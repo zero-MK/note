@@ -1,3 +1,19 @@
+_int_malloc 的参数：
+
+mstate：
+
+```
+typedef struct malloc_state *mstate;  
+```
+
+av 是指向记录当前堆状态的结构体的指针
+
+bytes 就是要申请的 chunk 的大小（并不是用户 malloc 的大小）
+
+------
+
+
+
 ```c
 static void *
 _int_malloc (mstate av, size_t bytes)
@@ -31,6 +47,24 @@ _int_malloc (mstate av, size_t bytes)
      aligned.
    */
 
+    /*检查 malloc 的大小是不是越界*/
+    /* checked_request2size 宏
+    #define checked_request2size(req, sz)                             \
+  		if (REQUEST_OUT_OF_RANGE (req)) {					      \
+  			    __set_errno (ENOMEM);						      \
+     		 	return 0;								      \
+    }																\
+    (sz) = request2size (req);
+    
+    REQUEST_OUT_OF_RANGE 宏
+    #define REQUEST_OUT_OF_RANGE(req)                                 \
+ 		 ((unsigned long) (req) >=						      \
+  		 (unsigned long) (INTERNAL_SIZE_T) (-2 * MINSIZE))
+    */
+    
+    
+  
+    
   checked_request2size (bytes, nb);
 
   /* There are no usable arenas.  Fall back to sysmalloc to get a chunk from

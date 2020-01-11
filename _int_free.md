@@ -214,14 +214,26 @@ _int_free (mstate av, mchunkptr p, int have_lock)
      * 是的话就合并 chunk 到 top chunk
      */
     if (nextchunk != av->top) {
-      /* get and clear inuse bit */
+        /*如果下一个块不是 top chunk*/
+       /* #define inuse_bit_at_offset(p, s)					      \
+  					(((mchunkptr) (((char *) (p)) + (s)))->size & PREV_INUSE)
+  	    */
+        /* get and clear inuse bit */
+        /*获取，清除 inuse bit */
       nextinuse = inuse_bit_at_offset(nextchunk, nextsize);
 
       /* consolidate forward */
+       /* 如果下一个块的 inuse bit 是 0 (表明当前块是 free 状态)*/
       if (!nextinuse) {
+       /*直接进行 unlink*/
 	unlink(av, nextchunk, bck, fwd);
+       /*把当前的 size 加上 next chunk 的 size，形成了一个新的 chunk，这个 chunk 的大小就是 这个新的 size*/
 	size += nextsize;
       } else
+       /* 如果 下一个 chunk 的inuse bit 不是 0，直接置零
+       	* 因为我们在 free 当前 chunk 
+        * 当前块的 free 状态标志位于下一个 chunk 的 size 的 bit0
+       */
 	clear_inuse_bit_at_offset(nextchunk, 0);
 
       /*
