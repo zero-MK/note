@@ -128,8 +128,6 @@ struct malloc_state
 
 把 P 的下一个块和上一个块分别保存到 FD 和 BK
 
-
-
     FD = P->fd; 
     BK = P->bk;
 
@@ -137,10 +135,10 @@ struct malloc_state
 检查块是不是已经损坏：
 
 ```
-__builtin_expect (FD->bk != P || BK->fd != P, 0)
+FD->bk != P || BK->fd != P, 0
 ```
 
-__builtin_expect 是 gcc 的内置函数用来优化分支，这里不多说。
+\_\_builtin_expect 是 gcc 的内置函数用来分支预测优化 具体参见(https://www.cnblogs.com/LubinLew/p/GCC-\_\_builtin_expect.html) ，这里不多说。
 
 glibc 2.23 主要是 
 
@@ -154,15 +152,13 @@ BK->fd != P
 
 上一个块的 下一个块 不是它自己的话就说明 chunk 被破坏
 
-，可以避免有些 heap exploit
-
-
+，可以防止有些 heap expolit
 
 检查通过了就是 
 
     FD->bk = BK;							      
     BK->fd = FD;
-白话就是：
+通俗点说就是：
 
 下一个块的上一个块变成 当前块的 上一个块
 
@@ -172,11 +168,7 @@ BK->fd != P
 
 
 
-
-
-
-
-in_smallbin_range 宏是检查 chunk 是不是位于 smallbin 里面的:
+in_smallbin_range 宏是检查 chunk 是不是位于 smallbin 里面:
 
 ```c
 #define MALLOC_ALIGNMENT       (2 *SIZE_SZ)
@@ -188,5 +180,102 @@ in_smallbin_range 宏是检查 chunk 是不是位于 smallbin 里面的:
   ((unsigned long) (sz) < (unsigned long) MIN_LARGE_SIZE)
 ```
 
- 参数是 chunk 的 size 
+ MALLOC_ALIGNMENT 是用来进行块对齐的，最小 chunk 就是 2×SIZE_SZ。
 
+SMALLBIN_CORRECTION 判断 bin 是不是被破坏， 因为不会有小于 2×SIZE_SZ  的 chunk。
+
+MIN_LARGE_SIZE 是 largebin 的最小 size 在 32 bit 系统上面是 512 Byte， 在 62 bit 系统上面是 1024 Byte。
+
+这样看的话 smallbin 是第一类 bin （当然从访问顺序上讲前面还有 unsortedbin ）只要小于 largebin 的最小 size 就说明这个 bin 是位于 smallbin 中（也许说的不够严谨），这就是 in_smallbin_range 的逻辑
+
+
+
+smallbin 的 size 计算公式
+
+```c
+Chunk_size=2 * SIZE_SZ * index
+```
+
+SIZE_SZ = 4 Byte( 32 bit),   8 Byte( 64 bit)
+
+smallbin 共 62 个 bin （没有 0 号 bin），每个 bin 的大小以 SIZE_SZ 为公差的等差数列
+
+由上面的公式可以知道
+
+在 32 bit 系统下面范围是  8  -  504（Byte）
+
+在 64 bit 系统下面范围是 16 - 1008（Byte）
+
+
+
+言归正传，回到 unlink，
+
+如果 bin 是不是位于 smallbin 里面的话（ !in_smallbin_range (P->size) ）也就是位于 largebin 中，smallbin 的话是没有 fd_nextsize 和 bk_nextsize 的，所以 unlink 的话直接操作 fd 和 bk 指针就好了，但是 要是是 largebin 要 unlink 的话还要操作  bk_nextsize 和 fd_nextsize
+
+```c
+P->fd_nextsize->bk_nextsize != P
+P->bk_nextsize->fd_nextsize != P
+```
+
+日常检查 P 指向下一块又指向上一个块是不是它自己， P 指向上一块又指向下一个块是不是它自己
+
+这样检查的目的就是 bin 是不是被恶意篡改了 bk_nextsize， fd_nextsize。当发生在 heap overflow（堆溢出）的时候，物理相邻的上一个块可以溢出，覆盖到当前块的 metadata，这个可能会造成任意地址读写。
+
+
+
+后面再多说两句，上面提到一点，现在我大概连起来讲一下关于 largebin：
+
+largebin 的 size 在 32 bit 系统下面是大于等于 512 Byte，64 bit 系统下面是大于等于 1024 Byte 
+
+在 largebin 中还会把 bin 再分类一次
+
+引用 华庭的 ptmalloc 分析中的话：
+
+> 在 SIZE_SZ 为 4B 的平台上,大于等于 512B 的空闲 chunk,或者,在 SIZE_SZ 为 8B 的平
+> 台上,
+> 大小大于等于 1024B 的空闲 chunk,
+> 由 sorted bins 管理。
+> Large bins 一共包括 63 个 bin,
+> 每个 bin 中的 chunk 大小不是一个固定公差的等差数列,而是分成 6 组 bin,每组 bin 是一个
+> 固定公差的等差数列,每组的 bin 数量依次为 32、16、8、4、2、1,公差依次为 64B、512B、
+> 4096B、32768B、262144B 等。
+
+我观察了一下这个公差，后一个公差是前一个公差左移的 3 得到的。
+
+第一个组的 bin 的计算公式 (0 => index <= 31) ：
+
+```c
+Chunk_size=512 + 64 * index
+```
+
+第二个组的 bin 的计算公式 (32 => index <= 47 )：
+
+```c
+Chunk_size=512 + 64 * 32 + 512 * index
+```
+
+第三个组的 bin 的计算公式(48 => index <=  55)：
+
+```c
+Chunk_size=512 + 64 * 32 + 512  * 16 + 4096 * index
+```
+
+第四个组的 bin 的计算公式(56 => index <= 59 ：
+
+```c
+Chunk_size=512 + 64 * 32 + 512  * 16 + 4096 +  8 * 32768 +  index
+```
+
+第五个组的 bin 的计算公式(60 => index <= 61)：
+
+```c
+Chunk_size=512 + 64 * 32 + 512  * 16 + 4096 +  8 * 32768 + 4 *  262144 + index
+```
+
+第六个组的 bin 的计算公式(62 => index <= 62) ：
+
+```c
+Chunk_size=512 + 64 * 32 + 512  * 16 + 4096 +  8 * 32768 + 4 *  262144 * 2 +  2097152 * index
+```
+
+:

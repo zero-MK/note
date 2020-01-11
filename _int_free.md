@@ -15,6 +15,9 @@ _int_free (mstate av, mchunkptr p, int have_lock)
   int locked = 0;
 
   size = chunksize (p);
+   /* #define chunksize(p)    ((p)->size & ~(SIZE_BITS)) 
+    * 得到 chunk 的 size
+    */
 
   /* Little security check which won't hurt performance: the
      allocator never wrapps around at the end of the address space.
@@ -33,6 +36,10 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     }
   /* We know that each chunk is at least MINSIZE bytes in size or a
      multiple of MALLOC_ALIGNMENT.  */
+    
+  /*检查要释放的 chunk 大小是不是小于最小 size ，这里用的 || ，其实只要 chunk 的大小
+   *大于最小 size 就不会进行对齐检查
+   */
   if (__glibc_unlikely (size < MINSIZE || !aligned_OK (size)))
     {
       errstr = "free(): invalid size";
@@ -46,6 +53,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     and used quickly in malloc.
   */
 
+    /* 检查 chunk 的大小符不符合 fastbin 并且下一个 chunk 不是 top chunk */
   if ((unsigned long)(size) <= (unsigned long)(get_max_fast ())
 
 #if TRIM_FASTBINS
@@ -85,16 +93,28 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
 
     set_fastchunks(av);
+    /* 拿到 chunk 的 idx*/
     unsigned int idx = fastbin_index(size);
+    /* #define fastbin(ar_ptr, idx) ((ar_ptr)->fastbinsY[idx]) 
+     * 拿到对应 idx 的 fastbin 的地址 
+     */
     fb = &fastbin (av, idx);
 
     /* Atomically link P to its fastbin: P->FD = *FB; *FB = P;  */
+    /* old 代表 fastbin 第一个 chunk 的地址 */
     mchunkptr old = *fb, old2;
     unsigned int old_idx = ~0u;
     do
       {
 	/* Check that the top of the bin is not the record we are going to add
 	   (i.e., double free).  */
+        
+    /* 这里就是大名鼎鼎的 double free 的检查机制
+     * old 是对应 idx 的 fastbin 的第一个 chunk 的地址
+     * 如果它的地址等于 p（我们要 free 的 chunk）的地址，说明 p 和 old 是
+     * 同一个 chunk ，这样的话，说明 free 的 chunk 已经位于 fastbin 中
+     * 再次 free 就判定为 double free
+     */
 	if (__builtin_expect (old == p, 0))
 	  {
 	    errstr = "double free or corruption (fasttop)";
@@ -104,8 +124,13 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	   size of the chunk that we are adding.  We can dereference OLD
 	   only if we have the lock, otherwise it might have already been
 	   deallocated.  See use of OLD_IDX below for the actual check.  */
+     /*检查是不是有锁，并且要 free 的 chunk ptr 不是指向 NULL*/
 	if (have_lock && old != NULL)
+      /**/
 	  old_idx = fastbin_index(chunksize(old));
+     /* 这一句的是把 chunk 串到 fastbin 中
+      * 就是把 free chunk 的 fd 指向原先在 fastbin 头的那个 chunk 的地址
+      */   
 	p->fd = old2 = old;
       }
     while ((old = catomic_compare_and_exchange_val_rel (fb, p, old2)) != old2);
@@ -121,16 +146,26 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     Consolidate other non-mmapped chunks as they arrive.
   */
 
+  /* 检查 chunk 是不是 mmap() 分配的*/
   else if (!chunk_is_mmapped(p)) {
     if (! have_lock) {
       (void)mutex_lock(&av->mutex);
       locked = 1;
     }
 
+    /* chunk_at_offset 这个宏：((mchunkptr)) ((char *) (p)) + (s)))*/
+    /* 传进来的 p + size 的地址当成一个 malloc_chunk 指针
+     * 通过 malloc_chunk 的结构可以知道 p 是指向 fd 的位置的
+     * 加上 size 就是得到下一个 chunk
+     */
     nextchunk = chunk_at_offset(p, size);
 
     /* Lightweight tests: check whether the block is already the
        top block.  */
+    /* 检查 p 的下一个块是不是 top chunk 。这里的 av 是一个 mstate 
+     * mstate 是一个 malloc_state 结构体的指针
+     * 这个结构体描述了当前堆的信息
+     */
     if (__glibc_unlikely (p == av->top))
       {
 	errstr = "double free or corruption (top)";
@@ -162,13 +197,22 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
 
     /* consolidate backward */
+    /* 检查上一个 chunk 是不是正在使用
+     * 这个宏展开是： (p->size) & 0x1
+     */
     if (!prev_inuse(p)) {
       prevsize = p->prev_size;
+      /* 把 size 的大小加上 上个 chunk 的 size*/
       size += prevsize;
+      /* 向上移动 p 指针，加上个 chunk 的 size ，指向新的 chunk*/
       p = chunk_at_offset(p, -((long) prevsize));
+      /* 对相邻的三个 chunk 进行 unlink*/
       unlink(av, p, bck, fwd);
     }
 
+    /* 检查下一个 chunk 是不是 top 
+     * 是的话就合并 chunk 到 top chunk
+     */
     if (nextchunk != av->top) {
       /* get and clear inuse bit */
       nextinuse = inuse_bit_at_offset(nextchunk, nextsize);
@@ -268,4 +312,9 @@ _int_free (mstate av, mchunkptr p, int have_lock)
   }
 }
 ```
+
+
+
+上面是完整的 glibc2.23 -- _int_free 的源码
+
 
