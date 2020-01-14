@@ -12,7 +12,7 @@ bytes 就是要申请的 chunk 的大小（并不是用户 malloc 的大小）
 
 ------
 
-
+下面提到的 nb 变量是一个 size_t ,也就是 一个 unsigned int 类型的变量，代表 malloc 的 chunk 的大小（全称应该是 n bytes，应该是这样理解，我猜的）
 
 ```c
 static void *
@@ -69,6 +69,11 @@ _int_malloc (mstate av, size_t bytes)
 
   /* There are no usable arenas.  Fall back to sysmalloc to get a chunk from
      mmap.  */
+  /* av 就是主分配区，
+   * av == NULL 代表主分配区不存在，直接调用 sysmalloc 
+   * mmap 分配
+   * 具体的运作我还没有看，现在主要是研究 _int_malloc
+   */
   if (__glibc_unlikely (av == NULL))
     {
       void *p = sysmalloc (nb, av);
@@ -85,14 +90,16 @@ _int_malloc (mstate av, size_t bytes)
 
   /* 先检查一下请求分配的内存大小是不是在 fastbin 的范围
    * 是的话就从 fastbin 里面拿
+   * get_max_fast 能获得 fastbin 的最大大小
    */
   if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
     {
-      /* 通过 fastbin_index 宏拿到 chunk 位于哪一条 fastbin 中*/
+      /* 通过 fastbin_index 宏拿到 chunk 位于哪一条 fastbin 中的 index*/
       idx = fastbin_index (nb);
-      /* 从堆的 fastbin 里面拿出 chunk */
+      /* 通过 index 从堆（av）的 fastbin 里面到一个指向符合条件的 chunk 的指针*/
       mfastbinptr *fb = &fastbin (av, idx);
       mchunkptr pp = *fb;
+      //验证是不是真正拿到 chunk
       do
         {
           victim = pp;
@@ -101,6 +108,7 @@ _int_malloc (mstate av, size_t bytes)
         }
       while ((pp = catomic_compare_and_exchange_val_acq (fb, victim->fd, victim))
              != victim);
+      // 验证失败
       if (victim != 0)
         {
           if (__builtin_expect (fastbin_index (chunksize (victim)) != idx, 0))
@@ -108,12 +116,25 @@ _int_malloc (mstate av, size_t bytes)
               errstr = "malloc(): memory corruption (fast)";
             errout:
               malloc_printerr (check_action, errstr, chunk2mem (victim), av);
+              // malloc 返回 NULL
               return NULL;
             }
           check_remalloced_chunk (av, victim, nb);
-          /* victim 是一个指向 chunk 的指针，使用 chunk2mem 宏把其转成指向 chunk 的 data*/
+         /* victim 是一个指向 chunk 的指针
+          * 使用 chunk2mem 宏把其转成指向 chunk 的 data 区段
+          */
           void *p = chunk2mem (victim);
+          // 把 chunk 的 data 区段 全部置 0
           alloc_perturb (p, bytes);
+          /*
+          static void
+						 alloc_perturb (char *p, size_t n)
+          {
+              if (__glibc_unlikely (perturb_byte))
+              memset (p, perturb_byte ^ 0xff, n);
+          }
+          */
+          // malloc 结束返回一个 指向 chunk 的 data 区段的指针
           return p;
         }
     }
@@ -126,9 +147,12 @@ _int_malloc (mstate av, size_t bytes)
      anyway, so we can check now, which is faster.)
    */
 
+  // 如果请求分配的大小超过了 fastbin 的最大大小则从 smallbin 中取 chunk
   if (in_smallbin_range (nb))
     {
+      // 通过 size 获得对应的 chunk 位于的 bin 的 index
       idx = smallbin_index (nb);
+      // 通过 index 获得 chunk
       bin = bin_at (av, idx);
 
       if ((victim = last (bin)) != bin)
@@ -556,5 +580,91 @@ _int_malloc (mstate av, size_t bytes)
         }
     }
 }
+```
+
+
+
+
+
+关于上文提到的重要的宏
+
+------
+
+get_max_fast() 宏：
+这个宏是用来获取 fastbin 的上限大小，主要还是这个 global_max_fast，这个变量是 通过调用 set_max_fast 宏来获得具体的值的。
+
+```c
+#define set_max_fast(s) \
+  global_max_fast = (((s) == 0)						      \
+                     ? SMALLBIN_WIDTH : ((s + SIZE_SZ) & ~MALLOC_ALIGN_MASK))
+#define get_max_fast() global_max_fast
+```
+
+------
+
+fastbin_index(sz)宏：
+
+传入的参数是一个 chunk 的 大小，然后通过这个大小确定 这个大小对应的 bin 的 index，其实 fastbin 都是经过对齐的，在 32 bit 系统下面除以 8（>> 3），在 64 bit 系统下面除以 16(>> 4)，就能拿到一个不是 index 的 index，因为有没有 0 号和 1 号 bin，所以前面得到的数还要 -2 才能得到真正的 index。
+
+```c
+#define fastbin_index(sz) \
+  ((((unsigned int) (sz)) >> (SIZE_SZ == 8 ? 4 : 3)) - 2)
+```
+
+所以 index 和 size 的关系是：
+
+```c
+size = (index + 2) << (SIZE_SZ == 8 ? 4 : 3) 
+```
+
+------
+
+MAX_FAST_SIZE 宏：
+
+这个宏定义了最大 fastbin 的 size ，在 32 bit 下面是 64 B，在 64 bit 下面是 128 B
+
+```c
+#define MAX_FAST_SIZE     (80 * SIZE_SZ / 4)
+```
+
+------
+
+in_smallbin_range 宏：
+参数是一个 sz 代表大小，检查这个 size 是不是落在 smallbin 里面。
+
+```c
+#define in_smallbin_range(sz)  \
+  ((unsigned long) (sz) < (unsigned long) MIN_LARGE_SIZE)
+```
+
+------
+
+smallbin_index 宏：
+
+参数是一个 sz 代表大小，用来获取 这个 size 的 chunk 位于那条 bin 中。
+
+```c
+#define smallbin_index(sz) \
+  ((SMALLBIN_WIDTH == 16 ? (((unsigned) (sz)) >> 4) : (((unsigned) (sz)) >> 3))\
+   + SMALLBIN_CORRECTION)
+```
+
+因为在 smallbin 里面 size 和 index 的关系是：
+
+```c
+size=2 * SIZE_SZ * index
+```
+
+要通过 size 获得 index  直接除以 SIZE_SZ （32bit ： 4，64bit ：8 ）再除以 2 就能得到 index。这个宏用的不是除法而是进行位运算，其实很少用除法，可能是效率的问题，我写了个 demo 逆向看了一下汇编，位移的指令数要比除法少，当然这个可能还是得看 是不是大数运算（我队友说的）。
+
+------
+
+bin_at 宏：
+
+```
+/* addressing -- note that bin_at(0) does not exist */
+#define bin_at(m, i) \
+  (mbinptr) (((char *) &((m)->bins[((i) - 1) * 2]))			      \
+             - offsetof (struct malloc_chunk, fd))
 ```
 
