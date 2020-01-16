@@ -1,5 +1,14 @@
 unlink 在 _int_free 中的调用是这样的：unlink(av, p, bck, fwd);
 
+unlink 的原理（其实就是链表的操作）
+
+1. 先把传入的块 P 的 fd 和 bk 指针存到参数的 FD ，BK，这两个参数其实是 chunk pointor。
+2. 检查 自己的 metadata 有没有损坏，因为 FD 和 BK 在第一步的时候已经被指向 P 的 前一个 chunk 和后一个 chunk，所以 `FD -> bk ; BK->fd;` 必定指向 P，要不然就说明 P 损坏。
+3. 第二步的检查如果通过，就直接把 FD 和 BK 连起来，让 FD 的 fd 指向 BK，让 BK 的 fd 指向 FD，这样就能把 P 拿走，这个是 smallbin 范围里面的 chunk 的操作。
+4. 在 largebin 中，chunk 还会有 `fd_nextsize` , `bk_nextsize` 字段，其实检查起来和第二步很相似，后面的操作也是差不多
+
+------
+
 关于 unlink 的参数
 
 ```c
