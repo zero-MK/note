@@ -152,27 +152,37 @@ _int_malloc (mstate av, size_t bytes)
     {
       // 通过 size 获得对应的 chunk 位于的 bin 的 index
       idx = smallbin_index (nb);
-      // 通过 index 获得 chunk
+      // 通过 index 获得 smallbin 的表头
       bin = bin_at (av, idx);
-
+      
+      // victim 是 bin 中的最后的一个 chunk
+      // 因为是 LIFO（Last In First Out）,这个最后一个 chunk 指的是最近一次 free 加到 bin 中的 chunk
+      // 如果 victim 和 bin 是一样的话，说明这条 bin 为空
       if ((victim = last (bin)) != bin)
         {
           if (victim == 0) /* initialization check */
             malloc_consolidate (av);
           else
             {
+              // 获取 victim 的 下一个 chunk 存到 bck，因为一下要把 victim 从 bin 中移除
               bck = victim->bk;
+    // 检查 chunk 是不是被损坏
 	if (__glibc_unlikely (bck->fd != victim))
                 {
                   errstr = "malloc(): smallbin double linked list corrupted";
                   goto errout;
                 }
+              // 把 chunk 的标记为 正在使用
               set_inuse_bit_at_offset (victim, nb);
+              // 把 chunk 从 bin 中拿下来，这个操作跟 unlink 一样。
               bin->bk = bck;
               bck->fd = bin;
 
+              // 判断当前是不是处于 主分配区
               if (av != &main_arena)
+                  // 要是不是 位于主分配区则设置 main_arena bit 为 0
                 victim->size |= NON_MAIN_ARENA;
+              // 检查 chunk 是不是真的已经被 malloc
               check_malloced_chunk (av, victim, nb);
               void *p = chunk2mem (victim);
               alloc_perturb (p, bytes);
@@ -584,8 +594,6 @@ _int_malloc (mstate av, size_t bytes)
 
 
 
-
-
 关于上文提到的重要的宏
 
 ------
@@ -668,3 +676,102 @@ bin_at 宏：
              - offsetof (struct malloc_chunk, fd))
 ```
 
+------
+
+next_bin 宏：
+
+用于获得下一条 bin 的地址,只需要将当前 bin 的地址向后移动两个指针的长度就得到下一个 bin 的链表头地址。
+
+```c
+/* analog of ++bin */
+#define next_bin(b)  ((mbinptr) ((char *) (b) + (sizeof (mchunkptr) << 1)))
+```
+
+------
+
+first， last宏：
+
+获得当前 chunk 的上一个（first）或者下一个（last） chunk。
+
+```c
+/* Reminders about list directionality within bins */
+#define first(b)     ((b)->fd)
+#define last(b)      ((b)->bk)
+```
+
+------
+
+set_inuse_bit_at_offset 宏：
+
+这个宏用来设置物理位置上面的上一个 chunk 的 inuse bit，表示 p 正在使用
+
+```c
+#define set_inuse_bit_at_offset(p, s)					      \
+  (((mchunkptr) (((char *) (p)) + (s)))->size |= PREV_INUSE)
+```
+
+p 是要标记为 正在使用 的chunk
+
+s 是 p 的 size
+
+其实这个的计算方式很简单，不过可能会混淆，可能会有人会以为加上 size 不对啊，不是还有 fd 和 bk 吗？其实 正在使用 的 chunk 的 fd 和 bk是没有意义的，所以可以在上面写入用户数据，所以只用加上 size 就能得到一个指向下一个 malloc_chunk 的指针，然后在它的 size 上面设置 inuse bit， 说明上一个 chunk 正在使用。 
+
+------
+
+check_malloced_chunk 宏：
+
+其实这个宏最终会调用  do_check_malloced_chunk 和 do_check_remalloced_chunk函数
+
+```c
+static void
+do_check_remalloced_chunk (mstate av, mchunkptr p, INTERNAL_SIZE_T s)
+{
+    // 清除 chunk 的标志位，取得 chunk 的 size
+  INTERNAL_SIZE_T sz = p->size & ~(PREV_INUSE | NON_MAIN_ARENA);
+
+  if (!chunk_is_mmapped (p))
+    {
+      assert (av == arena_for_chunk (p));
+      if (chunk_non_main_arena (p))
+        assert (av != &main_arena);
+      else
+        assert (av == &main_arena);
+    }
+
+  do_check_inuse_chunk (av, p);
+
+  /* Legal size ... */
+  assert ((sz & MALLOC_ALIGN_MASK) == 0);
+  assert ((unsigned long) (sz) >= MINSIZE);
+  /* ... and alignment */
+  assert (aligned_OK (chunk2mem (p)));
+  /* chunk is less than MINSIZE more than request */
+  assert ((long) (sz) - (long) (s) >= 0);
+  assert ((long) (sz) - (long) (s + MINSIZE) < 0);
+}
+
+static void
+do_check_malloced_chunk (mstate av, mchunkptr p, INTERNAL_SIZE_T s)
+{
+  /* same as recycled case ... */
+  do_check_remalloced_chunk (av, p, s);
+
+  /*
+     ... plus,  must obey implementation invariant that prev_inuse is
+     always true of any allocated chunk; i.e., that each allocated
+     chunk borders either a previously allocated and still in-use
+     chunk, or the base of its memory arena. This is ensured
+     by making all allocations from the `lowest' part of any found
+     chunk.  This does not necessarily hold however for chunks
+     recycled via fastbins.
+   */
+
+  assert (prev_inuse (p));
+}
+```
+
+
+
+
+
+注：这篇文章参考了 华庭的 ptmalloc 分析
