@@ -13,7 +13,7 @@
 
 ![CBC Encrypt](./cbc_encrypt.png)
 
-1. 先把明文（PlainText）填充（pad）成长度位 16 的倍数
+1. 先把明文（PlainText）填充（pad）成长度为 16 的倍数
 2. 根据设定的块大小（block size）来分组
 3. 第一组明文（p1）先与初始化向量 IV 进行异或运算得到一个二进制序列（enc_msg)
 4. 然后使用密钥（key） 去加密 enc1_msg，得到密文（CipherText）
@@ -34,8 +34,8 @@ CipherText = encrypt(key, enc_msg)
 
 解密是加密的逆过程
 
-1. 也是把密文（CipherText）按照每组长度喂 16 的倍数来分组
-2. 然后使用 密钥（key）解密最后一个分组密文（CipherTextN），得到一个二进制序列（fake_msgN)
+1. 也是把密文（CipherText）按照每组长度为 16 的倍数来分组
+2. 然后使用 密钥（key）解密最后一个分组密文（CipherTextN），得到一个序列（fake_msgN)
 3. 再把前一个分组（CipherTextN-1）的当成初始化向量 IV，解密 fake_msgN 得到明文 PlainTextN。重复以上流程直到解密完成
 
 ```c
