@@ -11,7 +11,7 @@
 
 加密：
 
-![CBC Encrypt](https://s2.ax1x.com/2020/02/06/160Jzj.png)
+![CBC Encrypt](cbc_encrypt.png)
 
 1. 先把明文（PlainText）填充（pad）成长度位 16 的倍数
 2. 根据设定的块大小（block size）来分组
@@ -28,7 +28,7 @@ CipherText = encrypt(key, enc_msg)
 
 
 解密：
-![CBC Decrypt](https://s2.ax1x.com/2020/02/06/160rYF.png)
+![CBC Decrypt](cbc_decrypt.png)
 
 
 
