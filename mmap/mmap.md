@@ -647,7 +647,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
 		return -EOVERFLOW;
 
 	/* Too many mappings? */
-    /*mmap 内存空间过大*/
+
 	if (mm->map_count > sysctl_max_map_count)
 		return -ENOMEM;
 
