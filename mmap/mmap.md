@@ -240,6 +240,8 @@ C source code：
 
 位于 glibc 源码： sysdeps/unix/sysv/linux/mmap64.c
 
+via：https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/mmap64.c.html#40
+
 ```c
 /* To avoid silent truncation of offset when using mmap2, do not accept
    offset larger than 1 << (page_shift + off_t bits).  For archictures with
@@ -311,7 +313,7 @@ SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,
 
 在内核里面找系统调用
 
-我用的是 5.4 的 kernel 
+我用的是 5.4-rc4 的 kernel 
 
 我查看 arch/x86/entry/syscalls/syscall_64.tbl
 
@@ -324,6 +326,8 @@ SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,
 直接跳到 sys_mmap 函数
 
 arch/ia64/kernel/sys_ia64.c
+
+via： https://elixir.bootlin.com/linux/v5.4-rc4/source/arch/ia64/kernel/sys_ia64.c#L149
 
 ```c
 asmlinkage unsigned long
@@ -350,6 +354,8 @@ sys_mmap (unsigned long addr, unsigned long len, int prot, int flags, int fd, lo
 
 跟下去：
 mm/mmap.c
+
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/mm/mmap.c#L1585
 
 ```c
 unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
@@ -416,7 +422,7 @@ SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,
 
 mm/util.c
 
-vm_mmap_pgoff
+ via：https://elixir.bootlin.com/linux/v5.4-rc4/source/mm/util.c#L483
 
 ```c
 unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
@@ -448,6 +454,8 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
 
 
 security_mmap_file
+
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/security/security.c#L1445
 
 ```c
 int security_mmap_file(struct file *file, unsigned long prot,
@@ -490,6 +498,8 @@ security_hook_heads 里面有	struct hlist_head mmap_file;
 
 mmap_prot （用来处理 prot 参数）
 
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/security/security.c#L1412
+
 ```c
 static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
 {
@@ -529,6 +539,8 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
 
 
 mmap_file
+
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/scripts/recordmcount.c#L158
 
 ```c
 static void *mmap_file(char const *fname)
@@ -588,6 +600,8 @@ out:
 vm_mmap_pgoff -> do_mmap_pgoff -> do_mmap -> mmap_region
 
 主要就是后面两个函数
+
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/mm/mmap.c#L1397
 
 ```c
 unsigned long do_mmap(struct file *file, unsigned long addr,
@@ -786,6 +800,8 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
 
 mmap_region
 
+via：https://elixir.bootlin.com/linux/v5.4-rc4/source/mm/mmap.c#L1721
+
 ```c
 unsigned long mmap_region(struct file *file, unsigned long addr,
 		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
@@ -956,7 +972,7 @@ unacct_error:
 
 
 
-这里涉及的面有点庞大，全部追踪下去的话还会设计 文件 的部分。我就简单描述一下，其实 mmap 的最终 映射的内存是由 vm_area_struct  来描述，里面有两个指针：vm_start， vm_end，描述映射区的起始地址和结束地址
+这里涉及的面有点庞大，全部追踪下去的话还会涉及 文件 的部分。我就简单描述一下，其实 mmap 的最终 映射的内存是由 vm_area_struct  来描述，里面有两个指针：vm_start， vm_end，描述映射区的起始地址和结束地址
 
 ```c
 	vma = vm_area_alloc(mm);
