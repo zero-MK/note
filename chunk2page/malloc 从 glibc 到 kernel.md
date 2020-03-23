@@ -182,36 +182,155 @@ sysmalloc 有点庞大，基本上就是一些 检查 和 设置标志位，我�
 
 搜索
 
-sys_brkcc
-
-
+sys_brk
 
 
 
 ```c
 SYSCALL_DEFINE1(brk, unsigned long, brk)
 {
-	struct mm_struct *mm = current->mm;
+	unsigned long retval;
+	unsigned long newbrk, oldbrk, origbrk;
+    
+    /* 获得描述当前进程的内存的 mm_struct
+	* current 指向的是当前进程的 task_struct 
+	*/
+    struct mm_struct *mm = current->mm;
+	/* 每一个内存区段（像是 mmap ，heap，详细描述看下面的图）都是用 vm_area_struct 来描述
+     *在 内存块少的时候使用的是链表把每个 块链接起来
+     * 在 内存块多的时候使用红黑树
+     * 这里的 next 是用来指向下一个内存块
+     */
+    
+    struct vm_area_struct *next;
+	unsigned long min_brk;
+	bool populate;
+	bool downgraded = false;
+	LIST_HEAD(uf);
 
-	if (brk < mm->start_brk || brk > mm->context.end_brk)
-		return mm->brk;
+	brk = untagged_addr(brk);
 
-	if (mm->brk == brk)
-		return mm->brk;
+	if (down_write_killable(&mm->mmap_sem))
+		return -EINTR;
+
+    // 获取现在 heap 的最高地址
+	origbrk = mm->brk;
+
+#ifdef CONFIG_COMPAT_BRK
+	/*
+	 * CONFIG_COMPAT_BRK can still be overridden by setting
+	 * randomize_va_space to 2, which will still cause mm->start_brk
+	 * to be arbitrarily shifted
+	 */
+    	/*
+	      *一般用户进程地址空间划分，堆在数据段的上方
+	       *如果开始 brk_randomized 属性最小堆地址就没办法通过数据段直接获取。
+	       * 也就是说 heap 和 data 在没开启 brk_randomized 贴在一起的 data 的结束地址就是 heap 的起始地址
+	       * 要是开启了 brk_randomized ，则 start_brk 指向 heap 的起始地址
+		*/
+	
+	if (current->brk_randomized)
+        // heap 的最低地址就是 start_brk
+		min_brk = mm->start_brk;
+	else
+        // heap 的最低地址是 data 段（数据段）的结束地址
+		min_brk = mm->end_data;
+#else
+	min_brk = mm->start_brk;
+#endif
+	if (brk < min_brk)
+		goto out;
 
 	/*
-	 * Always allow shrinking brk
+	 * Check against rlimit here. If this check is done later after the test
+	 * of oldbrk with newbrk then it can escape the test and let the data
+	 * segment grow beyond its set limit the in case where the limit is
+	 * not page aligned -Ram Gupta
 	 */
-	if (brk <= mm->brk) {
+    /*
+    ------------------------------------------------------------------------------
+    #define RLIMIT_DATA		2 
+    rlimit(RLIMIT_DATA) 展开就是
+    READ_ONCE(current->signal->rlim[2].rlim_cur)
+  --------------------------------------------------------------------------------
+    	static inline int check_data_rlimit(unsigned long rlim,
+				    unsigned long new,
+				    unsigned long start,
+				    unsigned long end_data,
+				    unsigned long start_data)
+{
+	if (rlim < RLIM_INFINITY) {
+		if (((new - start) + (end_data - start_data)) > rlim)
+		这个展开就是( brk - mm->start_brk ) + (mm->end_data - mm->start_data) > 
+			return -ENOSPC;
+	}
+
+	return 0;
+}
+    */
+	if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm->start_brk,
+			      mm->end_data, mm->start_data))
+		goto out;
+
+    // 按照页对齐 brk
+	newbrk = PAGE_ALIGN(brk);
+	oldbrk = PAGE_ALIGN(mm->brk);
+    
+	if (oldbrk == newbrk) {
+        // 更新 heap 的最高地址，这里就是真正的扩增 heap
 		mm->brk = brk;
-		return brk;
+		goto success;
 	}
 
 	/*
-	 * Ok, looks good - let it rip.
+	 * Always allow shrinking brk.
+	 * __do_munmap() may downgrade mmap_sem to read.
 	 */
-	flush_icache_range(mm->brk, brk);
-	return mm->brk = brk;
+	if (brk <= mm->brk) {
+		int ret;
+
+		/*
+		 * mm->brk must to be protected by write mmap_sem so update it
+		 * before downgrading mmap_sem. When __do_munmap() fails,
+		 * mm->brk will be restored from origbrk.
+		 */
+		mm->brk = brk;
+		ret = __do_munmap(mm, newbrk, oldbrk-newbrk, &uf, true);
+		if (ret < 0) {
+			mm->brk = origbrk;
+			goto out;
+		} else if (ret == 1) {
+			downgraded = true;
+		}
+		goto success;
+	}
+
+	/* Check against existing mmap mappings. */
+	next = find_vma(mm, oldbrk);
+	if (next && newbrk + PAGE_SIZE > vm_start_gap(next))
+		goto out;
+
+	/* Ok, looks good - let it rip. */
+	if (do_brk_flags(oldbrk, newbrk-oldbrk, 0, &uf) < 0)
+		goto out;
+	mm->brk = brk;
+
+success:
+	populate = newbrk > oldbrk && (mm->def_flags & VM_LOCKED) != 0;
+	if (downgraded)
+		up_read(&mm->mmap_sem);
+	else
+		up_write(&mm->mmap_sem);
+	userfaultfd_unmap_complete(mm, &uf);
+	if (populate)
+		mm_populate(oldbrk, newbrk - oldbrk);
+    // 返回新的 heap 结束地址
+	return brk;
+
+out:
+	retval = origbrk;
+	up_write(&mm->mmap_sem);
+	return retval;
 }
 ```
 
