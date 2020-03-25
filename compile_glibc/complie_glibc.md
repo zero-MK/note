@@ -1,6 +1,6 @@
 刚刚换了新系统（原本这些实验是在另一台电脑上做的）
 
-![image-20200326024348372](/home/r00t/note/compile_glibc/image-20200326024348372.png)
+![image-20200326024348372](./image-20200326024348372.png)
 
 今天编译 glibc，遇到的麻烦，以及解决方案
 
@@ -12,7 +12,7 @@
 
 1. 因为 汇编器 版本不同出的问题
 
-![common](/home/r00t/note/compile_glibc/深度截图_dde-desktop_20200325235223.png)
+![common](./深度截图_dde-desktop_20200325235223.png)
 
 这个问题我 patch 源码
 
@@ -119,7 +119,7 @@ index f56d0c7..3b36682 100644
  compat_symbol (libc, locs, locs, GLIBC_2_0);
 ```
 
-![image-20200326024008213](/home/r00t/note/compile_glibc/image-20200326024008213.png)
+![image-20200326024008213](./image-20200326024008213.png)
 
 patch 完编译，安装
 
@@ -131,7 +131,7 @@ sudo make j8
 sudo make install
 ```
 
-![](/home/r00t/note/compile_glibc/深度截图_dde-desktop_20200326005200.png)
+![](./深度截图_dde-desktop_20200326005200.png)
 
 x64 版 patch 完可以正常编译安装
 
@@ -145,7 +145,7 @@ cd build
 sudo ../configure --prefix=/glibc/x86/2.23/ --disable-werror --enable-debug=yes --host=i686-linux-gnu --build=i686-linux-gnu CC="gcc -m32" CXX="g++ -m32"
 ```
 
-![深度截图_dde-desktop_20200326012947](/home/r00t/note/compile_glibc/深度截图_dde-desktop_20200326012947.png)
+![](./深度截图_dde-desktop_20200326012947.png)
 
 看报错 __stack_chk_fail_local 
 
@@ -161,13 +161,13 @@ sudo make j8
 sudo make install
 ```
 
-![深度截图_dde-desktop_20200326014423](/home/r00t/note/compile_glibc/深度截图_dde-desktop_20200326014423.png)
+![](./深度截图_dde-desktop_20200326014423.png)
 
 编译成功，安装
 
 我的系统内核是 5.5，glibc是 2.31，有的工具是依赖比较高的 glibc 版本，像是刚刚编译好的 glibc2.23 直接 `export export LD_LIBRARY_PATH = ` 的话会造成很多工具用不了，像是这个
 
-![image-20200326030906804](/home/r00t/note/compile_glibc/image-20200326030906804.png)
+![](./image-20200326030906804.png)
 
 解决方案是利用 preload 或者用 pwntools， pwn_debug
 
@@ -175,7 +175,7 @@ sudo make install
 LD_PRELOAD=/glibc/x64/2.23/lib/libc-2.23.so malloc_debug
 ```
 
-![image-20200326031533125](/home/r00t/note/compile_glibc/image-20200326031533125.png)
+![](./image-20200326031533125.png)
 
 运行起来后再用 gdb attach 上去
 
