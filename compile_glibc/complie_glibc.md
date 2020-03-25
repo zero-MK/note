@@ -151,7 +151,7 @@ sudo ../configure --prefix=/glibc/x86/2.23/ --disable-werror --enable-debug=yes 
 
 这个函数是栈保护 cannary 的一个函数
 
-直接吧栈保护关掉 -fno-stack-protector
+直接把栈保护关掉 -fno-stack-protector
 
 ```bash
 sudo mkdir build
@@ -165,7 +165,7 @@ sudo make install
 
 编译成功，安装
 
-我的系统内核是 5.5，glibc是 2.31，有的工具是依赖比较高的 glibc 版本，像是刚刚编译好的 glibc2.23 直接 `export export LD_LIBRARY_PATH = ` 的话会造成很多工具用不了，像是这个
+我的系统内核是 5.5，glibc是 2.31，有的工具是依赖比较高的 glibc 版本，像是刚刚编译好的 glibc2.23 直接 `export LD_LIBRARY_PATH = ` 的话会造成很多工具用不了，像是这个
 
 ![](./image-20200326030906804.png)
 
