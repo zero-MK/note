@@ -119,7 +119,7 @@ index f56d0c7..3b36682 100644
  compat_symbol (libc, locs, locs, GLIBC_2_0);
 ```
 
-![image-20200326024008213](./image-20200326024008213.png)
+![image-20200326033852484](/home/r00t/note/compile_glibc/image-20200326033852484.png)
 
 patch 完编译，安装
 
