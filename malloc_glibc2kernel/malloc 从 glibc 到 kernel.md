@@ -67,7 +67,7 @@ _int_malloc (mstate av, size_t bytes)
 
   if (__glibc_unlikely (av == NULL))
     {
-        /*就是这里，这个函数就是分请是使用 mmap 还是 brk*/
+        /*就是这里，这个函数就是分清是使用 mmap 还是 brk*/
       void *p = sysmalloc (nb, av);
       if (p != NULL)
 	alloc_perturb (p, bytes);
@@ -268,6 +268,9 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
 	return 0;
 }
     */
+    // 2020.04.21 深入学了资源限制才明白的， RLIMIT_DATA 是一个 task->signal->rlim 数组的索引  
+    // 就是堆大小的最大值
+    // 其实这里就是检查我们 扩展堆后堆是不是超过了大小上限
 	if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm->start_brk,
 			      mm->end_data, mm->start_data))
 		goto out;
