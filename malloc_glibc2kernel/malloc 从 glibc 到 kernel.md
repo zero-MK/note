@@ -248,10 +248,13 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
 	 * not page aligned -Ram Gupta
 	 */
     /*
-    ------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
     #define RLIMIT_DATA		2 
     rlimit(RLIMIT_DATA) 展开就是
     READ_ONCE(current->signal->rlim[2].rlim_cur)
+    // 2020.04.21 深入学了资源限制才明白， RLIMIT_DATA 是一个 task->signal->rlim 数组的索引  
+    // rlim[2].rlim_cur 里面存的就是堆大小的最大值
+    // 其实这里就是检查我们 扩展堆后是不是超过了大小上限
   --------------------------------------------------------------------------------
     	static inline int check_data_rlimit(unsigned long rlim,
 				    unsigned long new,
@@ -261,16 +264,15 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
 {
 	if (rlim < RLIM_INFINITY) {
 		if (((new - start) + (end_data - start_data)) > rlim)
-		这个展开就是( brk - mm->start_brk ) + (mm->end_data - mm->start_data) > 
+		这个展开就是
+		( brk - mm->start_brk ) + (mm->end_data - mm->start_data) > current->signal->rlim[2].rlim_cur
 			return -ENOSPC;
 	}
 
 	return 0;
 }
     */
-    // 2020.04.21 深入学了资源限制才明白的， RLIMIT_DATA 是一个 task->signal->rlim 数组的索引  
-    // 就是堆大小的最大值
-    // 其实这里就是检查我们 扩展堆后堆是不是超过了大小上限
+
 	if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm->start_brk,
 			      mm->end_data, mm->start_data))
 		goto out;
