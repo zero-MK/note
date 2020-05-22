@@ -343,7 +343,7 @@ out:
 
 具体是这样的：
 
-![](task_mm.png)
+![](https://gitee.com/scriptkiddies/images/raw/master/task_mm.png)
 
 start_brk 指向的是 Heap 起始地址
 
