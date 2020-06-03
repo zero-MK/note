@@ -179,8 +179,8 @@ static __latent_entropy struct task_struct *copy_process(
      * Thread groups must share signals as well, and detached threads
      * can only be started up within the thread group.
      */
-    //CLONE_THREAD 子进程与父进程共享相同的线程群
-    //共享相同的线程组不共享 signals 冲突
+    // CLONE_THREAD 把子进程插入到父进程的同一线程组并迫使子进程共享父进程的信号描述符
+    // 所以和不共享 signals 冲突
     if ((clone_flags & CLONE_THREAD) && !(clone_flags & CLONE_SIGHAND))
         return ERR_PTR(-EINVAL);
 ​
@@ -190,7 +190,7 @@ static __latent_entropy struct task_struct *copy_process(
      * for various simplifications in other code.
      */
     //CLONE_SIGHAND  子进程与父进程共享相同的信号处理（signal handler）表
-    //CLONE_VM       子进程与父进程运行于相同的内存空间
+    //CLONE_VM       子进程与父进程运行于相同的内存空间（共享内存描述符和所有的页表）
     if ((clone_flags & CLONE_SIGHAND) && !(clone_flags & CLONE_VM))
         return ERR_PTR(-EINVAL);
 ​
@@ -200,6 +200,7 @@ static __latent_entropy struct task_struct *copy_process(
      * multi-rooted process trees, prevent global and container-inits
      * from creating siblings.
      */
+    // CLONE_PARENT 设置子进程的父进程（task_struct 里面的 parent 和 real_parent 字段）为调用进程的父进程
     if ((clone_flags & CLONE_PARENT) &&
                 current->signal->flags & SIGNAL_UNKILLABLE)
         return ERR_PTR(-EINVAL);
