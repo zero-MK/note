@@ -1592,7 +1592,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
 		rb_link = &tmp->vm_rb.rb_right;
 		rb_parent = &tmp->vm_rb;
 
-        // 这里就是 fork 写时复制（COW）在 copy_page_range 里面
+        // 在 copy_page_range 里面就是 fork 写时复制（COW）
 		mm->map_count++;
 		if (!(tmp->vm_flags & VM_WIPEONFORK))
 			retval = copy_page_range(mm, oldmm, mpnt);
@@ -1697,7 +1697,11 @@ int copy_page_range(struct mm_struct *dst_mm, struct mm_struct *src_mm,
 	 * parent mm. And a permission downgrade will only happen if
 	 * is_cow_mapping() returns true.
 	 */
-    // return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+  
+  /* return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+     VM_MAYWRITE 允许设置VM_WRITE标志
+     VM_WRITE 可以写入页面
+  */
 	is_cow = is_cow_mapping(vma->vm_flags);
 
 	if (is_cow) {
