@@ -1,4 +1,4 @@
-Linux 内核源码分析 -- getuid，geteuid，getgid，getegid，getpid，getppid，gettid，getuid
+Linux 内核源码分析 -- getgid，getegid，getpid，getppid，gettid，getuid
 
 
 
