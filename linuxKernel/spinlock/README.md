@@ -200,7 +200,7 @@ typedef struct arch_spinlock {
 
 这个`自旋锁`的变体被称为——`标签自旋锁 (ticket spinlock)`
 
-当锁被获取，如果有程序想要获取自旋锁，它就会将 `tail` 的值加 `1`，如果 `tail != head` ，那么程序就会被锁住，直到这些变量的值不再相等
+当锁被获取，如果有程序想要获取自旋锁，它就会将 `tail` 的值加 `1`，如果 `tail != head` ，那么程序就会被锁住，直到 `tail == head`
 
 `arch_spin_lock`
 
@@ -209,24 +209,77 @@ typedef struct arch_spinlock {
 #define cpu_relax()     asm volatile("rep; nop")
 static __always_inline void arch_spin_lock(arch_spinlock_t *lock)
 {
-        register struct __raw_tickets inc = { .tail = TICKET_LOCK_INC }; // tail 加 1
-        inc = xadd(&lock->tickets, inc);
+        register struct __raw_tickets inc = { .tail = TICKET_LOCK_INC }; // tail = 1
+        inc = xadd(&lock->tickets, inc); // 这个操作过后 &lock->tickets = inc (这是个原子操作,详细请自行搜索 xadd)
+        // 锁的关键就在这里了,只要 inc.head == inc.tail 成立,就说明这个锁没有被其他进程获取
         if (likely(inc.head == inc.tail))
-                goto out;
+                goto out; // 这个锁没有被获取,直接跳到 out 去执行
+        // inc.head != inc.tail 说明有线程获取了这个锁,进入这个循环,等待这个锁被释放
         for (;;) {
-                 unsigned count = SPIN_THRESHOLD;
+                 unsigned count = SPIN_THRESHOLD; // 这是类似于信号量的 timeout 的东西,这个变量定义了进程 "等多久" (while执行多少次)
                  do {
+                       // 把 head 读出来
                        inc.head = READ_ONCE(lock->tickets.head);
+                       // 对比 head 和 tail,相等就说明这个锁被释放了
                        if (__tickets_equal(inc.head, inc.tail))
                                 goto clear_slowpath;
-                        cpu_relax();
+                        cpu_relax(); // #define cpu_relax()     asm volatile("rep; nop"),就是一个 nop 指令,啥都不做
                  } while (--count);
                  __ticket_lock_spinning(lock, inc.tail);
          }
 clear_slowpath:
         __ticket_check_and_clear_slowpath(lock, inc.head);
 out:
-        barrier();
+        barrier(); // 屏障指令(防止 CPU 乱序)
 }
 ```
 
+
+
+## spin_unlock -- 释放给定的自旋锁
+
+其实这个锁的释放就是让 `head` 加 `1`
+
+核心操作
+
+```c
+__add(&lock->tickets.head, TICKET_LOCK_INC, UNLOCK_LOCK_PREFIX);
+```
+
+这样的话所有的等待进程就形成一个队列
+
+`head` 是当前获得锁的进程的编号
+
+`tail` 就是正在等待的进程的编号
+
+在锁没有被释放的时候, 一直有进程请求这个锁,请求一次 `tail` 就加 `1`
+
+释放锁的时候是 `head` 加 `1`, 这样对应的 `tail` (`head == tail`)的进程就能获得锁
+
+就像是这样的
+
+```
+          +-------+
+head      |   3   |
+          +-------+
+
+                  +-------+-------+-------+-------+
+tail              |   4   |   5   |   6   |   7   |
+                  +-------+-------+-------+-------+
+```
+
+现在 `tail` 等于 `3` , `head` 等于 `3`
+
+释放锁后,` head` 等于 `4`
+
+```
+          +-------+
+head      |   4   |
+          +-------+
+
+          +-------+-------+-------+-------+
+tail      |   4   |   5   |   6   |   7   |
+          +-------+-------+-------+-------+
+```
+
+这样 `tail == 4` 的进程就能获得锁
