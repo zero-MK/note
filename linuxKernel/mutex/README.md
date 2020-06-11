@@ -275,10 +275,11 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 	preempt_disable(); // 禁止内核抢占
 	mutex_acquire_nest(&lock->dep_map, subclass, 0, nest_lock, ip);
 
-  // 尝试获取 锁
+  // 尝试获取锁
 	if (__mutex_trylock(lock) ||
 	    mutex_optimistic_spin(lock, ww_ctx, use_ww_ctx, NULL)) {
 		/* got the lock, yay! */
+        // 执行到这里说明获取锁成功
 		lock_acquired(&lock->dep_map, ip);
 		if (use_ww_ctx && ww_ctx)
 			ww_mutex_set_context_fastpath(ww, ww_ctx);
@@ -286,10 +287,11 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 		return 0;
 	}
 
-	spin_lock(&lock->wait_lock);
+	spin_lock(&lock->wait_lock); // 上锁等待队列
 	/*
 	 * After waiting to acquire the wait_lock, try again.
 	 */
+    // 再次尝试
 	if (__mutex_trylock(lock)) {
 		if (use_ww_ctx && ww_ctx)
 			__ww_mutex_check_waiters(lock, ww_ctx);
@@ -323,7 +325,9 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 
 	waiter.task = current;
 
-	set_current_state(state);
+    // 设置的状态取决于在调用 __mutex_lock 函数
+    // 设置当前进程的状态（当是 __mutex_lock_slowpath 调用过来的话就是把当前进程状态设置成不可中断）
+	set_current_state(state); 
 	for (;;) {
 		/*
 		 * Once we hold wait_lock, we're serialized against
@@ -422,6 +426,10 @@ __mutex_trylock
 
 先说一下 mutex 标志位（task_struxt 的 低 3 bits）
 
+ Since task_struct pointers are aligned at least L1_CACHE_BYTES, we have low bits to store extra state.
+
+由于 `task_struct`  指针向 `L1_CACHE_BYTES` 对齐（至于数值是多少的看架构，位于 `arch/xxxx/include/asm/cache.h` 里面），这样用低 `3` bits 做标识，并不会有影响
+
 ```c
 /*
  * @owner: contains: 'struct task_struct *' to the current lock owner,
@@ -439,7 +447,17 @@ __mutex_trylock
 #define MUTEX_FLAGS		0x07
 ```
 
+Bit0：表明 等待队列非空，解锁时要执行唤醒（wakeup）操作（唤醒等待的进程）
 
+Bit1：释放锁时要把锁交给等待队列的第一个等待进程（top-waiter）
+
+Bit2：锁的状态切换已经完成，等待被获取
+
+
+
+__mutex_trylock_or_owner
+
+ 尝试上锁，成功的话返回持有者的 `task_struct` 指针
 
 ```c
 /*
@@ -452,19 +470,23 @@ static inline struct task_struct *__mutex_trylock_or_owner(struct mutex *lock)
 
   // 获取 lock 的持有者
 	owner = atomic_long_read(&lock->owner);
+    // 有点像自旋锁的操作
 	for (;;) { /* must loop, can race against a flag */
+        // 取出标志位
 		unsigned long old, flags = __owner_flags(owner);  // owner & 0x7
+        // 获得真正的 task_struxt 的地址（屏蔽掉 mutex 的 flags）
 		unsigned long task = owner & ~MUTEX_FLAGS; // MUTEX_FLAGS = 0x7
 
 		if (task) {
-      // 如果锁的持有者不是当前进程直接跳出循环
+     		 // 如果锁的持有者不是当前进程直接跳出循环
 			if (likely(task != curr))
 				break;
 
-      // 
+      		// 如果锁现在处于不可获取的状态跳出循环
 			if (likely(!(flags & MUTEX_FLAG_PICKUP)))
 				break;
 
+            // 把 flags 的 MUTEX_FLAG_PICKUP 置反
 			flags &= ~MUTEX_FLAG_PICKUP;
 		} else {
 #ifdef CONFIG_DEBUG_MUTEXES
@@ -477,22 +499,345 @@ static inline struct task_struct *__mutex_trylock_or_owner(struct mutex *lock)
 		 * past the point where we acquire it. This would be possible
 		 * if we (accidentally) set the bit on an unlocked mutex.
 		 */
+        // 设置 状态切换位 （HANDOFF bit）
 		flags &= ~MUTEX_FLAG_HANDOFF;
 
+        // &lock->owner = (curr | flags); return (curr | flags);  (原子操作)
 		old = atomic_long_cmpxchg_acquire(&lock->owner, owner, curr | flags);
+        //  检查更改 锁 的所有者是否成功
 		if (old == owner)
 			return NULL;
 
+        // owner =  (curr | flags)，仔细看吧
 		owner = old;
 	}
 
+    // 返回指向锁的持有者的，屏蔽 flags 后的 task_struct 指针
 	return __owner_task(owner);
+}
+```
+
+```c
+static inline struct task_struct *__owner_task(unsigned long owner)
+{
+	return (struct task_struct *)(owner & ~MUTEX_FLAGS);
+}
+```
+
+mutex_optimistic_spin
+
+```c
+/*
+ * Optimistic spinning.
+ *
+ * We try to spin for acquisition when we find that the lock owner
+ * is currently running on a (different) CPU and while we don't
+ * need to reschedule. The rationale is that if the lock owner is
+ * running, it is likely to release the lock soon.
+ *
+ * The mutex spinners are queued up using MCS lock so that only one
+ * spinner can compete for the mutex. However, if mutex spinning isn't
+ * going to happen, there is no point in going through the lock/unlock
+ * overhead.
+ *
+ * Returns true when the lock was taken, otherwise false, indicating
+ * that we need to jump to the slowpath and sleep.
+ *
+ * The waiter flag is set to true if the spinner is a waiter in the wait
+ * queue. The waiter-spinner will spin on the lock directly and concurrently
+ * with the spinner at the head of the OSQ, if present, until the owner is
+ * changed to itself.
+ */
+static __always_inline bool
+mutex_optimistic_spin(struct mutex *lock, struct ww_acquire_ctx *ww_ctx,
+		      const bool use_ww_ctx, struct mutex_waiter *waiter)
+{
+	if (!waiter) {
+		/*
+		 * The purpose of the mutex_can_spin_on_owner() function is
+		 * to eliminate the overhead of osq_lock() and osq_unlock()
+		 * in case spinning isn't possible. As a waiter-spinner
+		 * is not going to take OSQ lock anyway, there is no need
+		 * to call mutex_can_spin_on_owner().
+		 */
+        // 
+		if (!mutex_can_spin_on_owner(lock))
+			goto fail;
+
+		/*
+		 * In order to avoid a stampede of mutex spinners trying to
+		 * acquire the mutex all at once, the spinners need to take a
+		 * MCS (queued) lock first before spinning on the owner field.
+		 */
+		if (!osq_lock(&lock->osq))
+			goto fail;
+	}
+
+	for (;;) {
+		struct task_struct *owner;
+
+		/* Try to acquire the mutex... */
+        // 获取锁的持有者
+		owner = __mutex_trylock_or_owner(lock);
+		if (!owner)
+			break;
+
+		/*
+		 * There's an owner, wait for it to either
+		 * release the lock or go to sleep.
+		 */
+		if (!mutex_spin_on_owner(lock, owner, ww_ctx, waiter))
+			goto fail_unlock;
+
+		/*
+		 * The cpu_relax() call is a compiler barrier which forces
+		 * everything in this loop to be re-loaded. We don't need
+		 * memory barriers as we'll eventually observe the right
+		 * values at the cost of a few extra spins.
+		 */
+		cpu_relax();
+	}
+
+	if (!waiter)
+		osq_unlock(&lock->osq);
+
+	return true;
+
+
+fail_unlock:
+	if (!waiter)
+		osq_unlock(&lock->osq);
+
+fail:
+	/*
+	 * If we fell out of the spin path because of need_resched(),
+	 * reschedule now, before we try-lock the mutex. This avoids getting
+	 * scheduled out right after we obtained the mutex.
+	 */
+	if (need_resched()) {
+		/*
+		 * We _should_ have TASK_RUNNING here, but just in case
+		 * we do not, make it so, otherwise we might get stuck.
+		 */
+		__set_current_state(TASK_RUNNING);
+		schedule_preempt_disabled();
+	}
+
+	return false;
+}
+```
+
+mutex_can_spin_on_owner
+
+```c
+/*
+ * Initial check for entering the mutex spinning loop
+ */
+static inline int mutex_can_spin_on_owner(struct mutex *lock)
+{
+	struct task_struct *owner;
+	int retval = 1;
+
+	if (need_resched())
+		return 0;
+
+	rcu_read_lock();
+    // 获取锁的持有者
+	owner = __mutex_owner(lock);
+
+	/*
+	 * As lock holder preemption issue, we both skip spinning if task is not
+	 * on cpu or its cpu is preempted
+	 */
+    // 如果任务不在 cpu 上或其 cpu 被抢占，都会跳过旋转
+	if (owner)
+		retval = owner->on_cpu && !vcpu_is_preempted(task_cpu(owner));
+	rcu_read_unlock();
+
+	/*
+	 * If lock->owner is not set, the mutex has been released. Return true
+	 * such that we'll trylock in the spin path, which is a faster option
+	 * than the blocking slow path.
+	 */
+    // 如果 lock->owner 没有设置，就说明锁是 释放（released） 状态
+    // 这样的话我们尝试走 spin path 去获取锁，这是一个比阻塞 slow path 更快的选项。
+	return retval;
 }
 ```
 
 
 
+mutex_spin_on_owner
+
+```c
+
+/*
+ * Look out! "owner" is an entirely speculative pointer access and not
+ * reliable.
+ *
+ * "noinline" so that this function shows up on perf profiles.
+ */
+static noinline
+bool mutex_spin_on_owner(struct mutex *lock, struct task_struct *owner,
+			 struct ww_acquire_ctx *ww_ctx, struct mutex_waiter *waiter)
+{
+	bool ret = true;
+
+	rcu_read_lock();
+	while (__mutex_owner(lock) == owner) {
+		/*
+		 * Ensure we emit the owner->on_cpu, dereference _after_
+		 * checking lock->owner still matches owner. If that fails,
+		 * owner might point to freed memory. If it still matches,
+		 * the rcu_read_lock() ensures the memory stays valid.
+		 */
+        // 内存屏障
+		barrier();
+
+		/*
+		 * Use vcpu_is_preempted to detect lock holder preemption issue.
+		 */
+		if (!owner->on_cpu || need_resched() ||
+				vcpu_is_preempted(task_cpu(owner))) {
+			ret = false;
+			break;
+		}
+
+		if (ww_ctx && !ww_mutex_spin_on_owner(lock, ww_ctx, waiter)) {
+			ret = false;
+			break;
+		}
+
+		cpu_relax();
+	}
+	rcu_read_unlock();
+
+	return ret;
+}
+```
+
+
+
+
+
 ## mutex_unlock
 
+这个也分两个路径
 
+释放一个互斥锁
+
+```c
+/**
+ * mutex_unlock - release the mutex
+ * @lock: the mutex to be released
+ *
+ * Unlock a mutex that has been locked by this task previously.
+ *
+ * This function must not be used in interrupt context. Unlocking
+ * of a not locked mutex is not allowed.
+ *
+ * This function is similar to (but not equivalent to) up().
+ */
+void __sched mutex_unlock(struct mutex *lock)
+{
+#ifndef CONFIG_DEBUG_LOCK_ALLOC
+	if (__mutex_unlock_fast(lock))
+		return;
+#endif
+	__mutex_unlock_slowpath(lock, _RET_IP_);
+}
+EXPORT_SYMBOL(mutex_unlock);
+```
+
+
+
+### __mutex_unlock_fast
+
+通过 `fastpath` 去释放锁
+
+```c
+static __always_inline bool __mutex_unlock_fast(struct mutex *lock)
+{
+    // 获取当前进程的task_struct 的地址
+	unsigned long curr = (unsigned long)current;
+
+    // &lock->owner = 0; (原子操作)
+	if (atomic_long_cmpxchg_release(&lock->owner, curr, 0UL) == curr)
+		return true;
+
+	return false;
+}
+```
+
+
+
+### __mutex_unlock_slowpath
+
+通过 `slowpath` 去释放锁
+
+```c
+/*
+ * Release the lock, slowpath:
+ */
+static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigned long ip)
+{
+	struct task_struct *next = NULL;
+	DEFINE_WAKE_Q(wake_q);
+	unsigned long owner;
+
+	mutex_release(&lock->dep_map, ip);
+
+	/*
+	 * Release the lock before (potentially) taking the spinlock such that
+	 * other contenders can get on with things ASAP.
+	 *
+	 * Except when HANDOFF, in that case we must not clear the owner field,
+	 * but instead set it to the top waiter.
+	 */
+	owner = atomic_long_read(&lock->owner);
+	for (;;) {
+		unsigned long old;
+
+#ifdef CONFIG_DEBUG_MUTEXES
+		DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current);
+		DEBUG_LOCKS_WARN_ON(owner & MUTEX_FLAG_PICKUP);
+#endif
+
+		if (owner & MUTEX_FLAG_HANDOFF)
+			break;
+
+		old = atomic_long_cmpxchg_release(&lock->owner, owner,
+						  __owner_flags(owner));
+		if (old == owner) {
+			if (owner & MUTEX_FLAG_WAITERS)
+				break;
+
+			return;
+		}
+
+		owner = old;
+	}
+
+	spin_lock(&lock->wait_lock);
+	debug_mutex_unlock(lock);
+	if (!list_empty(&lock->wait_list)) {
+		/* get the first entry from the wait-list: */
+		struct mutex_waiter *waiter =
+			list_first_entry(&lock->wait_list,
+					 struct mutex_waiter, list);
+
+		next = waiter->task;
+
+		debug_mutex_wake_waiter(lock, waiter);
+		wake_q_add(&wake_q, next);
+	}
+
+	if (owner & MUTEX_FLAG_HANDOFF)
+		__mutex_handoff(lock, next);
+
+	spin_unlock(&lock->wait_lock);
+
+	wake_up_q(&wake_q);
+}
+```
 

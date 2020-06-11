@@ -1,6 +1,38 @@
 cred 结构体
 
+进程的安全相关信息上下文（context）
+
+一个进程有两个 `cred`
+
+在 `task_struct` 里面有 `cred` `real_cred`
+
+- 当其他进程试图影响此进程的时候就是访问 `cred` ，`cred` 是可以临时改变的，通常情况下是和 `real_cred` 是一样的
+- 当进程试图对一个其他对象（文件，进程，或者任何东西）进行操作的时候就是访问 `real_cred`
+
 ```c
+/*
+ * The security context of a task
+ *
+ * The parts of the context break down into two categories:
+ *
+ *  (1) The objective context of a task.  These parts are used when some other
+ *	task is attempting to affect this one.
+ *
+ *  (2) The subjective context.  These details are used when the task is acting
+ *	upon another object, be that a file, a task, a key or whatever.
+ *
+ * Note that some members of this structure belong to both categories - the
+ * LSM security pointer for instance.
+ *
+ * A task has two security pointers.  task->real_cred points to the objective
+ * context that defines that task's actual details.  The objective part of this
+ * context is used whenever that task is acted upon.
+ *
+ * task->cred points to the subjective context that defines the details of how
+ * that task is going to act upon another object.  This may be overridden
+ * temporarily to point to another security context, but normally points to the
+ * same context as task->real_cred.
+ */
 struct cred {
 	atomic_t	usage;
 #ifdef CONFIG_DEBUG_CREDENTIALS
@@ -56,22 +88,22 @@ user_struct
 
 ```c
 struct user_struct {
-	refcount_t __count;	/* reference count */
-	atomic_t processes;	/* How many processes does this user have? */
-	atomic_t sigpending;	/* How many pending signals does this user have? */
+	refcount_t __count;	/* reference count 引用计数*/
+	atomic_t processes;	/* How many processes does this user have? 这个用户一共有多少个进程 */
+	atomic_t sigpending;	/* How many pending signals does this user have? 这个用户一共有多少个挂起信号*/
 #ifdef CONFIG_FANOTIFY
 	atomic_t fanotify_listeners;
 #endif
 #ifdef CONFIG_EPOLL
-	atomic_long_t epoll_watches; /* The number of file descriptors currently watched */
+	atomic_long_t epoll_watches; /* The number of file descriptors currently watched 当前监视的文件描述符的数量 */
 #endif
 #ifdef CONFIG_POSIX_MQUEUE
 	/* protected by mq_lock	*/
 	unsigned long mq_bytes;	/* How many bytes can be allocated to mqueue? */
 #endif
 	unsigned long locked_shm; /* How many pages of mlocked shm ? */
-	unsigned long unix_inflight;	/* How many files in flight in unix sockets */
-	atomic_long_t pipe_bufs;  /* how many pages are allocated in pipe buffers */
+	unsigned long unix_inflight;	/* How many files in flight in unix sockets 有多少套接字 */
+	atomic_long_t pipe_bufs;  /* how many pages are allocated in pipe buffers 管道缓冲区中分配了多少个 页 的内存*/
 
 	/* Hash table maintenance information */
 	struct hlist_node uidhash_node;
