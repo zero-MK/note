@@ -44,7 +44,7 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 
 @fd -- 文件描述符
 
-@buf -- 把指定长度的文件内容存入这个 `buf` 里面
+n@buf -- 把指定长度的文件内容存入这个 `buf` 里面
 
 @count -- 读取的长度
 
@@ -73,8 +73,6 @@ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
 	return ret;
 }
 ```
-
-
 
 ## fdget_pos
 
@@ -208,6 +206,145 @@ loop:
 	rcu_read_unlock();
 
 	return file;
+}
+```
+
+
+
+
+
+### __to_fd
+
+```c
+static inline struct fd __to_fd(unsigned long v)
+{
+	return (struct fd){(struct file *)(v & ~3),v & 3};
+}
+```
+
+
+
+### file_ppos
+
+```c
+/* file_ppos returns &file->f_pos or NULL if file is stream */
+static inline loff_t *file_ppos(struct file *file)
+{
+	return file->f_mode & FMODE_STREAM ? NULL : &file->f_pos;
+}
+```
+
+
+
+### vfs_read
+
+```c
+ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+{
+	ssize_t ret;
+
+	if (!(file->f_mode & FMODE_READ))
+		return -EBADF;
+	if (!(file->f_mode & FMODE_CAN_READ))
+		return -EINVAL;
+	if (unlikely(!access_ok(buf, count)))
+		return -EFAULT;
+
+	ret = rw_verify_area(READ, file, pos, count);
+	if (!ret) {
+		if (count > MAX_RW_COUNT)
+			count =  MAX_RW_COUNT;
+		ret = __vfs_read(file, buf, count, pos);
+		if (ret > 0) {
+			fsnotify_access(file);
+			add_rchar(current, ret);
+		}
+		inc_syscr(current);
+	}
+
+	return ret;
+}
+```
+
+Flag:
+
+```
+#define	EBADF		 9	/* Bad file number */
+#define	EFAULT		14	/* Bad address */
+#define	EINVAL		22	/* Invalid argument */
+```
+
+
+
+```
+/* file is open for reading */
+#define FMODE_READ		((__force fmode_t)0x1)
+/* Has read method(s) */
+#define FMODE_CAN_READ          ((__force fmode_t)0x20000)
+```
+
+
+
+
+
+### rw_verify_area
+
+```c
+int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t count)
+{
+	struct inode *inode;
+	int retval = -EINVAL;
+
+	inode = file_inode(file);
+	if (unlikely((ssize_t) count < 0))
+		return retval;
+
+	/*
+	 * ranged mandatory locking does not apply to streams - it makes sense
+	 * only for files where position has a meaning.
+	 */
+	if (ppos) {
+		loff_t pos = *ppos;
+
+		if (unlikely(pos < 0)) {
+			if (!unsigned_offsets(file))
+				return retval;
+			if (count >= -pos) /* both values are in 0..LLONG_MAX */
+				return -EOVERFLOW;
+		} else if (unlikely((loff_t) (pos + count) < 0)) {
+			if (!unsigned_offsets(file))
+				return retval;
+		}
+
+		if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
+			retval = locks_mandatory_area(inode, file, pos, pos + count - 1,
+					read_write == READ ? F_RDLCK : F_WRLCK);
+			if (retval < 0)
+				return retval;
+		}
+	}
+
+	return security_file_permission(file,
+				read_write == READ ? MAY_READ : MAY_WRITE);
+}
+```
+
+
+
+
+
+### __vfs_read
+
+```c
+ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
+		   loff_t *pos)
+{
+	if (file->f_op->read)
+		return file->f_op->read(file, buf, count, pos);
+	else if (file->f_op->read_iter)
+		return new_sync_read(file, buf, count, pos);
+	else
+		return -EINVAL;
 }
 ```
 
