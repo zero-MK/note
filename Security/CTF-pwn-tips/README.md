@@ -26,79 +26,81 @@ Assume that: `char buf[40]` and `signed int num`
 ### scanf
 
 * `scanf("%s", buf)`
-    * `%s` doesn't have boundary check.
+    * `%s` 没有进行边界检查
     * **pwnable**
 
 * `scanf("%39s", buf)`
-    * `%39s` only takes 39 bytes from the input and puts NULL byte at the end of input.
+    * `%39s` 只从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
     * **useless**
 
 * `scanf("%40s", buf)`
-    * At first sight, it seems reasonable.(seems)
-    * It takes **40 bytes** from input, but it also **puts NULL byte at the end of input.**
-    * Therefore, it has **one-byte-overflow**.
+    * 乍一看好像没有什么问题
+    * 从标准输入获取 `40` 个字节的数据，并将 `NULL` 放在输入数据的结尾
+    * 因为 `buf` 只有 `40 Bytes` 的空间，输入数据加上 `NULL`溢出了一个字节（**one-byte-overflow**）
     * **pwnable**
 
 * `scanf("%d", &num)`
-    * Used with `alloca(num)`
-        * Since `alloca` allocates memory from the stack frame of the caller, there is an instruction `sub esp, eax` to achieve that.
-        * If we make num negative, it will have overlapped stack frame.
+    * 输入的 `num` 用做 `alloca` 的参数 `alloca(num)`
+        * `alloca` 是从调用者的栈上分配内存，相当于 `sub esp, eax` 
+        * 如果我们输入的是一个负数，就会发生栈帧重叠
         * E.g. [Seccon CTF quals 2016 cheer_msg](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/cheer-msg-100)
-    * Use num to access some data structures
-        * In most of the time, programs only check the higher bound and forget to make num unsigned.
-        * Making num negative may let us overwrite some important data to control the world!
+    * 利用 `num` 访问一些数据结构
+        * 很多时候程序员写检查的时候只进行了高边界的检查，而没有检查低边界，然后 `num` 又是无符号类型
+        * 将 `num` 设置成负数会发生整数溢出，`num` 会变得非常大，这样我们就能覆盖到一些重要的数据
 
 ### gets
 
 * `gets(buf)`
-    * No boundary check.
+    * 没有进行边界检查
     * **pwnable**
 
 * `fgets(buf, 40, stdin)`
-    * It takes only **39 bytes** from the input and puts NULL byte at the end of input.
+    * 从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
     * **useless**
 
 ### read
 
 * `read(stdin, buf, 40)`
-    * It takes **40 bytes** from the input, and it doesn't put NULL byte at the end of input.
-    * It seems safe, but it may have **information leak**.
+    * 从标准输入获取 `40` 个字节的数据，但是不会把 `NULL` 放在输入数据的结尾
+    * 看起来安全，但是可能会发生信息泄露（**information leak**）
     * **leakable**
 
 E.g.
 
-**memory layout**
+**内存布局**
+
 ```
 0x7fffffffdd00: 0x4141414141414141      0x4141414141414141
 0x7fffffffdd10: 0x4141414141414141      0x4141414141414141
 0x7fffffffdd20: 0x4141414141414141      0x00007fffffffe1cd
 ```
 
-* If there is a `printf` or `puts` used to output the buf, it will keep outputting until reaching NULL byte.
-* In this case, we can get `'A'*40 + '\xcd\xe1\xff\xff\xff\x7f'`.
+* 如果使用 `printf` 或者 `puts` 输出 `buf` ，这两个函数会一直读取内存上的东西直到遇到 
+    `NULL`
+* 在这里我们能输出 `'A'*40 + '\xcd\xe1\xff\xff\xff\x7f'`
 
 * `fread(buf, 1, 40, stdin)`
-    * Almost the same as `read`.
+    * 和  `read` 几乎一样
     * **leakable**
 
 ### strcpy
 
-Assume that there is another buffer: `char buf2[60]`
+假设有一个 buffer: `char buf2[60]`
 
 * `strcpy(buf, buf2)`
-    * No boundary check.
-    * It copies the content of buf2(until reaching NULL byte) which may be longer than `length(buf)` to buf.
-    * Therefore, it may happen overflow.
+    * 没有进行边界检查
+    * 它会将 `buf2`的内容复制到 `buf` (直到遇到 NULL byte)  这时 `length(buf2) > length(buf)`
+    * 因为 `length(buf2) > length(buf)` 所以 `buf` 发生溢出
     * **pwnable**
 
 * `strncpy(buf, buf2, 40)` && `memcpy(buf, buf2, 40)`
-    * It copies 40 bytes from buf2 to buf, but it won't put NULL byte at the end.
-    * Since there is no NULL byte to terminate, it may have **information leak**.
+    * 从 `buf2` 复制 `40 Bytes` 的数据到 `buf`，但是结尾没有添加 `NULL`
+    * 由于没有 `NULL` 标志字符串结束，所以跟上面的一样会发生信息泄露
     * **leakable**
 
 ### strcat
 
-Assume that there is another buffer: `char buf2[60]`
+假设有另一个 `buffer`：`char buf2[60]`
 
 * `strcat(buf, buf2)`
     * Of course, it may cause **overflow** if `length(buf)` isn't large enough.
