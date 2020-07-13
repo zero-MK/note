@@ -4,19 +4,19 @@ CTF-pwn-tips
 
 # 目录
 * [缓冲区溢出](#缓冲区溢出)
-* [在 gdb 中查找字符串](#在 gdb 中查找字符串)
+* [在 gdb 中查找字符串](#在gdb中查找字符串)
 * [让程序运行在指定端口上](#让程序运行在指定端口上)
 * [在 libc 中查找特定的函数偏移量](#在libc中查找特定的函数偏移量)
-* [在共享库里面查找 '/bin/sh' 或者 'sh' 字符串](#在共享库里面查找 '/bin/sh' 或者 'sh' 字符串)
+* [在共享库里面查找 '/bin/sh' 或者 'sh' 字符串](#在共享库里面查找'/bin/sh'或者'sh'字符串)
 * [泄露栈地址](#泄露栈地址)
-* [gdb 中 fork 跟踪调试的问题](#gdb 中 fork 跟踪调试的问题)
-* [.tls 段的秘密](#.tls 段的秘密)
-* [可预测的随机数发生器 -- RNG(Random Number Generator)](#可预测的随机数发生器 -- RNG(Random Number Generator))
+* [gdb 中 fork 跟踪调试的问题](#gdb中fork跟踪调试的问题)
+* [.tls 段的秘密](#.tls段的秘密)
+* [可预测的随机数发生器 -- RNG(Random Number Generator)](#可预测的随机数发生器))
 * [使栈可执行](#使栈可执行)
-* [使用 one-gadget-RCE 代替 system](#使用 one-gadget-RCE 代替 system)
+* [使用 one-gadget-RCE 代替 system](#使用one-gadget-RCE代替system)
 * [劫持钩子函数](#劫持钩子函数)
-* [使用 printf 触发 malloc 和 free](#使用 printf 触发 malloc 和 free)
-* [使用 execveat 打开一个 shell](#使用 execveat 打开一个 shell)
+* [使用 printf 触发 malloc 和 free](#使用printf触发malloc和free)
+* [使用 execveat 打开一个 shell](#使用execveat打开一个shell)
 
 
 ## 缓冲区溢出
@@ -118,7 +118,7 @@ E.g.
     * E.g. [Seccon CTF quals 2016 jmper](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/jmper-300)
 
 
-## 在 gdb 中查找字符串
+## 在gdb中查找字符串
 
 在有[SSP](http://j00ru.vexillium.org/blog/24_03_15/dragons_ctf.pdf) （Stack-smashing Protection） 的情况下 , 我们需要找出 `argv[0]` 和输入缓冲区的偏移量
 
@@ -196,7 +196,7 @@ libc = ELF('libc.so')
 system_off = libc.symbols['system']
 ```
 
-## 在共享库里面查找 '/bin/sh' 或者 'sh' 字符串
+## 在共享库里面查找'/bin/sh'或者'sh'字符串
 
 需要先获得 `libc` 的基地址
 
@@ -256,7 +256,7 @@ $12 = 0x7fffffffe230
 
 这个 [手册](https://www.gnu.org/software/libc/manual/html_node/Program-Arguments.html) 详细的描述了 `environ`
 
-## gdb 中 fork 跟踪调试的问题
+## gdb中fork跟踪调试的问题
 
 当你使用 **gdb** 调试带有 `fork()` 函数的可执行文件时，您可以使用下面列出的命令来确定要跟踪哪个进程（`gdb` 的默认设置是跟踪父进程，`gdb-peda` 的默认设置是跟踪子进程）：
 
@@ -265,7 +265,7 @@ $12 = 0x7fffffffe230
 
 另外，我们可以通过 `set detach-on-fork off` 命令同时调试父进程和子进程，通过 `inferior X` 切换跟踪调试进程， `X` 可以是 `info inferiors` 得到的任意数字（每个数字代表着一个进程）。 如果 `fork` 得出的两个进程都需要跟踪获取信息，上面的只跟踪任意一个进程是达不到目的的，同时跟踪两个进程还是很有用的（像是演示子进程的 `canary` 是和父进程一样的时候）
 
-## tls 段的秘密
+## tls段的秘密
 
 **约制因素**:
 
@@ -339,7 +339,7 @@ addr = LIBC.rand() & 0xfffff000
 * [link2](https://sploitfun.wordpress.com/author/sploitfun/)
 * Haven't read yet orz
 
-## 使用 one-gadget-RCE 代替 system
+## 使用one-gadget-RCE代替system
 
 **约制条件**:
 
@@ -401,7 +401,7 @@ if (__builtin_expect (hook != NULL, 0))
 
 这段代码会检查 `__free_hook`。如果它不为 `NULL`，它将优先调用钩子函数。在这里我们可以使用 **one-gadget-RCE**。由于钩子函数是在 `libc` 中调用的， 所以通常满足 **one-gadget** 的约束条件。
 
-## 使用 printf 触发 malloc 和 free
+## 使用printf触发malloc和free
 
 来看看 `printf` 的源码，有几个地方可能会触发 `malloc` 。 以 [vfprintf.c 的第 1470 行](https://code.woboq.org/userspace/glibc/stdio-common/vfprintf.c.html#1470) 为例：
 
@@ -468,14 +468,14 @@ More details:
 * [THREAD_GETMEM](https://code.woboq.org/userspace/glibc/sysdeps/x86_64/nptl/tls.h.html#_M/THREAD_GETMEM)
 
 
-### conclusion
+### 总结
 
 * 大多数时候，触发 `malloc` 和 `free` 的最小 `width` 是 `65537`。
 * 如果存在格式字符串漏洞，并且程序在调用 `printf(buf)` 后立即结束，我们可以使用 `one-gadget` 劫持 `__malloc_hook` 或 `__free_hook` 并使用上述技巧触发 `malloc` 和 `free`，那么即使在 `printf(buf)` 后面没有任何函数调用或其他东西，我们仍然可以获得 `shell`（这里的意思是，即使调用 `printf` 结束后程序直接退出，我们还是能做到程序执行流程劫持，因为我们劫持了 `__malloc_hook` 或 `__free_hook` ，在触发  `malloc` 和 `free` 的时候我们已经执行了我们想要的操作）
 
 
 
-## 使用 execveat 打开一个 shell
+## 使用execveat打开一个shell
 
 提到使用系统调用去开一个 `shell` 时我们的脑子中想到的会是 `execve` ，然而，由于缺少 `gadget` 或其他限制，执行起来总是很艰难
 
