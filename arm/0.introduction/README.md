@@ -2,6 +2,8 @@
 
 via：https://azeria-labs.com/writing-arm-assembly-part-1/
 
+推荐看维基百科：https://zh.wikipedia.org/zh-cn/ARM%E6%9E%B6%E6%A7%8B
+
 ## 介绍
 
 ​        欢迎来到 ARM 汇编基础系列教程。这是为后续的 ARM 利用开发系列教程做的准备。在开始创建 ARM shellcode 和构建 ROP 链之前，我们需要先介绍一些 ARM 汇编语言的基础知识。
