@@ -309,7 +309,7 @@ __malloc_assert (const char *assertion, const char *file, unsigned int line,
 
 /* When "x" is from chunksize().  */
 //  size 转换成 tcache 索引的公式
-//   - MINSIZE 减去 chunk 的头，然后对齐
+//   - MINSIZE 减去 chunk 的头，然后对齐，再除以 MALLOC_ALIGNMENT 就能得到 tcache 的索引
 # define csize2tidx(x) (((x) - MINSIZE + MALLOC_ALIGNMENT - 1) / MALLOC_ALIGNMENT)
 /* When "x" is a user-provided size.  */
 # define usize2tidx(x) csize2tidx (request2size (x))
@@ -1920,18 +1920,26 @@ free_perturb (char *p, size_t n)
 static void
 do_check_chunk (mstate av, mchunkptr p)
 {
+  // 获取 chunk 的 size
   unsigned long sz = chunksize (p);
   /* min and max possible addresses assuming contiguous allocation */
+
+  // heap 的最高地址是 top chunk 的地址再加上 top chunk 的 size
   char *max_address = (char *) (av->top) + chunksize (av->top);
+
+  // heap 的最低地址是 heap 的最高地址减去系统的 内存
   char *min_address = max_address - av->system_mem;
 
+  // 如果 chunk 不是通过 mmap 分配的
   if (!chunk_is_mmapped (p))
     {
       /* Has legal address ... */
+      // p 不是 arena 的 top chunk
       if (p != av->top)
         {
           if (contiguous (av))
             {
+              // 断言 p 是一个合法的 位于 heap 里面的地址
               assert (((char *) p) >= min_address);
               assert (((char *) p + sz) <= ((char *) (av->top)));
             }
@@ -1965,28 +1973,39 @@ do_check_chunk (mstate av, mchunkptr p)
 static void
 do_check_free_chunk (mstate av, mchunkptr p)
 {
+  // 这个 sz 是 p 的 size 屏蔽 PREV_INUSE 和 NON_MAIN_ARENA 标志后得到的结果（注意这里没有清除 IS_MMAP 标志位，为啥呢，自己思考）
   INTERNAL_SIZE_T sz = chunksize_nomask (p) & ~(PREV_INUSE | NON_MAIN_ARENA);
+
+  // p 的地址加上它自己的 size 就是等于下一个 chunk 的地址
   mchunkptr next = chunk_at_offset (p, sz);
 
+  // 检查 p 是否是 合法的 堆地址
   do_check_chunk (av, p);
 
   /* Chunk must claim to be free ... */
+  // chunk p 已经 free
   assert (!inuse (p));
+  // chunk p 不是通过 mmap 分配的
   assert (!chunk_is_mmapped (p));
 
   /* Unless a special marker, must have OK fields */
+  // 如果 chunk 不是最小 chunk
   if ((unsigned long) (sz) >= MINSIZE)
     {
       assert ((sz & MALLOC_ALIGN_MASK) == 0);
       assert (aligned_OK (chunk2mem (p)));
       /* ... matching footer field */
+      // 判断内存是不是被破坏了，检测 p 的下一个 chunk 的上一个 chunk 的 size 是不是等于 p 的 size
       assert (prev_size (next_chunk (p)) == sz);
       /* ... and is fully consolidated */
       assert (prev_inuse (p));
       assert (next == av->top || inuse (next));
 
       /* ... and has minimally sane links */
+      // 检测 p 的 fd 和 bk 字段有没有被破坏
+      // p 在 bin 中的上一个 chunk 的 下一个 chunk 肯定是它自己
       assert (p->fd->bk == p);
+      // p 在 bin 中的下一个 chunk 的 上一个 chunk 肯定是它自己
       assert (p->bk->fd == p);
     }
   else /* markers are always of size SIZE_SZ */
@@ -2002,31 +2021,42 @@ do_check_inuse_chunk (mstate av, mchunkptr p)
 {
   mchunkptr next;
 
+  // 检查 p 是否处于 av arena
   do_check_chunk (av, p);
 
+  // 如果 chunk 是 mmap 分配的就不存在 next 和 prev，也就不用检查，直接 return
   if (chunk_is_mmapped (p))
     return; /* mmapped chunks have no next/prev */
 
   /* Check whether it claims to be in use ... */
+  // 断言 p 是正在使用的（inuse 检查的是 物理位置上 下一个 chunk 的 inuse 标志位）
   assert (inuse (p));
 
+  // 获取 物理位置上 下一个 chunk 的地址
   next = next_chunk (p);
 
   /* ... and is surrounded by OK chunks.
      Since more things can be checked with free chunks than inuse ones,
      if an inuse chunk borders them and debug is on, it's worth doing them.
    */
+
+  // 检查 物理位置上 下一个 chunk 的是不是 inuse（也就是检查 p 的 inuse 标志位）
   if (!prev_inuse (p))
     {
       /* Note that we cannot even look at prev unless it is not inuse */
+      // 获取 物理位置上 上一个 chunk 的地址
       mchunkptr prv = prev_chunk (p);
+
+      // 断言 p 物理位置上 的上一个 chunk 不是它自己
       assert (next_chunk (prv) == p);
       do_check_free_chunk (av, prv);
     }
 
   if (next == av->top)
     {
+      // 断言 p 是 inuse 的
       assert (prev_inuse (next));
+      // top chunk 的大小大于 最小 chunk
       assert (chunksize (next) >= MINSIZE);
     }
   else if (!inuse (next))
@@ -3099,6 +3129,8 @@ __libc_free (void *mem)
   mstate ar_ptr;
   mchunkptr p;                          /* chunk corresponding to mem */
 
+  // 检查 malloc.h 中有没有定义 __free_hook 函数
+  // 定义的话则执行它
   void (*hook) (void *, const void *)
     = atomic_forced_read (__free_hook);
   if (__builtin_expect (hook != NULL, 0))
@@ -3110,8 +3142,11 @@ __libc_free (void *mem)
   if (mem == 0)                              /* free(0) has no effect */
     return;
 
+  // 传进来的指针 mem 是指向 data 字段的
+  // 只要减去 size 和 prev_size 字段的大小就能得到 chunk 的地址（不清楚的话可以去看一下在使用的 chunk 结构体的内存布局）
   p = mem2chunk (mem);
 
+  // 检查 chunk 是不是通过 mmap 分配的
   if (chunk_is_mmapped (p))                       /* release mmapped memory. */
     {
       /* See if the dynamic brk/mmap threshold needs adjusting.
@@ -3130,9 +3165,15 @@ __libc_free (void *mem)
       return;
     }
 
+  // 如果 chunk 不是通过 mmap 分配的（能执行到这里说明没有陷入上面的那个 if）
+
+  // 检查 tcache 有没有初始化，没有初始化就先进行初始化
   MAYBE_INIT_TCACHE ();
 
+  // 找到 chunk 所处的 arena
   ar_ptr = arena_for_chunk (p);
+
+  // 执行 free 操作
   _int_free (ar_ptr, p, 0);
 }
 libc_hidden_def (__libc_free)
@@ -4173,6 +4214,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
   mchunkptr bck;               /* misc temp for linking */
   mchunkptr fwd;               /* misc temp for linking */
 
+  // 取出 chunk 的 size 字段，屏蔽掉 size 字段的低 3 比特（标志位）就是 chunk 真正的 size
   size = chunksize (p);
 
   /* Little security check which won't hurt performance: the
