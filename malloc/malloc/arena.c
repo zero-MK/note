@@ -285,9 +285,12 @@ extern struct dl_open_hook *_dl_open_hook;
 libc_hidden_proto (_dl_open_hook);
 #endif
 
+
+// ptmalloc_init 初始化堆
 static void
 ptmalloc_init (void)
 {
+  // 全局变量 __malloc_initialized 等于 0 说明没有初始化
   if (__malloc_initialized >= 0)
     return;
 
@@ -304,9 +307,11 @@ ptmalloc_init (void)
           && l->l_ns != LM_ID_BASE))
     __morecore = __failing_morecore;
 #endif
-
+  
+  // 把 thread_arena 设置成主分配区
   thread_arena = &main_arena;
 
+  // 初始化主分配区
   malloc_init_state (&main_arena);
 
 #if HAVE_TUNABLES

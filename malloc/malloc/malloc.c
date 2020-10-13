@@ -4255,11 +4255,16 @@ _int_free (mstate av, mchunkptr p, int have_lock)
   check_inuse_chunk(av, p);
 
 #if USE_TCACHE
+// 开启 tcache 的话
   {
+    // 获取 free 的 chunk 对应于 tcache 的那一条链表的下标
     size_t tc_idx = csize2tidx (size);
+    // 如果 tcache 已经初始化，并且 这个 chunk 符合 tcache 的 chunk 的大小
+    // （tcache_bins 等于 64，tcache 有 64 个链表对应 64 种大小的 chunk，如果，计算出来的 index 小于这个数的说明，这个 chunk 能放入 tcache）
     if (tcache != NULL && tc_idx < mp_.tcache_bins)
       {
 	/* Check to see if it's already in the tcache.  */
+  // 把 p 转换成 tcache 节点（可以看到的是不同于 bins ，tcache 中的每一个 chunk 都是指向 mem 的，而不是指向 chunk）
 	tcache_entry *e = (tcache_entry *) chunk2mem (p);
 
 	/* This test succeeds on double free.  However, we don't 100%
