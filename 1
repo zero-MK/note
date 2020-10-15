@@ -1452,91 +1452,23 @@ typedef struct malloc_chunk *mbinptr;
 static void
 unlink_chunk (mstate av, mchunkptr p)
 {
-  // 检查 bin 是否被破坏
-  // 正常情况下 chunk p 的下一个 chunk 的 prev_size 肯定还是等于 chunk p 的 size
   if (chunksize (p) != prev_size (next_chunk (p)))
     malloc_printerr ("corrupted size vs. prev_size");
 
-  // 把 fd，bk 取出来
   mchunkptr fd = p->fd;
   mchunkptr bk = p->bk;
 
-  // 绕一遍链表，确定 chunk 的 fd和bk 没有被破坏
   if (__builtin_expect (fd->bk != p || bk->fd != p, 0))
     malloc_printerr ("corrupted double-linked list");
 
-  /*
-        bk                                p                                 fd
-+------------------+<--+  +------>+------------------+<--+   +----> +------------------+
-|    prev_size     |   |  |       |    prev_size     |   |   |      |    prev_size     |
-+------------------+   |  |       +------------------+   |   |      +------------------+
-|      size        |   |  |       |      size        |   |   |      |      size        |
-+------------------+   |  |       +------------------+   |   |      +------------------+
-|       fd         +------+       |       fd         +-------+      |       fd         |
-+------------------+   |          +------------------+   |          +------------------+
-|       bk         |   +----------+       bk         |   +----------+       bk         |
-+------------------+              +------------------+              +------------------+
-|                  |              |                  |              |                  |
-|      mem         |              |      mem         |              |      mem         |
-|                  |              |                  |              |                  |
-|                  |              |                  |              |                  |
-+------------------+              +------------------+              +------------------+
-   */
-  // 把下一个 chunk 的 bk 字段设置成 p 的 bk
-  /*
-             +------------------------------------------+
-             |                                          |
-        bk   v                            p             |                   fd
-+------------+-----+<--+  +------>+------------------+  |    +----> +------------------+
-|    prev_size     |   |  |       |    prev_size     |  |    |      |    prev_size     |
-+------------------+   |  |       +------------------+  |    |      +------------------+
-|      size        |   |  |       |      size        |  |    |      |      size        |
-+------------------+   |  |       +------------------+  |    |      +------------------+
-|       fd         +------+       |       fd         +-------+      |       fd         |
-+------------------+   |          +------------------+  |           +------------------+
-|       bk         |   +----------+       bk         |  +-----------+       bk         |
-+------------------+              +------------------+              +------------------+
-|                  |              |                  |              |                  |
-|      mem         |              |      mem         |              |      mem         |
-|                  |              |                  |              |                  |
-|                  |              |                  |              |                  |
-+------------------+              +------------------+              +------------------+
-*/
   fd->bk = bk;
-  // 把上一个 chunk 的 fd 字段设置成 p 的 fd
-  /*
-                             +---------------------------------------------+
-                             |                                             |
-             +------------------------------------------+                  |
-             |               |                          |                  v
-        bk   v               |            p             |                  fd
-+------------+-----+<--+     |    +------------------+  |    +----> +------------------+
-|    prev_size     |   |     |    |    prev_size     |  |    |      |    prev_size     |
-+------------------+   |     |    +------------------+  |    |      +------------------+
-|      size        |   |     |    |      size        |  |    |      |      size        |
-+------------------+   |     |    +------------------+  |    |      +------------------+
-|       fd         +---------+    |       fd         +-------+      |       fd         |
-+------------------+   |          +------------------+  |           +------------------+
-|       bk         |   +----------+       bk         |  +-----------+       bk         |
-+------------------+              +------------------+              +------------------+
-|                  |              |                  |              |                  |
-|      mem         |              |      mem         |              |      mem         |
-|                  |              |                  |              |                  |
-|                  |              |                  |              |                  |
-+------------------+              +------------------+              +------------------+
-   */
   bk->fd = fd;
-
-
-  // 如果 p 不是位于 smallbin，并且 fd_nextsize 不是 NULL （ fd_nextsize 不是 NULL 说明 p 位于 largebin）
   if (!in_smallbin_range (chunksize_nomask (p)) && p->fd_nextsize != NULL)
     {
-      // 日常检查 bin 链表有没有被破坏
       if (p->fd_nextsize->bk_nextsize != p
 	  || p->bk_nextsize->fd_nextsize != p)
 	malloc_printerr ("corrupted double-linked list (not small)");
-      
-      // 其实我没有想明白这个 if 有什么用（理论上来说应该永远都不会陷入这个 if 吧）
+
       if (fd->fd_nextsize == NULL)
 	{
 	  if (p->fd_nextsize == p)
@@ -1551,8 +1483,6 @@ unlink_chunk (mstate av, mchunkptr p)
 	}
       else
 	{
-    // 对 largebin 进行的 unlink 操作
-    // 因为 largebin 会用到这两个字段，形成另外的双链表
 	  p->fd_nextsize->bk_nextsize = p->bk_nextsize;
 	  p->bk_nextsize->fd_nextsize = p->fd_nextsize;
 	}
@@ -4368,7 +4298,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     and used quickly in malloc.
   */
 
-  // 如果 tcache 已经满了， p 的大小又符合 fastbin 的大小
+  // 如果 tcache 已经满了， chunk 的大小又符合 fastbin 的大小
   if ((unsigned long)(size) <= (unsigned long)(get_max_fast ())
 
 #if TRIM_FASTBINS
@@ -4376,16 +4306,13 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	If TRIM_FASTBINS set, don't place chunks
 	bordering top into fastbins
       */
-      // p 的下一个 chunk 不是 top chunk
+      // 
       && (chunk_at_offset(p, size) != av->top)
 #endif
       ) {
 
-    // 检查 p 的大小是否合法
-    // 2 * SIZE_SZ 是最小 chunk 的大小，chunk 小于这个数的说明，这个 chunk 被破坏了
     if (__builtin_expect (chunksize_nomask (chunk_at_offset (p, size))
 			  <= 2 * SIZE_SZ, 0)
-    //  检查 p 的 size 是不是大于 system_mem（ chunk 的大小不可能大于 system_mem）
 	|| __builtin_expect (chunksize (chunk_at_offset (p, size))
 			     >= av->system_mem, 0))
       {
@@ -4393,16 +4320,11 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	/* We might not have a lock at this point and concurrent modifications
 	   of system_mem might result in a false positive.  Redo the test after
 	   getting the lock.  */
-  // 如果当前分配区没有上锁
 	if (!have_lock)
 	  {
-      // 给分配区上锁
 	    __libc_lock_lock (av->mutex);
-
-      // 再次检查 p 的大小
 	    fail = (chunksize_nomask (chunk_at_offset (p, size)) <= 2 * SIZE_SZ
 		    || chunksize (chunk_at_offset (p, size)) >= av->system_mem);
-      // 解锁分配区
 	    __libc_lock_unlock (av->mutex);
 	  }
 
@@ -4410,42 +4332,24 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	  malloc_printerr ("free(): invalid next size (fast)");
       }
 
-    // 使用 perturb_byte 填充 chunk 的 mem 字段
     free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
 
-    // 先设定分配区的 have_fastchunks 字段（表示分配区的 fastbin 不为空）
     atomic_store_relaxed (&av->have_fastchunks, true);
-
-    // 获取 p 对应的 fastbin 的索引
     unsigned int idx = fastbin_index(size);
-
-    // 获取对应 p 的 fastbin 的链表的第一个 chunk（通过索引 idx）
     fb = &fastbin (av, idx);
 
     /* Atomically link P to its fastbin: P->FD = *FB; *FB = P;  */
     mchunkptr old = *fb, old2;
 
-    // 如果是单线程的话
     if (SINGLE_THREAD_P)
       {
 	/* Check that the top of the bin is not the record we are going to
 	   add (i.e., double free).  */
-  // old 是存的 fb，fb 是 fastbin 链表里面的第一个 chunk
-  // 如果 old 和释放的 p 相等，那么说明 p 之前已经 free 过了
-  // 触发 double free 的提示
 	if (__builtin_expect (old == p, 0))
 	  malloc_printerr ("double free or corruption (fasttop)");
-  
-  // 把 p 链到 fastbin
-  // fastbin 只会用到 fd 字段
-  // fd 字段会指向同一条 bin 里面的下一个 chunk
-  // 只要把 p 的 fd 设置成现在的 fastbin 的第一个 chunk
 	p->fd = old;
-  // 再把 fastbin 的第一个 chunk 设置成 p，就完成了插入
 	*fb = p;
       }
-
-    // 如果不是单线程（其实区别就是在多线程时操作分配区要上锁，防止竞争条件）
     else
       do
 	{
@@ -4471,24 +4375,19 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     Consolidate other non-mmapped chunks as they arrive.
   */
 
-  // 如果 p 不属于 fastbin
-  // 并且不是通过 mmap 分配来的
   else if (!chunk_is_mmapped(p)) {
 
     /* If we're single-threaded, don't lock the arena.  */
-    // 如果是单线程，就不要给 分配区 上锁
     if (SINGLE_THREAD_P)
       have_lock = true;
 
     if (!have_lock)
       __libc_lock_lock (av->mutex);
 
-    // 获取物理内存上（说物理内存也许不严谨）的下一个 chunk 
     nextchunk = chunk_at_offset(p, size);
 
     /* Lightweight tests: check whether the block is already the
        top block.  */
-    // 如果 p 是 top chunk
     if (__glibc_unlikely (p == av->top))
       malloc_printerr ("double free or corruption (top)");
     /* Or whether the next chunk is beyond the boundaries of the arena.  */
@@ -4497,14 +4396,10 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 			  >= ((char *) av->top + chunksize(av->top)), 0))
 	malloc_printerr ("double free or corruption (out)");
     /* Or whether the block is actually not marked used.  */
-    // 检查要释放的 chunk 是否在是在使用（这里是通过检查 nextchunk 的 inuse 位）
     if (__glibc_unlikely (!prev_inuse(nextchunk)))
       malloc_printerr ("double free or corruption (!prev)");
 
-    // 获取 下一个 chunk 的大小
     nextsize = chunksize(nextchunk);
-
-    // 日常检查大小
     if (__builtin_expect (chunksize_nomask (nextchunk) <= 2 * SIZE_SZ, 0)
 	|| __builtin_expect (nextsize >= av->system_mem, 0))
       malloc_printerr ("free(): invalid next size (normal)");
@@ -4512,39 +4407,24 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
 
     /* consolidate backward */
-    // 检查物理内存上的上一个 chunk 是否在是在使用（通过检查 p 的 inuse）
-    // 如果上一个 chunk 是 释放 状态，就会触发合并
-    // 两个相邻的 chunk 如果都处于 释放 状态，则会触发合并
-    // （当然，这里所谓的 释放 指的是对应 chunk 的下一个 chunk 的 inuse 标志位为 0）
-    // 如果这两个 chunk 都是属于 fastbin 的话就不会触发合并（如果你从 _int_free 的第 0 行看到这里的话就知道为什么）
-    // 因为 fastbin 在释放 chunk 后不会取消 inuse 标志位
     if (!prev_inuse(p)) {
-      // 取出 上一个 chunk 的大小
       prevsize = prev_size (p);
-      // 把两个 chunk 的大小相加得到合并后的 chunk 的大小
       size += prevsize;
-      // 通过把 p 的地址减去上一个 chunk 的大小得到新 chunk 的地址
-      // 注意，这里为什么是 -((long)prevsize)， 因为 p 是位于高地址，所以。。。
       p = chunk_at_offset(p, -((long) prevsize));
       if (__glibc_unlikely (chunksize(p) != prevsize))
         malloc_printerr ("corrupted size vs. prev_size while consolidating");
-      // 对 p 进行 unlink 操作
       unlink_chunk (av, p);
     }
 
-    // 如果下一个 chunk 不是 top chunk 的话
     if (nextchunk != av->top) {
       /* get and clear inuse bit */
-      // nextinuse 是标志 nextchunk 是否处于 释放 状态的标志
       nextinuse = inuse_bit_at_offset(nextchunk, nextsize);
 
       /* consolidate forward */
-      // 如果 nextchunk 也是 释放 状态的话，还会再次触发 unlink，把 p 和 nextchunk 合并
       if (!nextinuse) {
 	unlink_chunk (av, nextchunk);
 	size += nextsize;
       } else
-  // 把 nextchunk 的 inuse 位置 0
 	clear_inuse_bit_at_offset(nextchunk, 0);
 
       /*
@@ -4553,20 +4433,14 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	been given one chance to be used in malloc.
       */
 
-      // 获取 unsortedbin 的链表的链表头
       bck = unsorted_chunks(av);
-      // 获取 bck 的下一个 chunk
       fwd = bck->fd;
       if (__glibc_unlikely (fwd->bk != bck))
 	malloc_printerr ("free(): corrupted unsorted chunks");
-      // 把 p 插入 unsortedbin
       p->fd = fwd;
       p->bk = bck;
-
-      // 如果 p 不是属于 smallbin（属于 largebin）
       if (!in_smallbin_range(size))
 	{
-    // 初始化 largebin 独有的两个字段
 	  p->fd_nextsize = NULL;
 	  p->bk_nextsize = NULL;
 	}
@@ -4585,7 +4459,6 @@ _int_free (mstate av, mchunkptr p, int have_lock)
     */
 
     else {
-      // 把 p 的 size 加上 nextchunk 的 size 得到合并后的 chunk 的 size
       size += nextsize;
       set_head(p, size | PREV_INUSE);
       av->top = p;
@@ -4607,7 +4480,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 
     if ((unsigned long)(size) >= FASTBIN_CONSOLIDATION_THRESHOLD) {
       if (atomic_load_relaxed (&av->have_fastchunks))
-	malloc_consolidate(av); // 合并回收所有 fastbin
+	malloc_consolidate(av);
 
       if (av == &main_arena) {
 #ifndef MORECORE_CANNOT_TRIM
@@ -4633,7 +4506,6 @@ _int_free (mstate av, mchunkptr p, int have_lock)
   */
 
   else {
-    // 如果 chunk 是通过 mmap 分配的，则使用 munmap 来释放
     munmap_chunk (p);
   }
 }
@@ -4980,6 +4852,7 @@ mtrim (mstate av, size_t pad)
         for (mchunkptr p = last (bin); p != bin; p = p->bk)
           {
             INTERNAL_SIZE_T size = chunksize (p);
+
             if (size > psm1 + sizeof (struct malloc_chunk))
               {
                 /* See whether the chunk contains at least one unused page.  */
