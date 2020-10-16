@@ -3170,33 +3170,51 @@ __libc_malloc (size_t bytes)
       __set_errno (ENOMEM);
       return NULL;
     }
-  // 获得对应的 tcache 的 index
+  // 获得 tbytes 对应的 tcache 的 index
   size_t tc_idx = csize2tidx (tbytes);
 
   // 检查 tcache 有没有初始化，没有的话会进行初始化
   MAYBE_INIT_TCACHE ();
 
   DIAG_PUSH_NEEDS_COMMENT;
-  // 
+  // 检查 tc_idx 是否合法（mp_ 结构的 tcache_bins 字段记录着 tcache 的最大下标）
   if (tc_idx < mp_.tcache_bins
+      // tcache 是个 tcache_perthread_struct 的全局变量
+      // 如果 MAYBE_INIT_TCACHE 初始化成功，tcache 不应该是 NULL
       && tcache
+      // counts 字段记录着当前 tcache 的 chunk 的数量
+      // 因为是通过 申请的内存的大小来找对应的 tcache 的，而 counts 是记录 chunk 的数量的
+      // 如果 tcache 里面没有 tbytes 大小的 chunk，则 counts 为 0
       && tcache->counts[tc_idx] > 0)
     {
+      // if 的条件可以总结出
+      // 如果申请的内存的大小在 tcache 的范围
+      // 并且对应的 tcache 不为空
+      // 则直接从 tcache 里面取出一个 chunk 返回
+      // 这里不存在 chunk2mem 的转换，因为存入 tcache 的 chunk 指针还是指向 mem，而不是指向 chunk
       return tcache_get (tc_idx);
     }
   DIAG_POP_NEEDS_COMMENT;
 #endif
 
+  // 没有陷入上面那个 if，说明 tcache 不满足条件
+  // 则开始尝试从 bins 里面分配
+  
+  // 判断是不是单线程程序
   if (SINGLE_THREAD_P)
     {
+      // 单线程的话只会有一个分配区，所以不需要考虑其他的，直接从 主分配区 分配内存
       victim = _int_malloc (&main_arena, bytes);
       assert (!victim || chunk_is_mmapped (mem2chunk (victim)) ||
 	      &main_arena == arena_for_chunk (mem2chunk (victim)));
       return victim;
     }
 
+  // 获取当前线程对应的分配区
   arena_get (ar_ptr, bytes);
 
+  // 如果不是单线程程序，则从当前线程的分配区分配内存
+  // ar_ptr 指向当前线程的分配区
   victim = _int_malloc (ar_ptr, bytes);
   /* Retry with another arena only if we were able to find a usable arena
      before.  */
@@ -3687,6 +3705,7 @@ _int_malloc (mstate av, size_t bytes)
      aligned.
    */
 
+  // 检查申请的内存大小是否合法
   if (!checked_request2size (bytes, &nb))
     {
       __set_errno (ENOMEM);
@@ -3695,6 +3714,7 @@ _int_malloc (mstate av, size_t bytes)
 
   /* There are no usable arenas.  Fall back to sysmalloc to get a chunk from
      mmap.  */
+  // 如果指定的分配区不可用的话，直接通过 mmap 去分配 chunk
   if (__glibc_unlikely (av == NULL))
     {
       void *p = sysmalloc (nb, av);
@@ -3719,21 +3739,30 @@ _int_malloc (mstate av, size_t bytes)
   while ((pp = catomic_compare_and_exchange_val_acq (fb, victim->fd, victim)) \
 	 != victim);					\
 
+  // 如果 nb 大小的 chunk 位于 fastbin 里面
   if ((unsigned long) (nb) <= (unsigned long) (get_max_fast ()))
     {
+      // 获取对应的 index
       idx = fastbin_index (nb);
+      // 获取对应的 fastbin 链表头
       mfastbinptr *fb = &fastbin (av, idx);
       mchunkptr pp;
       victim = *fb;
 
+      // 如果 fastbin 的链表不为空
       if (victim != NULL)
 	{
+    // 在单线程时
 	  if (SINGLE_THREAD_P)
+      // 直接取出 第二 个 chunk
+      // 也就是 fastbin 的第一个 chunk 的 fd 指向的 chunk
 	    *fb = victim->fd;
 	  else
+      // 在多线程的情况下要防止竞争条件
 	    REMOVE_FB (fb, pp, victim);
 	  if (__glibc_likely (victim != NULL))
 	    {
+        // 检查取出来的 chunk 的大小是否符合请求的大小
 	      size_t victim_idx = fastbin_index (chunksize (victim));
 	      if (__builtin_expect (victim_idx != idx, 0))
 		malloc_printerr ("malloc(): memory corruption (fast)");
