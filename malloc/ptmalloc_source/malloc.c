@@ -3776,23 +3776,33 @@ _int_malloc (mstate av, size_t bytes)
 		  mchunkptr tc_victim;
 
 		  /* While bin not empty and tcache not full, copy chunks.  */
+      // 能运行到这里说明某个 tcache 为空
+      // 在 bin 不是空，tcache 没有满的时候要把 bin 里面的 chunk 转移到 tcache 里面
+      // 每个 tcache 默认都有 64 个 chunk。多出来的 chunk 就放入对应的 bin
 		  while (tcache->counts[tc_idx] < mp_.tcache_count
 			 && (tc_victim = *fb) != NULL)
 		    {
+          // 单线程
 		      if (SINGLE_THREAD_P)
+            // 通过 fd 遍历 bin
 			*fb = tc_victim->fd;
 		      else
 			{
+        // 多线程，一样的，只是使用了原子性操作，防止竞争条件
 			  REMOVE_FB (fb, pp, tc_victim);
+        // tc_victim 为 NULL 说明 bin 遍历完成，则结束填充
 			  if (__glibc_unlikely (tc_victim == NULL))
 			    break;
 			}
+          // 把 chunk tc_victim 放入下标为 tc_idx 的 tcache
 		      tcache_put (tc_victim, tc_idx);
 		    }
 		}
 #endif
+        // 因为 victim 指向的是 chunk，chunk2mem 宏通过指向 chunk 的指针计算出 chunk 的 mem 的地址
 	      void *p = chunk2mem (victim);
 	      alloc_perturb (p, bytes);
+        // 分配成功，返回
 	      return p;
 	    }
 	}
@@ -3806,44 +3816,66 @@ _int_malloc (mstate av, size_t bytes)
      anyway, so we can check now, which is faster.)
    */
 
+  // 申请的 chunk 不在 tcache 里也不再 fastbin 里面
+  //
+  // 如果 nb 符合 smallbin 的 chunk 大小
   if (in_smallbin_range (nb))
     {
+      // 计算出 nb 对应于那条 smallbin，idx 就是它的下标
       idx = smallbin_index (nb);
+      // 通过 bin_at 得到 idx 对应的 smallbin 的链表头
       bin = bin_at (av, idx);
 
+      // victim 取的是 bin 的最后一个 chunk
+      // 最后一个 chunk 如果指向的是 bin 说明这条 smallbin 为空
       if ((victim = last (bin)) != bin)
         {
+          // bck 取的是倒数第二个 chunk
           bck = victim->bk;
+          // 检验 bck 的 fd 字段（正常情况下 bck 的下一个（fd） chunk 就是 victim）
 	  if (__glibc_unlikely (bck->fd != victim))
 	    malloc_printerr ("malloc(): smallbin double linked list corrupted");
+          // 设置 victim 为 inuse（记住，当前 chunk 是否 inuse 是在物理相邻的下一个 chunk 的 size 的第 1 个 bit 标志的）
           set_inuse_bit_at_offset (victim, nb);
+          // 把 bck 当成当前这条 smallbin 的最后一个 chunk（环形双链表的操作，不想讲解，自行脑补）
           bin->bk = bck;
           bck->fd = bin;
 
+          // 如果不是从 主分配区分配的 chunk 要设置 NON_MAIN_ARENA 标志位（跟 inuse 不一样，这个是设置在自己的 size 的第 3 个 bit）
           if (av != &main_arena)
 	    set_non_main_arena (victim);
           check_malloced_chunk (av, victim, nb);
 #if USE_TCACHE
 	  /* While we're here, if we see other chunks of the same size,
 	     stash them in the tcache.  */
+    // 拿到对应 nb 大小的 tcache 的链表的索引
 	  size_t tc_idx = csize2tidx (nb);
+    // tcache 已经初始化，并且 tcache 没有满
 	  if (tcache && tc_idx < mp_.tcache_bins)
 	    {
 	      mchunkptr tc_victim;
 
 	      /* While bin not empty and tcache not full, copy chunks over.  */
+        // tcache 没有满，并且 当前 bin 还有 chunk
 	      while (tcache->counts[tc_idx] < mp_.tcache_count
 		     && (tc_victim = last (bin)) != bin)
 		{
 		  if (tc_victim != 0)
 		    {
+          // 通过 bk 逆向遍历 bin
 		      bck = tc_victim->bk;
+          // 把每个从 smallbin 中拿出来的 chunk 都设置为 inuse（不是设置它自己的 inuse 标志位。。。。）
+          // 因为每个 chunk 加入 tcache 时 tcache 都不会修改它的标志位（我说的是在 free chunk 加入 tcache 时，所以，这里也要一致）
 		      set_inuse_bit_at_offset (tc_victim, nb);
+          // 判断分配区 
 		      if (av != &main_arena)
+      // 不是位于主分配区就设置 NON_MAIN_ARENA 标志位
 			set_non_main_arena (tc_victim);
+          // 把 bck 设置成 bin 中的 最后一个 chunk（原本他是倒数第二个，现在 victim 被取走放入 tcache 了）
 		      bin->bk = bck;
 		      bck->fd = bin;
 
+          // 把 tc_victim 放入下标为 tc_idx 的 bin 中
 		      tcache_put (tc_victim, tc_idx);
 	            }
 		}
@@ -3868,7 +3900,9 @@ _int_malloc (mstate av, size_t bytes)
 
   else
     {
+      // largebin
       idx = largebin_index (nb);
+      // 如果 av 分配区有 fastbin 的话，合并回收 fastbin 的 chunk
       if (atomic_load_relaxed (&av->have_fastchunks))
         malloc_consolidate (av);
     }
