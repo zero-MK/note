@@ -4727,8 +4727,11 @@ static void malloc_consolidate(mstate av)
   INTERNAL_SIZE_T prevsize;
   int             nextinuse;
 
+  // 把分配区的 have_fastchunks 设置为 false，标志 fastbin 里面没有 chunk
+  // 因为·现在要清除 fastbin
   atomic_store_relaxed (&av->have_fastchunks, false);
 
+  // 获取 unsortedbin
   unsorted_bin = unsorted_chunks(av);
 
   /*
@@ -4739,18 +4742,29 @@ static void malloc_consolidate(mstate av)
     reused anyway.
   */
 
+  // 合并 fast bin 里面的 chunk，然后把合并后得到的 chunk 加入 unsorted bin
+  
+  // 获取最后一条 fastbin 
   maxfb = &fastbin (av, NFASTBINS - 1);
+  // 获取第一条 fastbin
   fb = &fastbin (av, 0);
   do {
+    // atomic_exchange_acq 这个宏是
+    // 原子性操作 把 fb 设置成 NULL，然后返回 fb 原来的值
     p = atomic_exchange_acq (fb, NULL);
+    // 如果当前这条 fastbin 不为空
     if (p != 0) {
+      // 则遍历取出里面的 chunk
       do {
 	{
+    // 获取 fastbin 的索引
 	  unsigned int idx = fastbin_index (chunksize (p));
+    // 检验 索引 是否真的是 当成当前这条 fastbin 的索引
 	  if ((&fastbin (av, idx)) != fb)
 	    malloc_printerr ("malloc_consolidate(): invalid chunk size");
 	}
 
+  // 
 	check_inuse_chunk(av, p);
 	nextp = p->fd;
 
