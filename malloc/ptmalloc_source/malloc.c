@@ -3881,8 +3881,11 @@ _int_malloc (mstate av, size_t bytes)
 		}
 	    }
 #endif
+          // 返回一个指向 victim chunk 的 mem（不是 mem 字段，这里的 mem 指的是 chunk header 后面可以存用户数据的内存块的起始地址） 的指针 p
           void *p = chunk2mem (victim);
+          // 清空之前 chunk 残留的数据（通过 memset， 用 perturb_byte^0xff 去填充）
           alloc_perturb (p, bytes);
+          // 分配成功，返回
           return p;
         }
     }
@@ -3933,18 +3936,29 @@ _int_malloc (mstate av, size_t bytes)
   for (;; )
     {
       int iters = 0;
+      // 通过 bk 反向遍历双向循环链表，只剩下头结点的时候，遍历结束
       while ((victim = unsorted_chunks (av)->bk) != unsorted_chunks (av))
         {
+          // 获取倒数第二个 chunk
           bck = victim->bk;
+          // 获取 chunk 的 size，不需要清除标志位，因为unsorted bin 里面的 chunk 已经清除了低 3 个 bit 的标志位
           size = chunksize (victim);
+
+          // 通过 *victim + size 获取 bin 里 victim 的下一个 chunk（也就是倒数第一个 chunk）
           mchunkptr next = chunk_at_offset (victim, size);
 
+          // chunk 各个属性的合法性检测
+          // 最小 chunk 的大小是 2*SIZE_SZ，小于这个数就是不合法 chunk
+          // chunk 的大小也不能大于分配区所分配的内存大小（system_mem）
           if (__glibc_unlikely (size <= 2 * SIZE_SZ)
               || __glibc_unlikely (size > av->system_mem))
             malloc_printerr ("malloc(): invalid size (unsorted)");
+
+          // 检查 next chunk 的大小是否合法
           if (__glibc_unlikely (chunksize_nomask (next) < 2 * SIZE_SZ)
               || __glibc_unlikely (chunksize_nomask (next) > av->system_mem))
             malloc_printerr ("malloc(): invalid next size (unsorted)");
+          // 
           if (__glibc_unlikely ((prev_size (next) & ~(SIZE_BITS)) != size))
             malloc_printerr ("malloc(): mismatching next->prev_size (unsorted)");
           if (__glibc_unlikely (bck->fd != victim)
