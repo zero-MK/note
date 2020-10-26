@@ -301,10 +301,13 @@ __malloc_assert (const char *assertion, const char *file, unsigned int line,
 
 #if USE_TCACHE
 /* We want 64 entries.  This is an arbitrary limit, which tunables can reduce.  */
+// tcache 最大有 64 条
 # define TCACHE_MAX_BINS		64
+// tcache 中最大的 chunk 的大小
 # define MAX_TCACHE_SIZE	tidx2usize (TCACHE_MAX_BINS-1)
 
 /* Only used to pre-fill the tunables.  */
+// tcache 下标和其里面的 chunk 的大小的计算公式
 # define tidx2usize(idx)	(((size_t) idx) * MALLOC_ALIGNMENT + MINSIZE - SIZE_SZ)
 
 /* When "x" is from chunksize().  */
@@ -3974,20 +3977,32 @@ _int_malloc (mstate av, size_t bytes)
              exception to best-fit, and applies only when there is
              no exact fit for a small chunk.
            */
-
+          // 如果申请 smallbin 里面的 chunk
           if (in_smallbin_range (nb) &&
+              // 并且 unsorted bin 里面只有一个 chunk
               bck == unsorted_chunks (av) &&
+              // 并且这个 chunk 是 last remainder chunk
               victim == av->last_remainder &&
+              // 并且这个 chunk 的大小大于 申请的 chunk 的大小
               (unsigned long) (size) > (unsigned long) (nb + MINSIZE))
             {
               /* split and reattach remainder */
+              // 分割 remainder chunk 得到满足条件的 chunk
+              
+              // 减去 申请的 chunk 的大小，得到新的 remainder chunk 的大小
               remainder_size = size - nb;
+              // 计算出 新 remainder chunk 的地址
               remainder = chunk_at_offset (victim, nb);
+              // 把 remainder chunk 放入 unsorted bin
               unsorted_chunks (av)->bk = unsorted_chunks (av)->fd = remainder;
+              // 设置分配区 的 last_remainder（这是 malloc_chunk 指针总是指向最后分裂得到的 chunk）
               av->last_remainder = remainder;
               remainder->bk = remainder->fd = unsorted_chunks (av);
+              
+              // 如果分裂完，剩下的 chunk 是个 large bin
               if (!in_smallbin_range (remainder_size))
                 {
+                  // 设置 large bin 独有的两个字段
                   remainder->fd_nextsize = NULL;
                   remainder->bk_nextsize = NULL;
                 }
@@ -4004,6 +4019,7 @@ _int_malloc (mstate av, size_t bytes)
             }
 
           /* remove from unsorted list */
+          // 如果 unsorted bin 中还有多个 chunk，直接从 unsorted bin 里面分配
           if (__glibc_unlikely (bck->fd != victim))
             malloc_printerr ("malloc(): corrupted unsorted chunks 3");
           unsorted_chunks (av)->bk = bck;
