@@ -4761,7 +4761,7 @@ static void malloc_consolidate(mstate av)
   // 因为·现在要清除 fastbin
   atomic_store_relaxed (&av->have_fastchunks, false);
 
-  // 获取 unsortedbin
+  // 获取 unsortedbin 的链表
   unsorted_bin = unsorted_chunks(av);
 
   /*
@@ -4794,16 +4794,23 @@ static void malloc_consolidate(mstate av)
 	    malloc_printerr ("malloc_consolidate(): invalid chunk size");
 	}
 
-  // 
+  // 对 p 进行 header 的各个 字段 进行检查（比如 分配区 标志位。。。）
 	check_inuse_chunk(av, p);
+  // 获取 p 在 bin 中的下一个 chunk
 	nextp = p->fd;
 
 	/* Slightly streamlined version of consolidation code in free() */
+  // 获取 p chunk 的大小
 	size = chunksize (p);
+  // 获取 p chunk 物理位置上的下一个 chunk（p 加上自己的 size 就是相邻的下一个 chunk 的地址）
 	nextchunk = chunk_at_offset(p, size);
+  // 获取下一个 chunk 的 size
 	nextsize = chunksize(nextchunk);
 
+  // #define prev_inuse(p)       ((p)->size & PREV_INUSE)
+  // 如果 p 的物理位置上相邻的上一个 chunk 不是 inuse 状态的话
 	if (!prev_inuse(p)) {
+    // 合并 p 和 prev chunk （逻辑简单，其他位置讲的够多，不想复述了）
 	  prevsize = prev_size (p);
 	  size += prevsize;
 	  p = chunk_at_offset(p, -((long) prevsize));
@@ -4812,19 +4819,26 @@ static void malloc_consolidate(mstate av)
 	  unlink_chunk (av, p);
 	}
 
+  // 物理位置上相邻的下一个 chunk 不是 top chunk
 	if (nextchunk != av->top) {
+    // 检查 nextchunk 自己是否 inuse 
 	  nextinuse = inuse_bit_at_offset(nextchunk, nextsize);
 
+    // 如果 nextchunk 不是 inuse 状态
 	  if (!nextinuse) {
+      // 合并 p 和 nextchunk
 	    size += nextsize;
 	    unlink_chunk (av, nextchunk);
 	  } else
-	    clear_inuse_bit_at_offset(nextchunk, 0);
+	    clear_inuse_bit_at_offset(nextchunk, 0); // 不然就清除 nextchunk 的 inuse 的标志位，表示 p 不是 inuse 状态
 
+    // 获取 unsorted bin 中的第 2 个 chunk
 	  first_unsorted = unsorted_bin->fd;
+    // 把 p 放入 unsorted bin
 	  unsorted_bin->fd = p;
 	  first_unsorted->bk = p;
 
+    // 一旦合并后得到的 p 不属于 smallbin（那 p 一定是 largebin），则设置 fd_nextsize bk_nextsize
 	  if (!in_smallbin_range (size)) {
 	    p->fd_nextsize = NULL;
 	    p->bk_nextsize = NULL;
@@ -4837,15 +4851,17 @@ static void malloc_consolidate(mstate av)
 	}
 
 	else {
+    // 物理位置上相邻的下一个 chunk 是 top chunk
+    // 直接把 p 合并到 top chunk
 	  size += nextsize;
 	  set_head(p, size | PREV_INUSE);
 	  av->top = p;
 	}
 
-      } while ( (p = nextp) != 0);
+      } while ( (p = nextp) != 0); // nextp = p->fd; 遍历当前 fastbin
 
     }
-  } while (fb++ != maxfb);
+  } while (fb++ != maxfb); // fb != maxfb 说明 fastbin 还没有处理完
 }
 
 /*
