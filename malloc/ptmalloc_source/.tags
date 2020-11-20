@@ -1,0 +1,1115 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/a3c87ab5/
+$(foreach o,$(all-object-suffixes),$(objpfx)malloc$(o))	Makefile	/^$(foreach o,$(all-object-suffixes),$(objpfx)malloc$(o)): arena.c hooks.c$/;"	t
+$(objpfx)libmcheck.a	Makefile	/^$(objpfx)libmcheck.a: $(objpfx)mcheck-init.o$/;"	t
+$(objpfx)libmemusage.so	Makefile	/^$(objpfx)libmemusage.so: $(libdl)$/;"	t
+$(objpfx)memusage	Makefile	/^$(objpfx)memusage: memusage.sh$/;"	t
+$(objpfx)memusagestat.o	Makefile	/^$(objpfx)memusagestat.o: sysincludes = # nothing$/;"	t
+$(objpfx)mtrace	Makefile	/^$(objpfx)mtrace: mtrace.pl$/;"	t
+$(objpfx)tst-dynarray-fail-mem.out	Makefile	/^$(objpfx)tst-dynarray-fail-mem.out: $(objpfx)tst-dynarray-fail.out$/;"	t
+$(objpfx)tst-dynarray-mem.out	Makefile	/^$(objpfx)tst-dynarray-mem.out: $(objpfx)tst-dynarray.out$/;"	t
+$(objpfx)tst-interpose-nothread	Makefile	/^$(objpfx)tst-interpose-nothread: $(objpfx)tst-interpose-aux-nothread.o$/;"	t
+$(objpfx)tst-interpose-static-nothread	Makefile	/^$(objpfx)tst-interpose-static-nothread: $(objpfx)tst-interpose-aux-nothread.o$/;"	t
+$(objpfx)tst-interpose-static-thread	Makefile	/^$(objpfx)tst-interpose-static-thread: \\$/;"	t
+$(objpfx)tst-interpose-thread	Makefile	/^$(objpfx)tst-interpose-thread: \\$/;"	t
+$(objpfx)tst-malloc-backtrace	Makefile	/^$(objpfx)tst-malloc-backtrace: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc-fork-deadlock	Makefile	/^$(objpfx)tst-malloc-fork-deadlock: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc-stats-cancellation	Makefile	/^$(objpfx)tst-malloc-stats-cancellation: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc-tcache-leak	Makefile	/^$(objpfx)tst-malloc-tcache-leak: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc-thread-exit	Makefile	/^$(objpfx)tst-malloc-thread-exit: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc-thread-fail	Makefile	/^$(objpfx)tst-malloc-thread-fail: $(shared-thread-library)$/;"	t
+$(objpfx)tst-malloc_info	Makefile	/^$(objpfx)tst-malloc_info: $(shared-thread-library)$/;"	t
+$(objpfx)tst-mallocfork2	Makefile	/^$(objpfx)tst-mallocfork2: $(shared-thread-library)$/;"	t
+$(objpfx)tst-mtrace.out	Makefile	/^$(objpfx)tst-mtrace.out: tst-mtrace.sh $(objpfx)tst-mtrace$/;"	t
+$(tests:%=$(objpfx)%.o)	Makefile	/^$(tests:%=$(objpfx)%.o): CPPFLAGS += -DTEST_NO_MALLOPT$/;"	t
+ALIGN_BOUNDARY	tst-obstack.c	/^#define ALIGN_BOUNDARY /;"	d	file:
+ALIGN_MASK	tst-obstack.c	/^#define ALIGN_MASK /;"	d	file:
+BINMAPSHIFT	malloc.c	/^#define BINMAPSHIFT /;"	d	file:
+BINMAPSIZE	malloc.c	/^#define BINMAPSIZE /;"	d	file:
+BITSPERMAP	malloc.c	/^#define BITSPERMAP /;"	d	file:
+CALL_CHUNKFUN	obstack.c	/^# define CALL_CHUNKFUN(/;"	d	file:
+CALL_FREEFUN	obstack.c	/^# define CALL_FREEFUN(/;"	d	file:
+CHECK_EMPTY	tst-dynarray-shared.h	/^#define CHECK_EMPTY(/;"	d
+CHECK_INIT_STATE	tst-dynarray-shared.h	/^#define CHECK_INIT_STATE(/;"	d
+COPYING_UNIT	obstack.c	/^#  define COPYING_UNIT /;"	d	file:
+COUNT	tst-tcfree2.c	/^#define COUNT /;"	d	file:
+DEFAULT_ALIGNMENT	obstack.c	/^  DEFAULT_ALIGNMENT = offsetof (struct fooalign, u),$/;"	e	enum:__anon8f581bbd0103	file:
+DEFAULT_BUFFER_SIZE	memusage.c	/^#define DEFAULT_BUFFER_SIZE /;"	d	file:
+DEFAULT_MMAP_MAX	malloc.c	/^#define DEFAULT_MMAP_MAX /;"	d	file:
+DEFAULT_MMAP_THRESHOLD	malloc.c	/^#define DEFAULT_MMAP_THRESHOLD /;"	d	file:
+DEFAULT_MMAP_THRESHOLD_MAX	malloc.c	/^#  define DEFAULT_MMAP_THRESHOLD_MAX /;"	d	file:
+DEFAULT_MMAP_THRESHOLD_MIN	malloc.c	/^#define DEFAULT_MMAP_THRESHOLD_MIN /;"	d	file:
+DEFAULT_MXFAST	malloc.c	/^#define DEFAULT_MXFAST /;"	d	file:
+DEFAULT_ROUNDING	obstack.c	/^  DEFAULT_ROUNDING = sizeof (union fooround)$/;"	e	enum:__anon8f581bbd0103	file:
+DEFAULT_TOP_PAD	malloc.c	/^#define DEFAULT_TOP_PAD /;"	d	file:
+DEFAULT_TRIM_THRESHOLD	malloc.c	/^#define DEFAULT_TRIM_THRESHOLD /;"	d	file:
+DUMPED_MAIN_ARENA_CHUNK	malloc.c	/^#define DUMPED_MAIN_ARENA_CHUNK(/;"	d	file:
+DYNARRAY_CONCAT0	dynarray-skeleton.c	/^#define DYNARRAY_CONCAT0(/;"	d	file:
+DYNARRAY_CONCAT1	dynarray-skeleton.c	/^#define DYNARRAY_CONCAT1(/;"	d	file:
+DYNARRAY_ELEMENT	tst-dynarray-shared.h	/^#define DYNARRAY_ELEMENT /;"	d
+DYNARRAY_ELEMENT	tst-dynarray.c	/^#define DYNARRAY_ELEMENT /;"	d	file:
+DYNARRAY_ELEMENT_FREE	tst-dynarray-shared.h	/^#define DYNARRAY_ELEMENT_FREE(/;"	d
+DYNARRAY_ELEMENT_INIT	tst-dynarray.c	/^#define DYNARRAY_ELEMENT_INIT(/;"	d	file:
+DYNARRAY_FINAL_TYPE	tst-dynarray-shared.h	/^#define DYNARRAY_FINAL_TYPE /;"	d
+DYNARRAY_FINAL_TYPE	tst-dynarray.c	/^#define DYNARRAY_FINAL_TYPE /;"	d	file:
+DYNARRAY_HAVE_SCRATCH	dynarray-skeleton.c	/^#  define DYNARRAY_HAVE_SCRATCH /;"	d	file:
+DYNARRAY_HAVE_SCRATCH	dynarray-skeleton.c	/^# define DYNARRAY_HAVE_SCRATCH /;"	d	file:
+DYNARRAY_INITIAL_SIZE	dynarray-skeleton.c	/^# define DYNARRAY_INITIAL_SIZE /;"	d	file:
+DYNARRAY_INITIAL_SIZE	tst-dynarray.c	/^#define DYNARRAY_INITIAL_SIZE /;"	d	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^#define DYNARRAY_NAME(/;"	d	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (add) (struct DYNARRAY_STRUCT *list, DYNARRAY_ELEMENT item)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (add__) (struct DYNARRAY_STRUCT *list, DYNARRAY_ELEMENT item)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (at) (struct DYNARRAY_STRUCT *list, size_t index)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (begin) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (clear) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (emplace) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (emplace__) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (emplace__tail__) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (end) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (finalize) (struct DYNARRAY_STRUCT *list, size_t *lengthp)$/;"	f	typeref:typename:DYNARRAY_ELEMENT *	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (finalize) (struct DYNARRAY_STRUCT *list,$/;"	f	typeref:typename:bool	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (free) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (free__array__) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (free__elements__) (DYNARRAY_ELEMENT *__dynarray_array,$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (has_failed) (const struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:bool	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (init) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (mark_failed) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (remove_last) (struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:void	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (resize) (struct DYNARRAY_STRUCT *list, size_t size)$/;"	f	typeref:typename:bool	file:
+DYNARRAY_NAME	dynarray-skeleton.c	/^DYNARRAY_NAME (size) (const struct DYNARRAY_STRUCT *list)$/;"	f	typeref:typename:size_t	file:
+DYNARRAY_PREFIX	tst-dynarray-shared.h	/^#define DYNARRAY_PREFIX /;"	d
+DYNARRAY_PREFIX	tst-dynarray.c	/^#define DYNARRAY_PREFIX /;"	d	file:
+DYNARRAY_SCRATCH	dynarray-skeleton.c	/^# define DYNARRAY_SCRATCH(/;"	d	file:
+DYNARRAY_STRUCT	dynarray-skeleton.c	/^struct DYNARRAY_STRUCT$/;"	s	file:
+DYNARRAY_STRUCT	tst-dynarray-shared.h	/^#define DYNARRAY_STRUCT /;"	d
+DYNARRAY_STRUCT	tst-dynarray.c	/^#define DYNARRAY_STRUCT /;"	d	file:
+ELIDE_CODE	obstack.c	/^#  define ELIDE_CODE$/;"	d	file:
+EXPECTED_SIGNAL	tst-malloc-backtrace.c	/^#define EXPECTED_SIGNAL /;"	d	file:
+EXPECTED_SIGNAL	tst-tcfree1.c	/^#define EXPECTED_SIGNAL /;"	d	file:
+EXPECTED_SIGNAL	tst-tcfree2.c	/^#define EXPECTED_SIGNAL /;"	d	file:
+FASTBIN_CONSOLIDATION_THRESHOLD	malloc.c	/^#define FASTBIN_CONSOLIDATION_THRESHOLD /;"	d	file:
+FIFTY_ON_BITS	tst-malloc-too-large.c	/^#define FIFTY_ON_BITS /;"	d	file:
+FOURTEEN_ON_BITS	tst-malloc-too-large.c	/^#define FOURTEEN_ON_BITS /;"	d	file:
+FREEFLOOD	mcheck.c	/^#define FREEFLOOD /;"	d	file:
+HAVE_MALLOC_INIT_HOOK	malloc.c	/^# define HAVE_MALLOC_INIT_HOOK /;"	d	file:
+HAVE_MREMAP	malloc.c	/^#define HAVE_MREMAP /;"	d	file:
+HEAP_MAX_SIZE	arena.c	/^#  define HEAP_MAX_SIZE /;"	d	file:
+HEAP_MIN_SIZE	arena.c	/^#define HEAP_MIN_SIZE /;"	d	file:
+INTERNAL_SIZE_T	malloc-internal.h	/^# define INTERNAL_SIZE_T /;"	d
+INTERPOSE_THREADS	tst-interpose-aux-nothread.c	/^#define INTERPOSE_THREADS /;"	d	file:
+INTERPOSE_THREADS	tst-interpose-aux-thread.c	/^#define INTERPOSE_THREADS /;"	d	file:
+INTERPOSE_THREADS	tst-interpose-nothread.c	/^#define INTERPOSE_THREADS /;"	d	file:
+INTERPOSE_THREADS	tst-interpose-thread.c	/^#define INTERPOSE_THREADS /;"	d	file:
+IS_ALIGNED	tst-alloc_buffer.c	/^#define IS_ALIGNED(/;"	d	file:
+IS_MMAPPED	malloc.c	/^#define IS_MMAPPED /;"	d	file:
+LDFLAGS-tst-mallocstate	Makefile	/^LDFLAGS-tst-mallocstate = -rdynamic$/;"	m
+LDLIBS-memusagestat	Makefile	/^LDLIBS-memusagestat = $(libgd-LDFLAGS) -lgd -lpng -lz -lm$/;"	m
+MAGIC	memusage.c	/^#define MAGIC /;"	d	file:
+MAGICBYTE	mcheck.c	/^#define MAGICBYTE /;"	d	file:
+MAGICFREE	mcheck.c	/^#define MAGICFREE /;"	d	file:
+MAGICWORD	mcheck.c	/^#define MAGICWORD /;"	d	file:
+MALLOCFLOOD	mcheck.c	/^#define MALLOCFLOOD /;"	d	file:
+MALLOC_ALIGN_MASK	malloc-internal.h	/^#define MALLOC_ALIGN_MASK /;"	d
+MALLOC_DEBUG	malloc.c	/^#define MALLOC_DEBUG /;"	d	file:
+MALLOC_STATE_MAGIC	hooks.c	/^#define MALLOC_STATE_MAGIC /;"	d	file:
+MALLOC_STATE_MAGIC	tst-mallocstate.c	/^# define MALLOC_STATE_MAGIC /;"	d	file:
+MALLOC_STATE_VERSION	hooks.c	/^#define MALLOC_STATE_VERSION /;"	d	file:
+MALLOC_STATE_VERSION	tst-mallocstate.c	/^# define MALLOC_STATE_VERSION /;"	d	file:
+MAP_ANONYMOUS	malloc.c	/^# define MAP_ANONYMOUS /;"	d	file:
+MAP_NORESERVE	malloc.c	/^# define MAP_NORESERVE /;"	d	file:
+MAX_FAST_SIZE	malloc.c	/^#define MAX_FAST_SIZE /;"	d	file:
+MAX_ITERS	malloc.c	/^#define MAX_ITERS /;"	d	file:
+MAX_TCACHE_COUNT	malloc.c	/^# define MAX_TCACHE_COUNT /;"	d	file:
+MAX_TCACHE_SIZE	malloc.c	/^# define MAX_TCACHE_SIZE	/;"	d	file:
+MAYBE_INIT_TCACHE	malloc.c	/^# define MAYBE_INIT_TCACHE(/;"	d	file:
+MCHECK_DISABLED	mcheck.h	/^  MCHECK_DISABLED = -1,         \/* Consistency checking is not turned on.  *\/$/;"	e	enum:mcheck_status
+MCHECK_FREE	mcheck.h	/^  MCHECK_FREE,                  \/* Block freed twice.  *\/$/;"	e	enum:mcheck_status
+MCHECK_HEAD	mcheck.h	/^  MCHECK_HEAD,                  \/* Memory before the block was clobbered.  *\/$/;"	e	enum:mcheck_status
+MCHECK_OK	mcheck.h	/^  MCHECK_OK,                    \/* Block is fine.  *\/$/;"	e	enum:mcheck_status
+MCHECK_TAIL	mcheck.h	/^  MCHECK_TAIL                   \/* Memory after the block was clobbered.  *\/$/;"	e	enum:mcheck_status
+MINSIZE	malloc.c	/^#define MINSIZE /;"	d	file:
+MINUS_1	tst-dynarray-at-fail.c	/^# define MINUS_1 /;"	d	file:
+MIN_CHUNK_SIZE	malloc.c	/^#define MIN_CHUNK_SIZE /;"	d	file:
+MIN_LARGE_SIZE	malloc.c	/^#define MIN_LARGE_SIZE /;"	d	file:
+MMAP	malloc.c	/^#define MMAP(/;"	d	file:
+MMAP_AS_MORECORE_SIZE	malloc.c	/^#define MMAP_AS_MORECORE_SIZE /;"	d	file:
+MORECORE	malloc.c	/^#define MORECORE /;"	d	file:
+MORECORE_CLEARS	malloc.c	/^# define MORECORE_CLEARS /;"	d	file:
+MORECORE_CONTIGUOUS	malloc.c	/^#define MORECORE_CONTIGUOUS /;"	d	file:
+MORECORE_FAILURE	malloc.c	/^#define MORECORE_FAILURE /;"	d	file:
+M_ARENA_MAX	malloc.h	/^#define M_ARENA_MAX /;"	d
+M_ARENA_TEST	malloc.h	/^#define M_ARENA_TEST /;"	d
+M_CHECK_ACTION	malloc.h	/^#define M_CHECK_ACTION /;"	d
+M_GRAIN	malloc.h	/^# define M_GRAIN /;"	d
+M_KEEP	malloc.h	/^# define M_KEEP /;"	d
+M_MMAP_MAX	malloc.c	/^#define M_MMAP_MAX /;"	d	file:
+M_MMAP_MAX	malloc.h	/^#define M_MMAP_MAX /;"	d
+M_MMAP_THRESHOLD	malloc.c	/^#define M_MMAP_THRESHOLD /;"	d	file:
+M_MMAP_THRESHOLD	malloc.h	/^#define M_MMAP_THRESHOLD /;"	d
+M_MXFAST	malloc.c	/^#define M_MXFAST /;"	d	file:
+M_MXFAST	malloc.h	/^# define M_MXFAST /;"	d
+M_NLBLKS	malloc.h	/^# define M_NLBLKS /;"	d
+M_PERTURB	malloc.h	/^#define M_PERTURB /;"	d
+M_TOP_PAD	malloc.c	/^#define M_TOP_PAD /;"	d	file:
+M_TOP_PAD	malloc.h	/^#define M_TOP_PAD /;"	d
+M_TRIM_THRESHOLD	malloc.c	/^#define M_TRIM_THRESHOLD /;"	d	file:
+M_TRIM_THRESHOLD	malloc.h	/^#define M_TRIM_THRESHOLD /;"	d
+N	tst-calloc.c	/^#define N /;"	d	file:
+N	tst-trim1.c	/^#define N /;"	d	file:
+NARENAS_FROM_NCORES	malloc.c	/^#define NARENAS_FROM_NCORES(/;"	d	file:
+NBINS	malloc.c	/^#define NBINS /;"	d	file:
+NBINS	tst-mallocstate.c	/^# define NBINS /;"	d	file:
+NFASTBINS	malloc.c	/^#define NFASTBINS /;"	d	file:
+NONCONTIGUOUS_BIT	malloc.c	/^#define NONCONTIGUOUS_BIT /;"	d	file:
+NON_MAIN_ARENA	malloc.c	/^#define NON_MAIN_ARENA /;"	d	file:
+NSMALLBINS	malloc.c	/^#define NSMALLBINS /;"	d	file:
+NULL	morecore.c	/^# define NULL /;"	d	file:
+N_	memusagestat.c	/^# define N_(/;"	d	file:
+OBJECT_SIZE	tst-obstack.c	/^#define OBJECT_SIZE /;"	d	file:
+OBSTACK_INTERFACE_VERSION	obstack.c	/^#define OBSTACK_INTERFACE_VERSION /;"	d	file:
+PACKAGE	memusagestat.c	/^#define PACKAGE /;"	d	file:
+PREV_INUSE	malloc.c	/^#define PREV_INUSE /;"	d	file:
+PTR_INT_TYPE	obstack.h	/^# define PTR_INT_TYPE /;"	d
+REALLOC_ZERO_BYTES_FREES	malloc.c	/^#define REALLOC_ZERO_BYTES_FREES /;"	d	file:
+REMOVE_FB	malloc.c	/^#define REMOVE_FB(/;"	d	file:
+RETURN_ADDRESS	malloc.c	/^#define RETURN_ADDRESS(/;"	d	file:
+SIZE	tst-alloc_buffer.c	/^  enum { SIZE = 23 };$/;"	e	enum:test_misaligned::__anon3cb12da20103	file:
+SIZE	tst-malloc-backtrace.c	/^#define SIZE /;"	d	file:
+SIZE_BITS	malloc.c	/^#define SIZE_BITS /;"	d	file:
+SIZE_SZ	malloc-internal.h	/^#define SIZE_SZ /;"	d
+SMALLBIN_CORRECTION	malloc.c	/^#define SMALLBIN_CORRECTION /;"	d	file:
+SMALLBIN_WIDTH	malloc.c	/^#define SMALLBIN_WIDTH /;"	d	file:
+SWITCH	mtrace.pl	/^    SWITCH: {$/;"	l
+TCACHE_FILL_COUNT	malloc.c	/^# define TCACHE_FILL_COUNT /;"	d	file:
+TCACHE_MAX_BINS	malloc.c	/^# define TCACHE_MAX_BINS	/;"	d	file:
+TEST_FUNCTION	tst-calloc.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-interpose-skeleton.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-malloc-thread-fail.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-malloc-usable.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-malloc.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-mallocfork.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-mallopt.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-mcheck.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-memalign.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-mtrace.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-obstack.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-posix_memalign.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-pvalloc.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-realloc.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-scratch_buffer.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-tcfree1.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-tcfree2.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-trim1.c	/^#define TEST_FUNCTION /;"	d	file:
+TEST_FUNCTION	tst-valloc.c	/^#define TEST_FUNCTION /;"	d	file:
+TIMEOUT	tst-dynarray-fail.c	/^#define TIMEOUT /;"	d	file:
+TIMEOUT	tst-malloc-tcache-leak.c	/^#define TIMEOUT /;"	d	file:
+TIMEOUT	tst-malloc-thread-fail.c	/^#define TIMEOUT /;"	d	file:
+TIMEOUT	tst-mallocfork2.c	/^#define TIMEOUT /;"	d	file:
+TRACE_BUFFER_SIZE	mtrace.c	/^#define TRACE_BUFFER_SIZE /;"	d	file:
+TRIM_FASTBINS	malloc.c	/^#define TRIM_FASTBINS /;"	d	file:
+TST_INTERPOSE_AUX_H	tst-interpose-aux.h	/^#define TST_INTERPOSE_AUX_H$/;"	d
+TUNABLE_CALLBACK	arena.c	/^TUNABLE_CALLBACK (set_mallopt_check) (tunable_val_t *valp)$/;"	f	typeref:typename:void
+TUNABLE_CALLBACK_FNDECL	arena.c	/^# define TUNABLE_CALLBACK_FNDECL(/;"	d	file:
+TUNABLE_CALLBACK_FNDECL	arena.c	/^TUNABLE_CALLBACK_FNDECL (set_mmap_threshold, size_t)$/;"	f	file:
+TUNABLE_NAMESPACE	arena.c	/^# define TUNABLE_NAMESPACE /;"	d	file:
+XSIZE	memusagestat.c	/^#define XSIZE /;"	d	file:
+YSIZE	memusagestat.c	/^#define YSIZE /;"	d	file:
+_	obstack.c	/^#  define _(/;"	d	file:
+_DYNARRAY_H	dynarray.h	/^#define _DYNARRAY_H$/;"	d
+_FILE_OFFSET_BITS	memusagestat.c	/^#define _FILE_OFFSET_BITS /;"	d	file:
+_FORTIFY_SOURCE	tst-pvalloc-fortify.c	/^#define _FORTIFY_SOURCE /;"	d	file:
+_MALLOC_H	malloc.h	/^#define _MALLOC_H /;"	d
+_MALLOC_HOOKS_H	malloc-hooks.h	/^#define _MALLOC_HOOKS_H$/;"	d
+_MALLOC_INTERNAL	mcheck.c	/^# define _MALLOC_INTERNAL$/;"	d	file:
+_MALLOC_INTERNAL	morecore.c	/^# define _MALLOC_INTERNAL$/;"	d	file:
+_MALLOC_INTERNAL	mtrace.c	/^# define _MALLOC_INTERNAL$/;"	d	file:
+_MALLOC_INTERNAL_H	malloc-internal.h	/^#define _MALLOC_INTERNAL_H$/;"	d
+_MCHECK_H	mcheck.h	/^#define _MCHECK_H /;"	d
+_OBSTACK_H	obstack.h	/^#define _OBSTACK_H /;"	d
+__BPTR_ALIGN	obstack.h	/^#define __BPTR_ALIGN(/;"	d
+__MALLOC_DEPRECATED	malloc.h	/^# define __MALLOC_DEPRECATED /;"	d
+__MALLOC_DEPRECATED	malloc.h	/^# define __MALLOC_DEPRECATED$/;"	d
+__MALLOC_HOOK_VOLATILE	malloc.h	/^# define __MALLOC_HOOK_VOLATILE /;"	d
+__MALLOC_HOOK_VOLATILE	malloc.h	/^# define __MALLOC_HOOK_VOLATILE$/;"	d
+__PTR_ALIGN	obstack.h	/^#define __PTR_ALIGN(/;"	d
+__after_morecore_hook	malloc.c	/^void weak_variable (*__after_morecore_hook) (void) = NULL;$/;"	v	typeref:typename:void weak_variable (*)(void)
+__anon2fb5e1a20103	tst-malloc-thread-exit.c	/^  enum { outer_thread_count = 2 };$/;"	g	function:do_test	file:
+__anon306ab4a40103	tst-malloc-thread-fail.c	/^static enum {$/;"	g	file:
+__anon306ab4a40203	tst-malloc-thread-fail.c	/^enum { thread_count = 8 };$/;"	g	file:
+__anon3cb12da20103	tst-alloc_buffer.c	/^  enum { SIZE = 23 };$/;"	g	function:test_misaligned	file:
+__anon4259f6ce0108	malloc.c	/^      {$/;"	s	function:weak_alias	file:
+__anon49c3ed920103	tst-interpose-aux.c	/^  enum { count = 3 };$/;"	g	function:fail	file:
+__anon49c3ed920203	tst-interpose-aux.c	/^enum { max_allocations = 65536 };$/;"	g	file:
+__anon6f306f12010a	dynarray-skeleton.c	/^  {$/;"	u	struct:DYNARRAY_STRUCT	file:
+__anon6f306f120208	dynarray-skeleton.c	/^    {$/;"	s	union:DYNARRAY_STRUCT::__anon6f306f12010a	file:
+__anon81d4a1790103	tst-malloc-fork-deadlock.c	/^enum {$/;"	g	file:
+__anon8f581bbd0103	obstack.c	/^{$/;"	g	file:
+__anon8f581bc2010a	obstack.h	/^  {$/;"	u	struct:obstack
+__anon91025b280103	tst-dynarray.c	/^enum { max_count = 20 };$/;"	g	file:
+__anon91025b280203	tst-dynarray.c	/^    enum { count = 2131 };$/;"	g	function:test_str	file:
+__anon91025b280303	tst-dynarray.c	/^  enum { count = 2131 };$/;"	g	function:test_long_init	file:
+__anona0f1a4a10103	tst-malloc_info.c	/^  {$/;"	g	file:
+__anonbd025fea0103	memusage.c	/^{$/;"	g	file:
+__anonbd4366d70103	tst-mallocstate.c	/^enum { max_size = 64 };$/;"	g	file:
+__anonbd4366d70208	tst-mallocstate.c	/^{$/;"	s	file:
+__anonbd4366d70303	tst-mallocstate.c	/^  {$/;"	g	function:dumped_heap_alloc	file:
+__anonbd4366d70403	tst-mallocstate.c	/^enum { allocation_task_count = action_count * max_size };$/;"	g	file:
+__anonbd4366d70503	tst-mallocstate.c	/^enum { heap_activity_allocations_count = 32 };$/;"	g	file:
+__anonca125e1a0103	tst-mallocfork2.c	/^enum { malloc_objects = 1009 };$/;"	g	file:
+__anonca125e1a0203	tst-mallocfork2.c	/^enum { malloc_maximum_size = 70000 };$/;"	g	file:
+__anonca125e1a0303	tst-mallocfork2.c	/^enum { iterations = 10000 };$/;"	g	file:
+__anonca125e1a0408	tst-mallocfork2.c	/^static struct { pthread_barrier_t barrier; } *shared;$/;"	s	file:
+__anone61d7fb10103	tst-dynarray-fail.c	/^enum { as_limit_reserve = 2 * 1024 * 1024 };$/;"	g	file:
+__anoneb8711290103	tst-interpose-skeleton.c	/^  enum { exit_code = 55 };$/;"	g	function:run_tests	file:
+__assert_fail	malloc.c	/^# define __assert_fail(/;"	d	file:
+__attribute_pure__	obstack.h	/^# define __attribute_pure__ /;"	d
+__dynarray_error	dynarray.h	/^__dynarray_error (struct dynarray_header *list)$/;"	f	typeref:typename:bool
+__dynarray_error_marker	dynarray.h	/^__dynarray_error_marker (void)$/;"	f	typeref:typename:size_t
+__extension__	obstack.h	/^#  define __extension__$/;"	d
+__free_hook	malloc.c	/^void weak_variable (*__free_hook) (void *__ptr,$/;"	v	typeref:typename:void weak_variable (*)(void * __ptr,const void *)
+__libc_alloc_buffer_alloc_array	alloc_buffer_alloc_array.c	/^__libc_alloc_buffer_alloc_array (struct alloc_buffer *buf, size_t element_size,$/;"	f	typeref:typename:void *
+__libc_alloc_buffer_allocate	alloc_buffer_allocate.c	/^__libc_alloc_buffer_allocate (size_t size, void **pptr)$/;"	f	typeref:struct:alloc_buffer
+__libc_alloc_buffer_copy_bytes	alloc_buffer_copy_bytes.c	/^__libc_alloc_buffer_copy_bytes (struct alloc_buffer buf,$/;"	f	typeref:struct:alloc_buffer
+__libc_alloc_buffer_copy_string	alloc_buffer_copy_string.c	/^__libc_alloc_buffer_copy_string (struct alloc_buffer buf, const char *src)$/;"	f	typeref:struct:alloc_buffer
+__libc_alloc_buffer_create_failure	alloc_buffer_create_failure.c	/^__libc_alloc_buffer_create_failure (void *start, size_t size)$/;"	f	typeref:typename:void
+__libc_calloc	malloc.c	/^__libc_calloc (size_t n, size_t elem_size)$/;"	f	typeref:typename:void *
+__libc_dynarray_at_failure	dynarray_at_failure.c	/^__libc_dynarray_at_failure (size_t size, size_t index)$/;"	f	typeref:typename:void
+__libc_dynarray_emplace_enlarge	dynarray_emplace_enlarge.c	/^__libc_dynarray_emplace_enlarge (struct dynarray_header *list,$/;"	f	typeref:typename:bool
+__libc_dynarray_finalize	dynarray_finalize.c	/^__libc_dynarray_finalize (struct dynarray_header *list,$/;"	f	typeref:typename:bool
+__libc_dynarray_resize	dynarray_resize.c	/^__libc_dynarray_resize (struct dynarray_header *list, size_t size,$/;"	f	typeref:typename:bool
+__libc_dynarray_resize_clear	dynarray_resize_clear.c	/^__libc_dynarray_resize_clear (struct dynarray_header *list, size_t size,$/;"	f	typeref:typename:bool
+__libc_freeres	set-freeres.c	/^__libc_freeres (void)$/;"	f	typeref:typename:void __libc_freeres_fn_section
+__libc_mallinfo	malloc.c	/^__libc_mallinfo (void)$/;"	f	typeref:struct:mallinfo
+__libc_malloc	malloc.c	/^__libc_malloc (size_t bytes)$/;"	f	typeref:typename:void *
+__libc_mallopt	malloc.c	/^__libc_mallopt (int param_number, int value)$/;"	f	typeref:typename:int
+__libc_pvalloc	malloc.c	/^__libc_pvalloc (size_t bytes)$/;"	f	typeref:typename:void *
+__libc_reallocarray	reallocarray.c	/^__libc_reallocarray (void *optr, size_t nmemb, size_t elem_size)$/;"	f	typeref:typename:void *
+__libc_scratch_buffer_grow	scratch_buffer_grow.c	/^__libc_scratch_buffer_grow (struct scratch_buffer *buffer)$/;"	f	typeref:typename:bool
+__libc_scratch_buffer_grow_preserve	scratch_buffer_grow_preserve.c	/^__libc_scratch_buffer_grow_preserve (struct scratch_buffer *buffer)$/;"	f	typeref:typename:bool
+__libc_scratch_buffer_set_array_size	scratch_buffer_set_array_size.c	/^__libc_scratch_buffer_set_array_size (struct scratch_buffer *buffer,$/;"	f	typeref:typename:bool
+__libc_thread_freeres	thread-freeres.c	/^__libc_thread_freeres (void)$/;"	f	typeref:typename:void
+__malloc_arena_thread_freeres	arena.c	/^__malloc_arena_thread_freeres (void)$/;"	f	typeref:typename:void
+__malloc_assert	malloc.c	/^__malloc_assert (const char *assertion, const char *file, unsigned int line,$/;"	f	typeref:typename:void	file:
+__malloc_check_init	hooks.c	/^__malloc_check_init (void)$/;"	f	typeref:typename:void
+__malloc_fork_lock_parent	arena.c	/^__malloc_fork_lock_parent (void)$/;"	f	typeref:typename:void
+__malloc_fork_unlock_child	arena.c	/^__malloc_fork_unlock_child (void)$/;"	f	typeref:typename:void
+__malloc_fork_unlock_parent	arena.c	/^__malloc_fork_unlock_parent (void)$/;"	f	typeref:typename:void
+__malloc_hook	malloc.c	/^void *weak_variable (*__malloc_hook)$/;"	v	typeref:typename:void * weak_variable (*)(size_t __size,const void *)
+__malloc_initialize_hook	malloc-hooks.h	/^void (*__malloc_initialize_hook) (void);$/;"	v	typeref:typename:void (*)(void)
+__malloc_initialize_hook	malloc.c	/^void weak_variable (*__malloc_initialize_hook) (void) = NULL;$/;"	v	typeref:typename:void weak_variable (*)(void)
+__malloc_initialize_hook	mcheck-init.c	/^void (*__malloc_initialize_hook) (void) = turn_on_mcheck;$/;"	v	typeref:typename:void (*)(void)
+__malloc_initialize_hook	tst-mallocstate.c	/^void (*volatile __malloc_initialize_hook) (void) = init_heap;$/;"	v	typeref:typename:void (* volatile)(void)
+__malloc_initialized	arena.c	/^int __malloc_initialized = -1;$/;"	v	typeref:typename:int
+__malloc_stats	malloc.c	/^__malloc_stats (void)$/;"	f	typeref:typename:void
+__malloc_trim	malloc.c	/^__malloc_trim (size_t s)$/;"	f	typeref:typename:int
+__malloc_usable_size	malloc.c	/^__malloc_usable_size (void *m)$/;"	f	typeref:typename:size_t
+__memalign_hook	malloc.c	/^void *weak_variable (*__memalign_hook)$/;"	v	typeref:typename:void * weak_variable (*)(size_t __alignment,size_t __size,const void *)
+__morecore	malloc.c	/^void *(*__morecore)(ptrdiff_t) = __default_morecore;$/;"	v	typeref:typename:void * (*)(ptrdiff_t)
+__obstack_free	obstack.c	/^__obstack_free (struct obstack *h, void *obj)$/;"	f	typeref:typename:void
+__obstack_free	obstack.h	/^# define __obstack_free /;"	d
+__posix_memalign	malloc.c	/^__posix_memalign (void **memptr, size_t alignment, size_t size)$/;"	f	typeref:typename:int
+__realloc_hook	malloc.c	/^void *weak_variable (*__realloc_hook)$/;"	v	typeref:typename:void * weak_variable (*)(void * __ptr,size_t __size,const void *)
+__sbrk	morecore.c	/^# define __sbrk /;"	d	file:
+_heap_info	arena.c	/^typedef struct _heap_info$/;"	s	file:
+_int_free	malloc.c	/^_int_free (mstate av, mchunkptr p, int have_lock)$/;"	f	typeref:typename:void	file:
+_int_malloc	malloc.c	/^_int_malloc (mstate av, size_t bytes)$/;"	f	typeref:typename:void *	file:
+_int_memalign	malloc.c	/^_int_memalign (mstate av, size_t alignment, size_t bytes)$/;"	f	typeref:typename:void *	file:
+_int_new_arena	arena.c	/^_int_new_arena (size_t size)$/;"	f	typeref:typename:mstate	file:
+_int_realloc	malloc.c	/^_int_realloc(mstate av, mchunkptr oldp, INTERNAL_SIZE_T oldsize,$/;"	f	typeref:typename:void *
+_mid_memalign	malloc.c	/^_mid_memalign (size_t alignment, size_t bytes, void *address)$/;"	f	typeref:typename:void *	file:
+_obstack_allocated_p	obstack.c	/^_obstack_allocated_p (struct obstack *h, void *obj)$/;"	f	typeref:typename:int
+_obstack_begin	obstack.c	/^_obstack_begin (struct obstack *h,$/;"	f	typeref:typename:int
+_obstack_begin_1	obstack.c	/^_obstack_begin_1 (struct obstack *h, int size, int alignment,$/;"	f	typeref:typename:int
+_obstack_chunk	obstack.h	/^struct _obstack_chunk           \/* Lives at front of each chunk. *\/$/;"	s
+_obstack_compat	obstack.c	/^struct obstack *_obstack_compat = 0;$/;"	v	typeref:struct:obstack *
+_obstack_newchunk	obstack.c	/^_obstack_newchunk (struct obstack *h, int length)$/;"	f	typeref:typename:void
+abortfunc	mcheck.c	/^static void (*abortfunc) (enum mcheck_status);$/;"	v	typeref:typename:void (*)(enum mcheck_status)	file:
+action	tst-mallocstate.c	/^  enum allocation_action action;$/;"	m	struct:allocation_task	typeref:enum:allocation_action	file:
+action_count	tst-mallocstate.c	/^    action_count$/;"	e	enum:allocation_action	file:
+action_free	tst-mallocstate.c	/^    action_free,                \/* Dumped and freed.  *\/$/;"	e	enum:allocation_action	file:
+action_realloc	tst-mallocstate.c	/^    action_realloc,             \/* Dumped and realloc'ed.  *\/$/;"	e	enum:allocation_action	file:
+action_realloc_same	tst-mallocstate.c	/^    action_realloc_same,        \/* Dumped and realloc'ed, same size.  *\/$/;"	e	enum:allocation_action	file:
+action_realloc_smaller	tst-mallocstate.c	/^    action_realloc_smaller,     \/* Dumped and realloc'ed, shrinked.  *\/$/;"	e	enum:allocation_action	file:
+address-width	Makefile	/^address-width=10$/;"	m
+address-width	Makefile	/^address-width=18$/;"	m
+align256	tst-alloc_buffer.c	/^  struct __attribute__ ((aligned (256))) align256$/;"	s	function:test_large_misaligned	file:
+aligned_OK	malloc.c	/^#define aligned_OK(/;"	d	file:
+aligned_heap_area	arena.c	/^static char *aligned_heap_area;$/;"	v	typeref:typename:char *	file:
+alignment	tst-malloc-thread-fail.c	/^  size_t alignment;$/;"	m	struct:allocate_result	typeref:typename:size_t	file:
+alignment	tst-malloc-thread-fail.c	/^static size_t alignment;$/;"	v	typeref:typename:size_t	file:
+alignment_mask	obstack.h	/^  int alignment_mask;           \/* Mask of alignment for each object. *\/$/;"	m	struct:obstack	typeref:typename:int
+alignment_sensitive	tst-malloc-thread-fail.c	/^const static bool alignment_sensitive[last_allocation_function + 1] =$/;"	v	typeref:typename:const bool[]	file:
+alloc_failed	obstack.h	/^  unsigned alloc_failed : 1;      \/* No longer used, as we now call the failed$/;"	m	struct:obstack	typeref:typename:unsigned:1
+alloc_perturb	malloc.c	/^alloc_perturb (char *p, size_t n)$/;"	f	typeref:typename:void	file:
+allocate	tst-malloc-thread-fail.c	/^allocate (void)$/;"	f	typeref:typename:void *	file:
+allocate_1	tst-malloc-thread-fail.c	/^allocate_1 (void)$/;"	f	typeref:struct:allocate_result	file:
+allocate_result	tst-malloc-thread-fail.c	/^struct allocate_result {$/;"	s	file:
+allocate_thread	tst-malloc-thread-fail.c	/^allocate_thread (void *closure)$/;"	f	typeref:typename:void *	file:
+allocate_zeroed	tst-malloc-thread-fail.c	/^allocate_zeroed (size_t a, size_t b)$/;"	f	typeref:typename:void *	file:
+allocated	dynarray-skeleton.c	/^      size_t allocated;$/;"	m	struct:DYNARRAY_STRUCT::__anon6f306f12010a::__anon6f306f120208	typeref:typename:size_t	file:
+allocated	dynarray.h	/^  size_t allocated;$/;"	m	struct:dynarray_header	typeref:typename:size_t
+allocation	tst-mallocstate.c	/^  struct allocation allocation;$/;"	m	struct:allocation_task	typeref:struct:allocation	file:
+allocation	tst-mallocstate.c	/^struct allocation$/;"	s	file:
+allocation_action	tst-mallocstate.c	/^enum allocation_action$/;"	g	file:
+allocation_function	tst-malloc-thread-fail.c	/^} allocation_function;$/;"	v	typeref:enum:__anon306ab4a40103	file:
+allocation_header	tst-interpose-aux.c	/^struct __attribute__ ((aligned (__alignof__ (max_align_t)))) allocation_header$/;"	s	file:
+allocation_index	tst-interpose-aux.c	/^  size_t allocation_index;$/;"	m	struct:allocation_header	typeref:typename:size_t	file:
+allocation_index	tst-interpose-aux.c	/^static size_t allocation_index;$/;"	v	typeref:typename:size_t	file:
+allocation_size	tst-interpose-aux.c	/^  size_t allocation_size;$/;"	m	struct:allocation_header	typeref:typename:size_t	file:
+allocation_size	tst-malloc-thread-fail.c	/^static size_t allocation_size;$/;"	v	typeref:typename:size_t	file:
+allocation_task	tst-mallocstate.c	/^struct allocation_task$/;"	s	file:
+allocation_task_count	tst-mallocstate.c	/^enum { allocation_task_count = action_count * max_size };$/;"	e	enum:__anonbd4366d70403	file:
+allocation_tasks	tst-mallocstate.c	/^static struct allocation_task allocation_tasks[allocation_task_count];$/;"	v	typeref:struct:allocation_task[]	file:
+allocation_thread_function	tst-malloc_info.c	/^allocation_thread_function (void *closure)$/;"	f	typeref:typename:void *	file:
+allocations	tst-interpose-aux.c	/^static struct allocation_header *allocations[max_allocations];$/;"	v	typeref:struct:allocation_header * []	file:
+also_total	memusagestat.c	/^static int also_total = 0;$/;"	v	typeref:typename:int	file:
+ar_ptr	arena.c	/^  mstate ar_ptr; \/* Arena for this heap. *\/$/;"	m	struct:_heap_info	typeref:typename:mstate	file:
+arena	malloc.h	/^  int arena;    \/* non-mmapped space allocated from system *\/$/;"	m	struct:mallinfo	typeref:typename:int
+arena_for_chunk	arena.c	/^#define arena_for_chunk(/;"	d	file:
+arena_get	arena.c	/^#define arena_get(/;"	d	file:
+arena_get2	arena.c	/^arena_get2 (size_t size, mstate avoid_arena)$/;"	f	typeref:typename:mstate	file:
+arena_get_retry	arena.c	/^arena_get_retry (mstate ar_ptr, size_t bytes)$/;"	f	typeref:typename:mstate	file:
+arena_lock	arena.c	/^#define arena_lock(/;"	d	file:
+arena_max	hooks.c	/^  unsigned long arena_max;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+arena_max	malloc.c	/^  INTERNAL_SIZE_T arena_max;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+arena_max	tst-mallocstate.c	/^  unsigned long arena_max;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+arena_test	hooks.c	/^  unsigned long arena_test;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+arena_test	malloc.c	/^  INTERNAL_SIZE_T arena_test;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+arena_test	tst-mallocstate.c	/^  unsigned long arena_test;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+arglist	mtrace.pl	/^arglist: while (@ARGV) {$/;"	l
+argp	memusagestat.c	/^static struct argp argp =$/;"	v	typeref:struct:argp	file:
+argp_program_version_hook	memusagestat.c	/^void (*argp_program_version_hook) (FILE *, struct argp_state *) = print_version;$/;"	v	typeref:typename:void (*)(FILE *,struct argp_state *)
+args_doc	memusagestat.c	/^static const char args_doc[] = N_ ("DATAFILE [OUTFILE]");$/;"	v	typeref:typename:const char[]	file:
+arr	tst-trim1.c	/^static void *arr[N];$/;"	v	typeref:typename:void * []	file:
+array	dynarray-skeleton.c	/^      DYNARRAY_ELEMENT *array;$/;"	m	struct:DYNARRAY_STRUCT::__anon6f306f12010a::__anon6f306f120208	typeref:typename:DYNARRAY_ELEMENT *	file:
+array	dynarray.h	/^  void *array;$/;"	m	struct:dynarray_finalize_result	typeref:typename:void *
+array	dynarray.h	/^  void *array;$/;"	m	struct:dynarray_header	typeref:typename:void *
+array	tst-dynarray-shared.h	/^  char **array;$/;"	m	struct:str_array	typeref:typename:char **
+array	tst-dynarray-shared.h	/^  int *array;$/;"	m	struct:int_array	typeref:typename:int *
+array	tst-dynarray.c	/^  long *array;$/;"	m	struct:long_array	typeref:typename:long *	file:
+array_size_must_fail	tst-scratch_buffer.c	/^array_size_must_fail (size_t a, size_t b)$/;"	f	typeref:typename:bool	file:
+as_limit_reserve	tst-dynarray-fail.c	/^enum { as_limit_reserve = 2 * 1024 * 1024 };$/;"	e	enum:__anone61d7fb10103	file:
+attached_threads	malloc.c	/^  INTERNAL_SIZE_T attached_threads;$/;"	m	struct:malloc_state	typeref:typename:INTERNAL_SIZE_T	file:
+attribute_tls_model_ie	arena.c	/^static __thread mstate thread_arena attribute_tls_model_ie;$/;"	v	typeref:typename:__thread mstate thread_arena	file:
+aux	Makefile	/^aux := set-freeres thread-freeres$/;"	m
+av	hooks.c	/^  mbinptr av[NBINS * 2 + 2];$/;"	m	struct:malloc_save_state	typeref:typename:mbinptr[]	file:
+av	tst-mallocstate.c	/^  void *av[NBINS * 2 + 2];$/;"	m	struct:__anonbd4366d70208	typeref:typename:void * []	file:
+barrier	tst-malloc_info.c	/^static pthread_barrier_t barrier;$/;"	v	typeref:typename:pthread_barrier_t	file:
+barrier	tst-mallocfork2.c	/^static struct { pthread_barrier_t barrier; } *shared;$/;"	m	struct:__anonca125e1a0408	typeref:typename:pthread_barrier_t	file:
+bin_at	malloc.c	/^#define bin_at(/;"	d	file:
+bin_index	malloc.c	/^#define bin_index(/;"	d	file:
+binmap	malloc.c	/^  unsigned int binmap[BINMAPSIZE];$/;"	m	struct:malloc_state	typeref:typename:unsigned int[]	file:
+bins	malloc.c	/^  mchunkptr bins[NBINS * 2 - 2];$/;"	m	struct:malloc_state	typeref:typename:mchunkptr[]	file:
+bk	malloc.c	/^  struct malloc_chunk* bk;$/;"	m	struct:malloc_chunk	typeref:struct:malloc_chunk *	file:
+bk_nextsize	malloc.c	/^  struct malloc_chunk* bk_nextsize;$/;"	m	struct:malloc_chunk	typeref:struct:malloc_chunk *	file:
+block	mcheck.c	/^  void *block;                  \/* Real block allocated, for memalign.  *\/$/;"	m	struct:hdr	typeref:typename:void *	file:
+buffer	memusage.c	/^static struct entry buffer[2 * DEFAULT_BUFFER_SIZE];$/;"	v	typeref:struct:entry[]	file:
+buffer	tst-alloc_buffer.c	/^  uint32_t buffer[3] __attribute__ ((aligned (4)));$/;"	m	struct:twelve	typeref:typename:uint32_t[3]	file:
+buffer_cnt	memusage.c	/^static uatomic32_t buffer_cnt;$/;"	v	typeref:typename:uatomic32_t	file:
+buffer_size	memusage.c	/^static size_t buffer_size;$/;"	v	typeref:typename:size_t	file:
+buffer_threadproc	tst-malloc-stats-cancellation.c	/^buffer_threadproc (void *argp)$/;"	f	typeref:typename:void *	file:
+buffer_tp_args	tst-malloc-stats-cancellation.c	/^struct buffer_tp_args$/;"	s	file:
+c	obstack.c	/^  char c;$/;"	m	struct:fooalign	typeref:typename:char	file:
+call_free	tst-malloc-backtrace.c	/^call_free (void *ptr)$/;"	f	typeref:typename:void	file:
+calloc	memusage.c	/^calloc (size_t n, size_t len)$/;"	f	typeref:typename:void *
+calloc	tst-interpose-aux.c	/^calloc (size_t a, size_t b)$/;"	f	typeref:typename:void *
+callocp	memusage.c	/^static void *(*callocp) (size_t, size_t);$/;"	v	typeref:typename:void * (*)(size_t,size_t)	file:
+calls	memusage.c	/^static memusage_cntr_t calls[idx_last];$/;"	v	typeref:typename:memusage_cntr_t[]	file:
+calls_total	memusage.c	/^static memusage_cntr_t calls_total;$/;"	v	typeref:typename:memusage_cntr_t	file:
+char2	tst-alloc_buffer.c	/^    typedef char __attribute__ ((aligned (2))) char2;$/;"	t	function:test_large	typeref:typename:char	file:
+check	tst-dynarray-at-fail.c	/^check (const char *test, void (*callback) (void *), size_t index,$/;"	f	typeref:typename:void	file:
+check_action	hooks.c	/^  int check_action;$/;"	m	struct:malloc_save_state	typeref:typename:int	file:
+check_action	tst-mallocstate.c	/^  int check_action;$/;"	m	struct:__anonbd4366d70208	typeref:typename:int	file:
+check_allocation	tst-mallocstate.c	/^check_allocation (const struct allocation *alloc, int index)$/;"	f	typeref:typename:void	file:
+check_brk	tst-interpose-skeleton.c	/^check_brk (void)$/;"	f	typeref:typename:void	file:
+check_chunk	malloc.c	/^# define check_chunk(/;"	d	file:
+check_for_allocations	tst-interpose-aux.c	/^check_for_allocations (void)$/;"	f	typeref:typename:void	file:
+check_free_chunk	malloc.c	/^# define check_free_chunk(/;"	d	file:
+check_inuse_chunk	malloc.c	/^# define check_inuse_chunk(/;"	d	file:
+check_malloc_state	malloc.c	/^# define check_malloc_state(/;"	d	file:
+check_malloced_chunk	malloc.c	/^# define check_malloced_chunk(/;"	d	file:
+check_remalloced_chunk	malloc.c	/^# define check_remalloced_chunk(/;"	d	file:
+checked_request2size	malloc.c	/^checked_request2size (size_t req, size_t *sz) __nonnull (1)$/;"	f	typeref:typename:bool	file:
+checkhdr	mcheck.c	/^checkhdr (const struct hdr *hdr)$/;"	f	typeref:enum:mcheck_status	file:
+chunk	obstack.h	/^  struct _obstack_chunk *chunk; \/* address of current struct obstack_chunk *\/$/;"	m	struct:obstack	typeref:struct:_obstack_chunk *
+chunk2mem	malloc.c	/^#define chunk2mem(/;"	d	file:
+chunk_at_offset	malloc.c	/^#define chunk_at_offset(/;"	d	file:
+chunk_is_mmapped	malloc.c	/^#define chunk_is_mmapped(/;"	d	file:
+chunk_limit	obstack.h	/^  char *chunk_limit;            \/* address of char after current chunk *\/$/;"	m	struct:obstack	typeref:typename:char *
+chunk_main_arena	malloc.c	/^#define chunk_main_arena(/;"	d	file:
+chunk_size	obstack.h	/^  long chunk_size;              \/* preferred size to allocate chunks in *\/$/;"	m	struct:obstack	typeref:typename:long
+chunkfun	obstack.h	/^  struct _obstack_chunk *(*chunkfun) (void *, long);$/;"	m	struct:obstack	typeref:struct:_obstack_chunk * (*)(void *,long)
+chunksize	malloc.c	/^#define chunksize(/;"	d	file:
+chunksize_nomask	malloc.c	/^#define chunksize_nomask(/;"	d	file:
+clear_inuse	malloc.c	/^#define clear_inuse(/;"	d	file:
+clear_inuse_bit_at_offset	malloc.c	/^#define clear_inuse_bit_at_offset(/;"	d	file:
+contents	obstack.h	/^  char contents[4];             \/* objects begin here *\/$/;"	m	struct:_obstack_chunk	typeref:typename:char[4]
+contiguous	malloc.c	/^#define contiguous(/;"	d	file:
+count	malloc.c	/^	size_t count;$/;"	m	struct:weak_alias::__anon4259f6ce0108	typeref:typename:size_t	file:
+count	tst-dynarray.c	/^    enum { count = 2131 };$/;"	e	enum:test_str::__anon91025b280203	file:
+count	tst-dynarray.c	/^  enum { count = 2131 };$/;"	e	enum:test_long_init::__anon91025b280303	file:
+count	tst-interpose-aux.c	/^  enum { count = 3 };$/;"	e	enum:fail::__anon49c3ed920103	file:
+counts	malloc.c	/^  uint16_t counts[TCACHE_MAX_BINS];$/;"	m	struct:tcache_perthread_struct	typeref:typename:uint16_t[]	file:
+cpp-srcs-left	Makefile	/^cpp-srcs-left := $(memusagestat-modules)$/;"	m
+create_file_with_large_line	tst-malloc-fork-deadlock.c	/^create_file_with_large_line (void)$/;"	f	typeref:typename:void	file:
+create_threads	tst-malloc-fork-deadlock.c	/^create_threads (pthread_t *threads, size_t count, void *(*func) (void *))$/;"	f	typeref:typename:void	file:
+csize2tidx	malloc.c	/^# define csize2tidx(/;"	d	file:
+current_heap	memusage.c	/^static memusage_size_t current_heap;$/;"	v	typeref:typename:memusage_size_t	file:
+d	obstack.c	/^  long double d;$/;"	m	union:fooround	typeref:typename:long double	file:
+data	tst-mallocstate.c	/^  unsigned char *data;$/;"	m	struct:allocation	typeref:typename:unsigned char *	file:
+deallocation_count	tst-interpose-aux.c	/^static size_t deallocation_count;$/;"	v	typeref:typename:size_t	file:
+decreasing	memusage.c	/^static memusage_cntr_t decreasing;$/;"	v	typeref:typename:memusage_cntr_t	file:
+decreasing_mremap	memusage.c	/^static memusage_cntr_t decreasing_mremap;$/;"	v	typeref:typename:memusage_cntr_t	file:
+delete_heap	arena.c	/^#define delete_heap(/;"	d	file:
+dest	memusage.c	/^dest (void)$/;"	f	typeref:typename:void	file:
+detach_arena	arena.c	/^detach_arena (mstate replaced_arena)$/;"	f	typeref:typename:void	file:
+dist-headers	Makefile	/^dist-headers := malloc.h$/;"	m
+do-memusagestat	Makefile	/^do-memusagestat: $(objpfx)memusagestat$/;"	t
+do_check_chunk	malloc.c	/^do_check_chunk (mstate av, mchunkptr p)$/;"	f	typeref:typename:void	file:
+do_check_free_chunk	malloc.c	/^do_check_free_chunk (mstate av, mchunkptr p)$/;"	f	typeref:typename:void	file:
+do_check_inuse_chunk	malloc.c	/^do_check_inuse_chunk (mstate av, mchunkptr p)$/;"	f	typeref:typename:void	file:
+do_check_malloc_state	malloc.c	/^do_check_malloc_state (mstate av)$/;"	f	typeref:typename:void	file:
+do_check_malloced_chunk	malloc.c	/^do_check_malloced_chunk (mstate av, mchunkptr p, INTERNAL_SIZE_T s)$/;"	f	typeref:typename:void	file:
+do_check_remalloced_chunk	malloc.c	/^do_check_remalloced_chunk (mstate av, mchunkptr p, INTERNAL_SIZE_T s)$/;"	f	typeref:typename:void	file:
+do_help	memusage.sh	/^do_help() {$/;"	f
+do_missing_arg	memusage.sh	/^do_missing_arg() {$/;"	f
+do_set_arena_max	malloc.c	/^do_set_arena_max (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_arena_test	malloc.c	/^do_set_arena_test (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_mallopt_check	malloc.c	/^do_set_mallopt_check (int32_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_mmap_threshold	malloc.c	/^do_set_mmap_threshold (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_mmaps_max	malloc.c	/^do_set_mmaps_max (int32_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_mxfast	malloc.c	/^do_set_mxfast (size_t value)$/;"	f	typeref:typename:int __always_inline	file:
+do_set_perturb_byte	malloc.c	/^do_set_perturb_byte (int32_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_tcache_count	malloc.c	/^do_set_tcache_count (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_tcache_max	malloc.c	/^do_set_tcache_max (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_tcache_unsorted_limit	malloc.c	/^do_set_tcache_unsorted_limit (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_top_pad	malloc.c	/^do_set_top_pad (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_set_trim_threshold	malloc.c	/^do_set_trim_threshold (size_t value)$/;"	f	typeref:typename:__always_inline int	file:
+do_test	tst-alloc_buffer.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-calloc.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-dynarray-at-fail.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-dynarray-fail.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-dynarray.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-interpose-skeleton.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc-backtrace.c	/^do_test (void)$/;"	f	typeref:typename:int
+do_test	tst-malloc-fork-deadlock.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc-tcache-leak.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc-thread-exit.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc-thread-fail.c	/^do_test (void)$/;"	f	typeref:typename:int
+do_test	tst-malloc-too-large.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc-usable.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-malloc_info.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mallocfork.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mallocfork2.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mallocstate.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mallopt.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mcheck.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-memalign.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mtrace.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-mxfast.c	/^do_test (void)$/;"	f	typeref:typename:int
+do_test	tst-obstack.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-posix_memalign.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-pvalloc-fortify.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-pvalloc.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-realloc.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-reallocarray.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-scratch_buffer.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-tcfree1.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-tcfree2.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-tcfree3.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-trim1.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_test	tst-valloc.c	/^do_test (void)$/;"	f	typeref:typename:int	file:
+do_usage	memusage.sh	/^do_usage() {$/;"	f
+do_version	memusage.sh	/^do_version() {$/;"	f
+doc	memusagestat.c	/^static const char doc[] = N_ ("Generate graphic from memory profiling data");$/;"	v	typeref:typename:const char[]	file:
+dummy	tst-malloc_info.c	/^    long dummy[4];$/;"	m	struct:allocation_thread_function::list	typeref:typename:long[4]	file:
+dummy0	mallocbug.c	/^char *dummy0;$/;"	v	typeref:typename:char *
+dummy1	mallocbug.c	/^char *dummy1;$/;"	v	typeref:typename:char *
+dump_heap	arena.c	/^dump_heap (heap_info *heap)$/;"	f	typeref:typename:void	file:
+dump_hex	tst-mallocstate.c	/^dump_hex (unsigned char *buffer, size_t length)$/;"	f	typeref:typename:void	file:
+dumped_heap	tst-mallocstate.c	/^static size_t dumped_heap[action_count * max_size * max_size$/;"	v	typeref:typename:size_t[]	file:
+dumped_heap_alloc	tst-mallocstate.c	/^dumped_heap_alloc (size_t length)$/;"	f	typeref:typename:void *	file:
+dumped_main_arena_end	malloc.c	/^static mchunkptr dumped_main_arena_end;   \/* Exclusive.  *\/$/;"	v	typeref:typename:mchunkptr	file:
+dumped_main_arena_start	malloc.c	/^static mchunkptr dumped_main_arena_start; \/* Inclusive.  *\/$/;"	v	typeref:typename:mchunkptr	file:
+dymmy	tst-alloc_buffer.c	/^    int dymmy;$/;"	m	struct:test_large_misaligned::align256	typeref:typename:int	file:
+dynarray_abstract	dynarray-skeleton.c	/^    struct dynarray_header dynarray_abstract;$/;"	m	union:DYNARRAY_STRUCT::__anon6f306f12010a	typeref:struct:dynarray_header	file:
+dynarray_finalize_result	dynarray.h	/^struct dynarray_finalize_result$/;"	s
+dynarray_header	dynarray-skeleton.c	/^    } dynarray_header;$/;"	m	union:DYNARRAY_STRUCT::__anon6f306f12010a	typeref:struct:DYNARRAY_STRUCT::__anon6f306f12010a::__anon6f306f120208	file:
+dynarray_header	dynarray.h	/^struct dynarray_header$/;"	s
+end_barrier	tst-malloc-thread-fail.c	/^static pthread_barrier_t end_barrier;$/;"	v	typeref:typename:pthread_barrier_t	file:
+entries	malloc.c	/^  tcache_entry *entries[TCACHE_MAX_BINS];$/;"	m	struct:tcache_perthread_struct	typeref:typename:tcache_entry * []	file:
+entry	memusage.c	/^struct entry$/;"	s	file:
+entry	memusagestat.c	/^struct entry$/;"	s	file:
+errors	tst-malloc.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-mallocstate.c	/^static bool errors = false;$/;"	v	typeref:typename:bool	file:
+errors	tst-mallopt.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-mcheck.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-memalign.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-posix_memalign.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-pvalloc.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-realloc.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+errors	tst-valloc.c	/^static int errors = 0;$/;"	v	typeref:typename:int	file:
+exit_code	tst-interpose-skeleton.c	/^  enum { exit_code = 55 };$/;"	e	enum:run_tests::__anoneb8711290103	file:
+extra-libs	Makefile	/^extra-libs = libmemusage$/;"	m
+extra-libs-others	Makefile	/^extra-libs-others = $(extra-libs)$/;"	m
+extra-objs	Makefile	/^extra-objs = mcheck-init.o libmcheck.a$/;"	m
+extra_arg	obstack.h	/^  void *extra_arg;              \/* first arg for chunk alloc\/dealloc funcs *\/$/;"	m	struct:obstack	typeref:typename:void *
+fail	tst-interpose-aux.c	/^fail (const char *format, ...)$/;"	f	typeref:typename:void *	file:
+failed	memusage.c	/^static memusage_cntr_t failed[idx_last];$/;"	v	typeref:typename:memusage_cntr_t[]	file:
+fastbin	malloc.c	/^#define fastbin(/;"	d	file:
+fastbin_index	malloc.c	/^#define fastbin_index(/;"	d	file:
+fastbinsY	malloc.c	/^  mfastbinptr fastbinsY[NFASTBINS];$/;"	m	struct:malloc_state	typeref:typename:mfastbinptr[]	file:
+fd	malloc.c	/^  struct malloc_chunk* fd;         \/* double links -- used only if free. *\/$/;"	m	struct:malloc_chunk	typeref:struct:malloc_chunk *	file:
+fd	memusage.c	/^static int fd = -1;$/;"	v	typeref:typename:int	file:
+fd_nextsize	malloc.c	/^  struct malloc_chunk* fd_nextsize; \/* double links -- used only if free. *\/$/;"	m	struct:malloc_chunk	typeref:struct:malloc_chunk *	file:
+file_to_read	tst-malloc-fork-deadlock.c	/^static char *file_to_read;$/;"	v	typeref:typename:char *	file:
+fill_heap	tst-dynarray-fail.c	/^fill_heap (void)$/;"	f	typeref:struct:heap_filler *	file:
+fill_info_table1	mallocbug.c	/^char *fill_info_table1;$/;"	v	typeref:typename:char *
+first	malloc.c	/^#define first(/;"	d	file:
+first	memusage.c	/^static struct entry first;$/;"	v	typeref:struct:entry	file:
+fixed_test	tst-calloc.c	/^fixed_test (int size)$/;"	f	typeref:typename:void	file:
+flags	malloc.c	/^  int flags;$/;"	m	struct:malloc_state	typeref:typename:int	file:
+flood	mcheck.c	/^# define flood /;"	d	file:
+flood	mcheck.c	/^flood (void *ptr, int val, size_t size)$/;"	f	typeref:typename:void	file:
+flushall_thread_function	tst-malloc-fork-deadlock.c	/^flushall_thread_function (void *closure)$/;"	f	typeref:typename:void *	file:
+fooalign	obstack.c	/^struct fooalign$/;"	s	file:
+fooround	obstack.c	/^union fooround$/;"	u	file:
+fordblks	malloc.h	/^  int fordblks; \/* total free space *\/$/;"	m	struct:mallinfo	typeref:typename:int
+fork_thread_count	tst-malloc-fork-deadlock.c	/^  fork_thread_count = 4,$/;"	e	enum:__anon81d4a1790103	file:
+fork_thread_function	tst-malloc-fork-deadlock.c	/^fork_thread_function (void *closure)$/;"	f	typeref:typename:void *	file:
+fp	tst-mtrace.c	/^static FILE *fp;$/;"	v	typeref:typename:FILE *	file:
+free	memusage.c	/^free (void *ptr)$/;"	f	typeref:typename:void
+free	tst-interpose-aux.c	/^free (void *ptr)$/;"	f	typeref:typename:void
+free_check	hooks.c	/^free_check (void *mem, const void *caller)$/;"	f	typeref:typename:void	file:
+free_fill_heap	tst-dynarray-fail.c	/^free_fill_heap (struct heap_filler *head)$/;"	f	typeref:typename:void	file:
+free_internal	tst-interpose-aux.c	/^free_internal (const char *op, struct allocation_header *header)$/;"	f	typeref:typename:void	file:
+free_list	arena.c	/^static mstate free_list;$/;"	v	typeref:typename:mstate	file:
+free_perturb	malloc.c	/^free_perturb (char *p, size_t n)$/;"	f	typeref:typename:void	file:
+freefun	obstack.h	/^  void (*freefun) (void *, struct _obstack_chunk *);$/;"	m	struct:obstack	typeref:typename:void (*)(void *,struct _obstack_chunk *)
+freehook	mcheck.c	/^freehook (void *ptr, const void *caller)$/;"	f	typeref:typename:void	file:
+freep	memusage.c	/^static void (*freep) (void *);$/;"	v	typeref:typename:void (*)(void *)	file:
+from	malloc.c	/^	size_t from;$/;"	m	struct:weak_alias::__anon4259f6ce0108	typeref:typename:size_t	file:
+fsmblks	malloc.h	/^  int fsmblks;  \/* space available in freed fastbin blocks *\/$/;"	m	struct:mallinfo	typeref:typename:int
+full_heap_check	tst-mallocstate.c	/^full_heap_check (void)$/;"	f	typeref:typename:void	file:
+fwrite	mtrace.c	/^#define fwrite(/;"	d	file:
+get_binmap	malloc.c	/^#define get_binmap(/;"	d	file:
+get_free_list	arena.c	/^get_free_list (void)$/;"	f	typeref:typename:mstate	file:
+get_header	tst-interpose-aux.c	/^static struct allocation_header *get_header (const char *op, void *ptr)$/;"	f	typeref:struct:allocation_header *	file:
+get_max_fast	malloc.c	/^get_max_fast (void)$/;"	f	typeref:typename:INTERNAL_SIZE_T	file:
+global_max_fast	malloc.c	/^static INTERNAL_SIZE_T global_max_fast;$/;"	v	typeref:typename:INTERNAL_SIZE_T	file:
+global_seed	tst-mallocstate.c	/^static unsigned long long global_seed;$/;"	v	typeref:typename:unsigned long long	file:
+grand_total	memusage.c	/^static memusage_size_t grand_total;$/;"	v	typeref:typename:memusage_size_t	file:
+grow_heap	arena.c	/^grow_heap (heap_info *h, long diff)$/;"	f	typeref:typename:int	file:
+have_fastchunks	malloc.c	/^  int have_fastchunks;$/;"	m	struct:malloc_state	typeref:typename:int	file:
+hblkhd	malloc.h	/^  int hblkhd;   \/* space in mmapped regions *\/$/;"	m	struct:mallinfo	typeref:typename:int
+hblks	malloc.h	/^  int hblks;    \/* number of mmapped regions *\/$/;"	m	struct:mallinfo	typeref:typename:int
+hdr	mcheck.c	/^struct hdr$/;"	s	file:
+header	memusage.c	/^struct header$/;"	s	file:
+headers	Makefile	/^headers := $(dist-headers) obstack.h mcheck.h$/;"	m
+heap	memusage.c	/^  uint64_t heap;$/;"	m	struct:entry	typeref:typename:uint64_t	file:
+heap	memusagestat.c	/^  uint64_t heap;$/;"	m	struct:entry	typeref:typename:uint64_t	file:
+heap_activity	tst-mallocstate.c	/^heap_activity (void)$/;"	f	typeref:typename:void	file:
+heap_activity_allocations	tst-mallocstate.c	/^static struct allocation heap_activity_allocations$/;"	v	typeref:struct:allocation[]	file:
+heap_activity_allocations_count	tst-mallocstate.c	/^enum { heap_activity_allocations_count = 32 };$/;"	e	enum:__anonbd4366d70503	file:
+heap_activity_deallocate	tst-mallocstate.c	/^heap_activity_deallocate (void)$/;"	f	typeref:typename:void	file:
+heap_activity_seed_counter	tst-mallocstate.c	/^static int heap_activity_seed_counter = 1000 * 1000;$/;"	v	typeref:typename:int	file:
+heap_alignment	tst-mallocstate.c	/^    heap_alignment = 8,$/;"	e	enum:dumped_heap_alloc::__anonbd4366d70303	file:
+heap_alignment_mask	tst-mallocstate.c	/^    heap_alignment_mask = heap_alignment - 1$/;"	e	enum:dumped_heap_alloc::__anonbd4366d70303	file:
+heap_filler	tst-dynarray-fail.c	/^struct heap_filler$/;"	s	file:
+heap_for_ptr	arena.c	/^#define heap_for_ptr(/;"	d	file:
+heap_info	arena.c	/^} heap_info;$/;"	t	typeref:struct:_heap_info	file:
+heap_initialized	tst-mallocstate.c	/^static volatile bool heap_initialized;$/;"	v	typeref:typename:volatile bool	file:
+heap_trim	arena.c	/^heap_trim (heap_info *heap, size_t pad)$/;"	f	typeref:typename:int	file:
+histogram	memusage.c	/^static memusage_cntr_t histogram[65536 \/ 16];$/;"	v	typeref:typename:memusage_cntr_t[]	file:
+i	obstack.c	/^  uintmax_t i;$/;"	m	union:fooround	typeref:typename:uintmax_t	file:
+idx2bit	malloc.c	/^#define idx2bit(/;"	d	file:
+idx2block	malloc.c	/^#define idx2block(/;"	d	file:
+idx_calloc	memusage.c	/^  idx_calloc,$/;"	e	enum:__anonbd025fea0103	file:
+idx_free	memusage.c	/^  idx_free,$/;"	e	enum:__anonbd025fea0103	file:
+idx_last	memusage.c	/^  idx_last$/;"	e	enum:__anonbd025fea0103	file:
+idx_malloc	memusage.c	/^  idx_malloc = 0,$/;"	e	enum:__anonbd025fea0103	file:
+idx_mmap_a	memusage.c	/^  idx_mmap_a,$/;"	e	enum:__anonbd025fea0103	file:
+idx_mmap_r	memusage.c	/^  idx_mmap_r,$/;"	e	enum:__anonbd025fea0103	file:
+idx_mmap_w	memusage.c	/^  idx_mmap_w,$/;"	e	enum:__anonbd025fea0103	file:
+idx_mremap	memusage.c	/^  idx_mremap,$/;"	e	enum:__anonbd025fea0103	file:
+idx_munmap	memusage.c	/^  idx_munmap,$/;"	e	enum:__anonbd025fea0103	file:
+idx_realloc	memusage.c	/^  idx_realloc,$/;"	e	enum:__anonbd025fea0103	file:
+ifd	tst-malloc-stats-cancellation.c	/^  int ifd;$/;"	m	struct:buffer_tp_args	typeref:typename:int	file:
+in_smallbin_range	malloc.c	/^#define in_smallbin_range(/;"	d	file:
+init	memusage.c	/^init (void)$/;"	f	typeref:typename:void	file:
+init_heap	tst-mallocstate.c	/^init_heap (void)$/;"	f	typeref:typename:void	file:
+initial_allocations	tst-mallocstate.c	/^initial_allocations (void)$/;"	f	typeref:typename:void	file:
+initial_brk	tst-interpose-skeleton.c	/^static void *initial_brk;$/;"	v	typeref:typename:void *	file:
+initial_top	malloc.c	/^#define initial_top(/;"	d	file:
+initialized	memusage.c	/^static int initialized;$/;"	v	typeref:typename:int	file:
+inner_thread_count	tst-malloc-thread-exit.c	/^static int inner_thread_count = 4;$/;"	v	typeref:typename:int	file:
+inplace	memusage.c	/^static memusage_cntr_t inplace;$/;"	v	typeref:typename:memusage_cntr_t	file:
+inplace_mremap	memusage.c	/^static memusage_cntr_t inplace_mremap;$/;"	v	typeref:typename:memusage_cntr_t	file:
+install-bin	Makefile	/^install-bin = memusagestat$/;"	m
+install-bin-script	Makefile	/^install-bin-script = mtrace$/;"	m
+install-lib	Makefile	/^install-lib := libmcheck.a$/;"	m
+int_array	tst-dynarray-shared.h	/^struct int_array$/;"	s
+int_handler	memusage.c	/^int_handler (int signo)$/;"	f	typeref:typename:void	file:
+int_mallinfo	malloc.c	/^int_mallinfo (mstate av, struct mallinfo *m)$/;"	f	typeref:typename:void	file:
+inuse	malloc.c	/^#define inuse(/;"	d	file:
+inuse_bit_at_offset	malloc.c	/^#define inuse_bit_at_offset(/;"	d	file:
+iterations	tst-mallocfork2.c	/^enum { iterations = 10000 };$/;"	e	enum:__anonca125e1a0303	file:
+join_threads	tst-malloc-fork-deadlock.c	/^join_threads (pthread_t *threads, size_t count)$/;"	f	typeref:typename:void	file:
+keepcost	malloc.h	/^  int keepcost; \/* top-most, releasable (via malloc_trim) space *\/$/;"	m	struct:mallinfo	typeref:typename:int
+key	malloc.c	/^  struct tcache_perthread_struct *key;$/;"	m	struct:tcache_entry	typeref:struct:tcache_perthread_struct *	file:
+large	memusage.c	/^static memusage_cntr_t large;$/;"	v	typeref:typename:memusage_cntr_t	file:
+largebin_index	malloc.c	/^#define largebin_index(/;"	d	file:
+largebin_index_32	malloc.c	/^#define largebin_index_32(/;"	d	file:
+largebin_index_32_big	malloc.c	/^#define largebin_index_32_big(/;"	d	file:
+largebin_index_64	malloc.c	/^#define largebin_index_64(/;"	d	file:
+last	malloc.c	/^#define last(/;"	d	file:
+last_allocation_function	tst-malloc-thread-fail.c	/^  last_allocation_function = with_calloc$/;"	e	enum:__anon306ab4a40103	file:
+last_remainder	malloc.c	/^  mchunkptr last_remainder;$/;"	m	struct:malloc_state	typeref:typename:mchunkptr	file:
+length	dynarray.h	/^  size_t length;$/;"	m	struct:dynarray_finalize_result	typeref:typename:size_t
+length	memusage.c	/^  size_t length;$/;"	m	struct:header	typeref:typename:size_t	file:
+length	tst-dynarray-shared.h	/^  size_t length;$/;"	m	struct:int_array	typeref:typename:size_t
+length	tst-dynarray-shared.h	/^  size_t length;$/;"	m	struct:str_array	typeref:typename:size_t
+length	tst-dynarray.c	/^  size_t length;$/;"	m	struct:long_array	typeref:typename:size_t	file:
+lib	Makefile	/^lib := memusagestat$/;"	m
+lib	Makefile	/^lib: $(objpfx)libmcheck.a$/;"	t
+libc_hidden_def	malloc.c	/^libc_hidden_def (__libc_free)$/;"	f
+libc_hidden_def	malloc.c	/^libc_hidden_def (__libc_malloc)$/;"	f
+libc_hidden_def	malloc.c	/^libc_hidden_def (__libc_realloc)$/;"	f
+libc_hidden_def	mcheck.c	/^libc_hidden_def (mcheck)$/;"	f
+libc_hidden_def	mcheck.c	/^libc_hidden_def (mcheck_check_all)$/;"	f	file:
+libc_hidden_def	mtrace.c	/^libc_hidden_def (tr_break)$/;"	f	file:
+libc_hidden_proto	morecore.c	/^libc_hidden_proto (__sbrk)$/;"	f
+libc_hidden_proto	mtrace.c	/^libc_hidden_proto (tr_break)$/;"	f
+libmemusage-inhibit-o	Makefile	/^libmemusage-inhibit-o = $(filter-out .os,$(object-suffixes))$/;"	m
+libmemusage-routines	Makefile	/^libmemusage-routines = memusage$/;"	m
+limit	obstack.h	/^  char *limit;                  \/* 1 past end of this chunk *\/$/;"	m	struct:_obstack_chunk	typeref:typename:char *
+line_string	tst-interpose-skeleton.c	/^line_string (int number, char *buffer, size_t length)$/;"	f	typeref:typename:void	file:
+link_blk	mcheck.c	/^link_blk (struct hdr *hdr)$/;"	f	typeref:typename:void	file:
+list	tst-malloc-thread-fail.c	/^  struct list {$/;"	s	function:allocate_thread	file:
+list	tst-malloc_info.c	/^  struct list$/;"	s	function:allocation_thread_function	file:
+liveness_signal_handler	tst-mallocfork2.c	/^liveness_signal_handler (int signo)$/;"	f	typeref:typename:void	file:
+location	mtrace.pl	/^sub location {$/;"	s
+lock	tst-interpose-aux.c	/^lock (void)$/;"	f	typeref:typename:void	file:
+lock_and_info	mtrace.c	/^lock_and_info (const void *caller, Dl_info *mem)$/;"	f	typeref:typename:Dl_info *	file:
+long_array	tst-dynarray.c	/^struct long_array$/;"	s	file:
+mabort	mcheck.c	/^mabort (enum mcheck_status status)$/;"	f	typeref:typename:void	file:
+magic	hooks.c	/^  long magic;$/;"	m	struct:malloc_save_state	typeref:typename:long	file:
+magic	mcheck.c	/^  unsigned long int magic;      \/* Magic number to check header integrity.  *\/$/;"	m	struct:hdr	typeref:typename:unsigned long int	file:
+magic	memusage.c	/^  size_t magic;$/;"	m	struct:header	typeref:typename:size_t	file:
+magic	tst-mallocstate.c	/^  long magic;$/;"	m	struct:__anonbd4366d70208	typeref:typename:long	file:
+magic2	mcheck.c	/^  unsigned long int magic2;     \/* Extra, keeps us doubleword aligned.  *\/$/;"	m	struct:hdr	typeref:typename:unsigned long int	file:
+magicbyte	hooks.c	/^magicbyte (const void *p)$/;"	f	typeref:typename:unsigned char	file:
+main	mallocbug.c	/^main (int argc, char *argv[])$/;"	f	typeref:typename:int
+main	memusagestat.c	/^main (int argc, char *argv[])$/;"	f	typeref:typename:int
+main	tst-malloc-stats-cancellation.c	/^main (void)$/;"	f	typeref:typename:int
+main_arena	malloc.c	/^static struct malloc_state main_arena =$/;"	v	typeref:struct:malloc_state	file:
+mallenv	mtrace.c	/^static const char mallenv[] = "MALLOC_TRACE";$/;"	v	typeref:typename:const char[]	file:
+mallinfo	malloc.h	/^struct mallinfo$/;"	s
+malloc	memusage.c	/^malloc (size_t len)$/;"	f	typeref:typename:void *
+malloc	tst-interpose-aux.c	/^malloc (size_t size)$/;"	f	typeref:typename:void *
+malloc_allocation_count	tst-interpose-aux.c	/^malloc_allocation_count (void)$/;"	f	typeref:typename:size_t
+malloc_check	hooks.c	/^malloc_check (size_t sz, const void *caller)$/;"	f	typeref:typename:void *	file:
+malloc_check_get_size	hooks.c	/^malloc_check_get_size (mchunkptr p)$/;"	f	typeref:typename:size_t	file:
+malloc_chunk	malloc.c	/^struct malloc_chunk {$/;"	s	file:
+malloc_consolidate	malloc.c	/^static void malloc_consolidate(mstate av)$/;"	f	typeref:typename:void	file:
+malloc_deallocation_count	tst-interpose-aux.c	/^malloc_deallocation_count (void)$/;"	f	typeref:typename:size_t
+malloc_first_thread	tst-malloc-thread-exit.c	/^malloc_first_thread (void * closure)$/;"	f	typeref:typename:void *	file:
+malloc_get_state	hooks.c	/^malloc_get_state (void)$/;"	f	typeref:typename:void * attribute_compat_text_section
+malloc_hook_ini	hooks.c	/^malloc_hook_ini (size_t sz, const void *caller)$/;"	f	typeref:typename:void *	file:
+malloc_init_state	malloc.c	/^malloc_init_state (mstate av)$/;"	f	typeref:typename:void	file:
+malloc_internal	tst-interpose-aux.c	/^malloc_internal (size_t size)$/;"	f	typeref:typename:void *	file:
+malloc_maximum_size	tst-mallocfork2.c	/^enum { malloc_maximum_size = 70000 };$/;"	e	enum:__anonca125e1a0203	file:
+malloc_objects	tst-mallocfork2.c	/^enum { malloc_objects = 1009 };$/;"	e	enum:__anonca125e1a0103	file:
+malloc_opt_barrier	mcheck.c	/^#define malloc_opt_barrier(/;"	d	file:
+malloc_par	malloc.c	/^struct malloc_par$/;"	s	file:
+malloc_printerr	malloc.c	/^malloc_printerr (const char *str)$/;"	f	typeref:typename:void	file:
+malloc_save_state	hooks.c	/^struct malloc_save_state$/;"	s	file:
+malloc_set_state	hooks.c	/^malloc_set_state (void *msptr)$/;"	f	typeref:typename:int attribute_compat_text_section
+malloc_size	tst-malloc-thread-exit.c	/^static size_t malloc_size = 32;$/;"	v	typeref:typename:size_t	file:
+malloc_state	malloc.c	/^struct malloc_state$/;"	s	file:
+malloc_trace_buffer	mtrace.c	/^static char *malloc_trace_buffer;$/;"	v	typeref:typename:char *	file:
+mallochook	mcheck.c	/^mallochook (size_t size, const void *caller)$/;"	f	typeref:typename:void *	file:
+mallocp	memusage.c	/^static void *(*mallocp)(size_t);$/;"	v	typeref:typename:void * (*)(size_t)	file:
+mallstream	mtrace.c	/^static FILE *mallstream;$/;"	v	typeref:typename:FILE *	file:
+mallwatch	mtrace.c	/^void *mallwatch;$/;"	v	typeref:typename:void *
+mark_bin	malloc.c	/^#define mark_bin(/;"	d	file:
+max_allocations	tst-interpose-aux.c	/^enum { max_allocations = 65536 };$/;"	e	enum:__anon49c3ed920203	file:
+max_count	tst-dynarray.c	/^enum { max_count = 20 };$/;"	e	enum:__anon91025b280103	file:
+max_fast	hooks.c	/^  unsigned long max_fast;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+max_fast	tst-mallocstate.c	/^  unsigned long max_fast;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+max_mmapped_mem	hooks.c	/^  unsigned long max_mmapped_mem;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+max_mmapped_mem	malloc.c	/^  INTERNAL_SIZE_T max_mmapped_mem;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+max_mmapped_mem	tst-mallocstate.c	/^  unsigned long max_mmapped_mem;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+max_n_mmaps	hooks.c	/^  unsigned int max_n_mmaps;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned int	file:
+max_n_mmaps	malloc.c	/^  int max_n_mmaps;$/;"	m	struct:malloc_par	typeref:typename:int	file:
+max_n_mmaps	tst-mallocstate.c	/^  unsigned int max_n_mmaps;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned int	file:
+max_sbrked_mem	hooks.c	/^  unsigned long max_sbrked_mem;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+max_sbrked_mem	tst-mallocstate.c	/^  unsigned long max_sbrked_mem;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+max_size	tst-mallocstate.c	/^enum { max_size = 64 };$/;"	e	enum:__anonbd4366d70103	file:
+max_system_mem	malloc.c	/^  INTERNAL_SIZE_T max_system_mem;$/;"	m	struct:malloc_state	typeref:typename:INTERNAL_SIZE_T	file:
+max_total_mem	hooks.c	/^  unsigned long max_total_mem;	\/* Always 0, for backwards compatibility.  *\/$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+max_total_mem	tst-mallocstate.c	/^  unsigned long max_total_mem;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+maybe_empty_object	obstack.h	/^  unsigned maybe_empty_object : 1; \/* There is a possibility that the current$/;"	m	struct:obstack	typeref:typename:unsigned:1
+mbinptr	malloc.c	/^typedef struct malloc_chunk *mbinptr;$/;"	t	typeref:struct:malloc_chunk *	file:
+mcheck	mcheck.c	/^mcheck (void (*func) (enum mcheck_status))$/;"	f	typeref:typename:int
+mcheck_check_all	mcheck.c	/^mcheck_check_all (void)$/;"	f	typeref:typename:void
+mcheck_status	mcheck.h	/^enum mcheck_status$/;"	g
+mcheck_used	mcheck.c	/^static int mcheck_used;$/;"	v	typeref:typename:int	file:
+mchunk_prev_size	malloc.c	/^  INTERNAL_SIZE_T      mchunk_prev_size;  \/* Size of previous chunk (if free).  *\/$/;"	m	struct:malloc_chunk	typeref:typename:INTERNAL_SIZE_T	file:
+mchunk_size	malloc.c	/^  INTERNAL_SIZE_T      mchunk_size;       \/* Size in bytes, including overhead. *\/$/;"	m	struct:malloc_chunk	typeref:typename:INTERNAL_SIZE_T	file:
+mchunkptr	malloc.c	/^typedef struct malloc_chunk* mchunkptr;$/;"	t	typeref:struct:malloc_chunk *	file:
+me	memusage.c	/^me (void)$/;"	f	typeref:typename:void	file:
+mem2chunk	malloc.c	/^#define mem2chunk(/;"	d	file:
+mem2chunk_check	hooks.c	/^mem2chunk_check (void *mem, unsigned char **magic_p)$/;"	f	typeref:typename:mchunkptr	file:
+mem2mem_check	hooks.c	/^mem2mem_check (void *ptr, size_t req_sz)$/;"	f	typeref:typename:void *	file:
+memalign_check	hooks.c	/^memalign_check (size_t alignment, size_t bytes, const void *caller)$/;"	f	typeref:typename:void *	file:
+memalign_hook_ini	hooks.c	/^memalign_hook_ini (size_t alignment, size_t sz, const void *caller)$/;"	f	typeref:typename:void *	file:
+memalignhook	mcheck.c	/^memalignhook (size_t alignment, size_t size,$/;"	f	typeref:typename:void *	file:
+memusagestat-modules	Makefile	/^memusagestat-modules = memusagestat$/;"	m
+merror	tst-malloc.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-mallopt.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-mcheck.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-memalign.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-posix_memalign.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-pvalloc.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-realloc.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+merror	tst-valloc.c	/^merror (const char *msg)$/;"	f	typeref:typename:void	file:
+mfastbinptr	malloc.c	/^typedef struct malloc_chunk *mfastbinptr;$/;"	t	typeref:struct:malloc_chunk *	file:
+misaligned_chunk	malloc.c	/^#define misaligned_chunk(/;"	d	file:
+mmap	memusage.c	/^mmap (void *start, size_t len, int prot, int flags, int fd, off_t offset)$/;"	f	typeref:typename:void *
+mmap64	memusage.c	/^mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)$/;"	f	typeref:typename:void *
+mmap64p	memusage.c	/^static void *(*mmap64p) (void *, size_t, int, int, int, off64_t);$/;"	v	typeref:typename:void * (*)(void *,size_t,int,int,int,off64_t)	file:
+mmap_threshold	hooks.c	/^  unsigned long mmap_threshold;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+mmap_threshold	malloc.c	/^  INTERNAL_SIZE_T mmap_threshold;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+mmap_threshold	tst-mallocstate.c	/^  unsigned long mmap_threshold;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+mmap_works	tst-dynarray-fail.c	/^mmap_works (void)$/;"	f	typeref:typename:bool	file:
+mmapp	memusage.c	/^static void *(*mmapp) (void *, size_t, int, int, int, off_t);$/;"	v	typeref:typename:void * (*)(void *,size_t,int,int,int,off_t)	file:
+mmapped_mem	hooks.c	/^  unsigned long mmapped_mem;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+mmapped_mem	malloc.c	/^  INTERNAL_SIZE_T mmapped_mem;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+mmapped_mem	tst-mallocstate.c	/^  unsigned long mmapped_mem;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+more_help	memusagestat.c	/^more_help (int key, const char *text, void *input)$/;"	f	typeref:typename:char *	file:
+mp_	malloc.c	/^static struct malloc_par mp_ =$/;"	v	typeref:struct:malloc_par	file:
+mprobe	mcheck.c	/^mprobe (void *ptr)$/;"	f	typeref:enum:mcheck_status
+mprotect_size	arena.c	/^  size_t mprotect_size; \/* Size in bytes that has been mprotected$/;"	m	struct:_heap_info	typeref:typename:size_t	file:
+mremap	memusage.c	/^mremap (void *start, size_t old_len, size_t len, int flags, ...)$/;"	f	typeref:typename:void *
+mremap_chunk	malloc.c	/^mremap_chunk (mchunkptr p, size_t new_size)$/;"	f	typeref:typename:mchunkptr	file:
+mremapp	memusage.c	/^static void *(*mremapp) (void *, size_t, size_t, int, void *);$/;"	v	typeref:typename:void * (*)(void *,size_t,size_t,int,void *)	file:
+mtrace	mtrace.c	/^mtrace (void)$/;"	f	typeref:typename:void
+mtrim	malloc.c	/^mtrim (mstate av, size_t pad)$/;"	f	typeref:typename:int	file:
+munmap	memusage.c	/^munmap (void *start, size_t len)$/;"	f	typeref:typename:int
+munmap_chunk	malloc.c	/^munmap_chunk (mchunkptr p)$/;"	f	typeref:typename:void	file:
+munmapp	memusage.c	/^static int (*munmapp) (void *, size_t);$/;"	v	typeref:typename:int (*)(void *,size_t)	file:
+muntrace	mtrace.c	/^muntrace (void)$/;"	f	typeref:typename:void
+musable	malloc.c	/^musable (void *mem)$/;"	f	typeref:typename:size_t	file:
+mutex	tst-interpose-aux.c	/^static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v	typeref:typename:pthread_mutex_t	file:
+my_free	tst-mallocstate.c	/^my_free (void *ptr)$/;"	f	typeref:typename:void	file:
+n_mmaps	hooks.c	/^  unsigned int n_mmaps;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned int	file:
+n_mmaps	malloc.c	/^  int n_mmaps;$/;"	m	struct:malloc_par	typeref:typename:int	file:
+n_mmaps	tst-mallocstate.c	/^  unsigned int n_mmaps;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned int	file:
+n_mmaps_max	hooks.c	/^  unsigned int n_mmaps_max;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned int	file:
+n_mmaps_max	malloc.c	/^  int n_mmaps_max;$/;"	m	struct:malloc_par	typeref:typename:int	file:
+n_mmaps_max	tst-mallocstate.c	/^  unsigned int n_mmaps_max;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned int	file:
+narenas	arena.c	/^static size_t narenas = 1;$/;"	v	typeref:typename:size_t	file:
+narenas	hooks.c	/^  unsigned long narenas;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+narenas	tst-mallocstate.c	/^  unsigned long narenas;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+new_heap	arena.c	/^new_heap (size_t size, size_t top_pad)$/;"	f	typeref:typename:heap_info *	file:
+next	malloc.c	/^  struct malloc_state *next;$/;"	m	struct:malloc_state	typeref:struct:malloc_state *	file:
+next	malloc.c	/^  struct tcache_entry *next;$/;"	m	struct:tcache_entry	typeref:struct:tcache_entry *	file:
+next	mcheck.c	/^  struct hdr *next;$/;"	m	struct:hdr	typeref:struct:hdr *	file:
+next	tst-dynarray-fail.c	/^  struct heap_filler *next;$/;"	m	struct:heap_filler	typeref:struct:heap_filler *	file:
+next	tst-malloc-thread-fail.c	/^    struct list *next;$/;"	m	struct:allocate_thread::list	typeref:struct:list *	file:
+next	tst-malloc_info.c	/^    struct list *next;$/;"	m	struct:allocation_thread_function::list	typeref:struct:list *	file:
+next_bin	malloc.c	/^#define next_bin(/;"	d	file:
+next_chunk	malloc.c	/^#define next_chunk(/;"	d	file:
+next_free	malloc.c	/^  struct malloc_state *next_free;$/;"	m	struct:malloc_state	typeref:struct:malloc_state *	file:
+next_free	obstack.h	/^  char *next_free;              \/* where to add next char to current object *\/$/;"	m	struct:obstack	typeref:typename:char *
+next_heap_chunk	tst-mallocstate.c	/^static size_t *next_heap_chunk;$/;"	v	typeref:typename:size_t *	file:
+no_dyn_threshold	malloc.c	/^  int no_dyn_threshold;$/;"	m	struct:malloc_par	typeref:typename:int	file:
+non-lib.a	Makefile	/^non-lib.a := libmcheck.a$/;"	m
+noncontiguous	malloc.c	/^#define noncontiguous(/;"	d	file:
+not_me	memusage.c	/^static bool not_me;$/;"	v	typeref:typename:bool	file:
+nsizes	malloc.c	/^#define nsizes /;"	d	file:
+null_test	tst-calloc.c	/^null_test (void)$/;"	f	typeref:typename:void	file:
+object_base	obstack.h	/^  char *object_base;            \/* address of object we are building *\/$/;"	m	struct:obstack	typeref:typename:char *
+obstack	obstack.h	/^struct obstack          \/* control current object in current chunk *\/$/;"	s
+obstack_1grow	obstack.h	/^# define obstack_1grow(/;"	d
+obstack_1grow_fast	obstack.h	/^#define obstack_1grow_fast(/;"	d
+obstack_alignment_mask	obstack.h	/^#define obstack_alignment_mask(/;"	d
+obstack_alloc	obstack.h	/^# define obstack_alloc(/;"	d
+obstack_alloc_failed_handler	obstack.c	/^void (*obstack_alloc_failed_handler) (void) = print_and_abort;$/;"	v	typeref:typename:void (*)(void)
+obstack_base	obstack.h	/^#define obstack_base(/;"	d
+obstack_begin	obstack.h	/^#define obstack_begin(/;"	d
+obstack_blank	obstack.h	/^# define obstack_blank(/;"	d
+obstack_blank_fast	obstack.h	/^#define obstack_blank_fast(/;"	d
+obstack_chunk_alloc	tst-obstack.c	/^#define obstack_chunk_alloc /;"	d	file:
+obstack_chunk_free	tst-obstack.c	/^#define obstack_chunk_free /;"	d	file:
+obstack_chunk_size	obstack.h	/^#define obstack_chunk_size(/;"	d
+obstack_chunkfun	obstack.h	/^#define obstack_chunkfun(/;"	d
+obstack_copy	obstack.h	/^# define obstack_copy(/;"	d
+obstack_copy0	obstack.h	/^# define obstack_copy0(/;"	d
+obstack_empty_p	obstack.h	/^# define obstack_empty_p(/;"	d
+obstack_exit_failure	obstack.c	/^#  define obstack_exit_failure /;"	d	file:
+obstack_exit_failure	obstack.c	/^int obstack_exit_failure = EXIT_FAILURE;$/;"	v	typeref:typename:int
+obstack_finish	obstack.h	/^# define obstack_finish(/;"	d
+obstack_free	obstack.h	/^# define obstack_free(/;"	d
+obstack_freefun	obstack.h	/^#define obstack_freefun(/;"	d
+obstack_grow	obstack.h	/^# define obstack_grow(/;"	d
+obstack_grow0	obstack.h	/^# define obstack_grow0(/;"	d
+obstack_init	obstack.h	/^#define obstack_init(/;"	d
+obstack_int_grow	obstack.h	/^# define obstack_int_grow(/;"	d
+obstack_int_grow_fast	obstack.h	/^# define obstack_int_grow_fast(/;"	d
+obstack_make_room	obstack.h	/^# define obstack_make_room(/;"	d
+obstack_memory_used	obstack.h	/^#define obstack_memory_used(/;"	d
+obstack_next_free	obstack.h	/^#define obstack_next_free(/;"	d
+obstack_object_size	obstack.h	/^# define obstack_object_size(/;"	d
+obstack_ptr_grow	obstack.h	/^# define obstack_ptr_grow(/;"	d
+obstack_ptr_grow_fast	obstack.h	/^# define obstack_ptr_grow_fast(/;"	d
+obstack_room	obstack.h	/^# define obstack_room(/;"	d
+obstack_specify_allocation	obstack.h	/^#define obstack_specify_allocation(/;"	d
+obstack_specify_allocation_with_arg	obstack.h	/^#define obstack_specify_allocation_with_arg(/;"	d
+old_free_hook	mcheck.c	/^static void (*old_free_hook)(void *ptr, const void *);$/;"	v	typeref:typename:void (*)(void * ptr,const void *)	file:
+old_malloc_hook	mcheck.c	/^static void *(*old_malloc_hook) (size_t size, const void *);$/;"	v	typeref:typename:void * (*)(size_t size,const void *)	file:
+old_memalign_hook	mcheck.c	/^static void *(*old_memalign_hook) (size_t alignment, size_t size,$/;"	v	typeref:typename:void * (*)(size_t alignment,size_t size,const void *)	file:
+old_realloc_hook	mcheck.c	/^static void *(*old_realloc_hook) (void *ptr, size_t size,$/;"	v	typeref:typename:void * (*)(void * ptr,size_t size,const void *)	file:
+options	memusagestat.c	/^static const struct argp_option options[] =$/;"	v	typeref:typename:const struct argp_option[]	file:
+ordblks	malloc.h	/^  int ordblks;  \/* number of free chunks *\/$/;"	m	struct:mallinfo	typeref:typename:int
+others	Makefile	/^others: $(objpfx)memusage$/;"	t
+others-extras	Makefile	/^others-extras = mcheck-init.o$/;"	m
+outer_thread	tst-malloc-thread-exit.c	/^outer_thread (void *closure)$/;"	f	typeref:typename:void *	file:
+outer_thread_count	tst-malloc-thread-exit.c	/^  enum { outer_thread_count = 2 };$/;"	e	enum:do_test::__anon2fb5e1a20103	file:
+outname	memusagestat.c	/^static char *outname;$/;"	v	typeref:typename:char *	file:
+p	obstack.c	/^  void *p;$/;"	m	union:fooround	typeref:typename:void *	file:
+pad	arena.c	/^  char pad[-6 * SIZE_SZ & MALLOC_ALIGN_MASK];$/;"	m	struct:_heap_info	typeref:typename:char[]	file:
+page_size	tst-malloc-thread-fail.c	/^static unsigned long page_size;$/;"	v	typeref:typename:unsigned long	file:
+pagesize	tst-malloc-too-large.c	/^static long pagesize;$/;"	v	typeref:typename:long	file:
+parse_opt	memusagestat.c	/^parse_opt (int key, char *arg, struct argp_state *state)$/;"	f	typeref:typename:error_t	file:
+peak_heap	memusage.c	/^#define peak_heap /;"	d	file:
+peak_stack	memusage.c	/^#define peak_stack /;"	d	file:
+peak_total	memusage.c	/^#define peak_total /;"	d	file:
+peak_use	memusage.c	/^static memusage_size_t peak_use[3];$/;"	v	typeref:typename:memusage_size_t[3]	file:
+pedantic	mcheck.c	/^static int pedantic;$/;"	v	typeref:typename:int	file:
+per_thread_allocations	tst-malloc_info.c	/^    per_thread_allocations$/;"	e	enum:__anona0f1a4a10103	file:
+perturb_byte	malloc.c	/^static int perturb_byte;$/;"	v	typeref:typename:int	file:
+pointer	tst-malloc-thread-fail.c	/^  void *pointer;$/;"	m	struct:allocate_result	typeref:typename:void *	file:
+prev	arena.c	/^  struct _heap_info *prev; \/* Previous heap. *\/$/;"	m	struct:_heap_info	typeref:struct:_heap_info *	file:
+prev	mcheck.c	/^  struct hdr *prev;$/;"	m	struct:hdr	typeref:struct:hdr *	file:
+prev	obstack.h	/^  struct _obstack_chunk *prev;  \/* address of prior chunk or NULL *\/$/;"	m	struct:_obstack_chunk	typeref:struct:_obstack_chunk *
+prev_chunk	malloc.c	/^#define prev_chunk(/;"	d	file:
+prev_inuse	malloc.c	/^#define prev_inuse(/;"	d	file:
+prev_size	malloc.c	/^#define prev_size(/;"	d	file:
+print	tst-mtrace.c	/^print (const void *node, VISIT value, int level)$/;"	f	typeref:typename:void	file:
+print_and_abort	obstack.c	/^print_and_abort (void)$/;"	f	typeref:typename:_Noreturn void	file:
+print_version	memusagestat.c	/^print_version (FILE *stream, struct argp_state *state)$/;"	f	typeref:typename:void	file:
+progress_indicator	tst-mallocfork2.c	/^static volatile sig_atomic_t progress_indicator = 1;$/;"	v	typeref:typename:volatile sig_atomic_t	file:
+ptmalloc_init	arena.c	/^ptmalloc_init (void)$/;"	f	typeref:typename:void	file:
+rand_next	tst-mallocstate.c	/^rand_next (unsigned long long *seed)$/;"	f	typeref:typename:unsigned int	file:
+random_test	tst-calloc.c	/^random_test (void)$/;"	f	typeref:typename:void	file:
+randomize_buffer	tst-mallocstate.c	/^randomize_buffer (unsigned char *buffer, size_t length,$/;"	f	typeref:typename:void	file:
+read_thread_count	tst-malloc-fork-deadlock.c	/^  read_thread_count = 8,$/;"	e	enum:__anon81d4a1790103	file:
+read_thread_function	tst-malloc-fork-deadlock.c	/^read_thread_function (void *closure)$/;"	f	typeref:typename:void *	file:
+real_stderr	tst-malloc-stats-cancellation.c	/^  FILE *real_stderr;$/;"	m	struct:buffer_tp_args	typeref:typename:FILE *	file:
+realloc	memusage.c	/^realloc (void *old, size_t len)$/;"	f	typeref:typename:void *
+realloc	tst-interpose-aux.c	/^realloc (void *ptr, size_t n)$/;"	f	typeref:typename:void *
+realloc_check	hooks.c	/^realloc_check (void *oldmem, size_t bytes, const void *caller)$/;"	f	typeref:typename:void *	file:
+realloc_free	memusage.c	/^static memusage_cntr_t realloc_free;$/;"	v	typeref:typename:memusage_cntr_t	file:
+realloc_hook_ini	hooks.c	/^realloc_hook_ini (void *ptr, size_t sz, const void *caller)$/;"	f	typeref:typename:void *	file:
+realloc_internal	tst-interpose-aux.c	/^realloc_internal (void *ptr, size_t new_size)$/;"	f	typeref:typename:void *	file:
+reallocarray_nowarn	tst-reallocarray.c	/^reallocarray_nowarn (void *ptr, size_t nmemb, size_t size)$/;"	f	typeref:typename:void *	file:
+reallochook	mcheck.c	/^reallochook (void *ptr, size_t size, const void *caller)$/;"	f	typeref:typename:void *	file:
+reallocp	memusage.c	/^static void *(*reallocp) (void *, size_t);$/;"	v	typeref:typename:void * (*)(void *,size_t)	file:
+reduce_rlimit_as	tst-dynarray-fail.c	/^reduce_rlimit_as (void)$/;"	f	typeref:typename:void	file:
+release_libc_mem	mtrace.c	/^release_libc_mem (void)$/;"	f	typeref:typename:void __libc_freeres_fn_section	file:
+remove_from_free_list	arena.c	/^remove_from_free_list (mstate arena)$/;"	f	typeref:typename:void	file:
+request2size	malloc.c	/^#define request2size(/;"	d	file:
+reused_arena	arena.c	/^reused_arena (mstate avoid_arena)$/;"	f	typeref:typename:mstate	file:
+root	mcheck.c	/^static struct hdr *root;$/;"	v	typeref:struct:hdr *	file:
+routines	Makefile	/^routines = malloc morecore mcheck mtrace obstack reallocarray \\$/;"	m
+run_allocation_functions	tst-malloc-thread-fail.c	/^run_allocation_functions (void)$/;"	f	typeref:typename:void	file:
+run_one	tst-malloc-thread-fail.c	/^run_one (void)$/;"	f	typeref:typename:void	file:
+run_tests	tst-interpose-skeleton.c	/^run_tests (void *closure)$/;"	f	typeref:typename:void *	file:
+sLIBdir	Makefile	/^sLIBdir := $(shell echo $(slibdir) | sed 's,lib\\(\\|64\\)$$,\\\\\\\\$$LIB,')$/;"	m
+save_default_hooks	mtrace.c	/^save_default_hooks (void)$/;"	f	typeref:typename:__always_inline void	file:
+save_state	tst-mallocstate.c	/^} save_state =$/;"	v	typeref:struct:__anonbd4366d70208
+sbrk_base	hooks.c	/^  char *sbrk_base;$/;"	m	struct:malloc_save_state	typeref:typename:char *	file:
+sbrk_base	malloc.c	/^  char *sbrk_base;$/;"	m	struct:malloc_par	typeref:typename:char *	file:
+sbrk_base	tst-mallocstate.c	/^  char *sbrk_base;$/;"	m	struct:__anonbd4366d70208	typeref:typename:char *	file:
+sbrked_mem_bytes	hooks.c	/^  int sbrked_mem_bytes;$/;"	m	struct:malloc_save_state	typeref:typename:int	file:
+sbrked_mem_bytes	tst-mallocstate.c	/^  int sbrked_mem_bytes;$/;"	m	struct:__anonbd4366d70208	typeref:typename:int	file:
+scratch	dynarray-skeleton.c	/^  DYNARRAY_ELEMENT scratch[DYNARRAY_INITIAL_SIZE];$/;"	m	struct:DYNARRAY_STRUCT	typeref:typename:DYNARRAY_ELEMENT[]	file:
+seed	tst-mallocstate.c	/^  unsigned int seed;$/;"	m	struct:allocation	typeref:typename:unsigned int	file:
+set_contiguous	malloc.c	/^#define set_contiguous(/;"	d	file:
+set_default_hooks	mtrace.c	/^set_default_hooks (void)$/;"	f	typeref:typename:__always_inline void	file:
+set_foot	malloc.c	/^#define set_foot(/;"	d	file:
+set_head	malloc.c	/^#define set_head(/;"	d	file:
+set_head_size	malloc.c	/^#define set_head_size(/;"	d	file:
+set_initial_brk	tst-interpose-skeleton.c	/^set_initial_brk (void)$/;"	f	typeref:typename:void	file:
+set_inuse	malloc.c	/^#define set_inuse(/;"	d	file:
+set_inuse_bit_at_offset	malloc.c	/^#define set_inuse_bit_at_offset(/;"	d	file:
+set_max_fast	malloc.c	/^#define set_max_fast(/;"	d	file:
+set_non_main_arena	malloc.c	/^#define set_non_main_arena(/;"	d	file:
+set_noncontiguous	malloc.c	/^#define set_noncontiguous(/;"	d	file:
+set_prev_size	malloc.c	/^#define set_prev_size(/;"	d	file:
+set_trace_hooks	mtrace.c	/^set_trace_hooks (void)$/;"	f	typeref:typename:__always_inline void	file:
+setvbuf	mtrace.c	/^#define setvbuf(/;"	d	file:
+shared	tst-mallocfork2.c	/^static struct { pthread_barrier_t barrier; } *shared;$/;"	v	typeref:struct:__anonca125e1a0408 *
+short2	tst-alloc_buffer.c	/^    typedef short __attribute__ ((aligned (2))) short2;$/;"	t	function:test_large	typeref:typename:short	file:
+shrink_heap	arena.c	/^shrink_heap (heap_info *h, long diff)$/;"	f	typeref:typename:int	file:
+shuffle_allocation_tasks	tst-mallocstate.c	/^shuffle_allocation_tasks (void)$/;"	f	typeref:typename:void	file:
+sig_handler	tst-mallocfork.c	/^sig_handler (int signum)$/;"	f	typeref:typename:void	file:
+signal_sender	tst-mallocfork2.c	/^signal_sender (int signo, bool sleep)$/;"	f	typeref:typename:void	file:
+sigusr1_handler	tst-mallocfork2.c	/^sigusr1_handler (int signo)$/;"	f	typeref:typename:void	file:
+sigusr1_received	tst-mallocfork2.c	/^static volatile sig_atomic_t sigusr1_received;$/;"	v	typeref:typename:volatile sig_atomic_t	file:
+size	arena.c	/^  size_t size;   \/* Current size in bytes. *\/$/;"	m	struct:_heap_info	typeref:typename:size_t	file:
+size	mcheck.c	/^  size_t size;                  \/* Exact size requested by user.  *\/$/;"	m	struct:hdr	typeref:typename:size_t	file:
+size	tst-mallocstate.c	/^  unsigned int size;$/;"	m	struct:allocation	typeref:typename:unsigned int	file:
+size_t	mallocbug.c	/^#define size_t /;"	d	file:
+small_stack	tst-malloc-thread-fail.c	/^static pthread_attr_t small_stack;$/;"	v	typeref:typename:pthread_attr_t	file:
+smallbin_index	malloc.c	/^#define smallbin_index(/;"	d	file:
+smblks	malloc.h	/^  int smblks;   \/* number of fastbin blocks *\/$/;"	m	struct:mallinfo	typeref:typename:int
+stack	memusage.c	/^  uint64_t stack;$/;"	m	struct:entry	typeref:typename:uint64_t	file:
+stack	memusagestat.c	/^  uint64_t stack;$/;"	m	struct:entry	typeref:typename:uint64_t	file:
+start_barrier	tst-malloc-thread-fail.c	/^static pthread_barrier_t start_barrier;$/;"	v	typeref:typename:pthread_barrier_t	file:
+start_sp	memusage.c	/^static __thread uintptr_t start_sp;$/;"	v	typeref:typename:__thread uintptr_t	file:
+str_array	tst-dynarray-shared.h	/^struct str_array$/;"	s
+string	memusagestat.c	/^static const char *string;$/;"	v	typeref:typename:const char *	file:
+strong_alias	obstack.c	/^strong_alias (obstack_free, _obstack_free)$/;"	f
+subdir	Makefile	/^subdir	:= malloc$/;"	m
+sysincludes	Makefile	/^$(objpfx)memusagestat.o: sysincludes = # nothing$/;"	m
+sysmalloc	malloc.c	/^sysmalloc (INTERNAL_SIZE_T nb, mstate av)$/;"	f	typeref:typename:void *	file:
+system_mem	malloc.c	/^  INTERNAL_SIZE_T system_mem;$/;"	m	struct:malloc_state	typeref:typename:INTERNAL_SIZE_T	file:
+systrim	malloc.c	/^systrim (size_t pad, mstate av)$/;"	f	typeref:typename:int	file:
+tcache	malloc.c	/^static __thread tcache_perthread_struct *tcache = NULL;$/;"	v	typeref:typename:__thread tcache_perthread_struct *	file:
+tcache_bins	malloc.c	/^  size_t tcache_bins;$/;"	m	struct:malloc_par	typeref:typename:size_t	file:
+tcache_count	malloc.c	/^  size_t tcache_count;$/;"	m	struct:malloc_par	typeref:typename:size_t	file:
+tcache_entry	malloc.c	/^typedef struct tcache_entry$/;"	s	file:
+tcache_entry	malloc.c	/^} tcache_entry;$/;"	t	typeref:struct:tcache_entry	file:
+tcache_get	malloc.c	/^tcache_get (size_t tc_idx)$/;"	f	typeref:typename:__always_inline void *	file:
+tcache_init	malloc.c	/^tcache_init(void)$/;"	f	typeref:typename:void	file:
+tcache_max_bytes	malloc.c	/^  size_t tcache_max_bytes;$/;"	m	struct:malloc_par	typeref:typename:size_t	file:
+tcache_perthread_struct	malloc.c	/^typedef struct tcache_perthread_struct$/;"	s	file:
+tcache_perthread_struct	malloc.c	/^} tcache_perthread_struct;$/;"	t	typeref:struct:tcache_perthread_struct	file:
+tcache_put	malloc.c	/^tcache_put (mchunkptr chunk, size_t tc_idx)$/;"	f	typeref:typename:__always_inline void	file:
+tcache_shutting_down	malloc.c	/^static __thread bool tcache_shutting_down = false;$/;"	v	typeref:typename:__thread bool	file:
+tcache_thread_shutdown	malloc.c	/^tcache_thread_shutdown (void)$/;"	f	typeref:typename:void	file:
+tcache_unsorted_limit	malloc.c	/^  size_t tcache_unsorted_limit;$/;"	m	struct:malloc_par	typeref:typename:size_t	file:
+temp	obstack.h	/^  } temp;                       \/* Temporary for some macros.  *\/$/;"	m	struct:obstack	typeref:union:obstack::__anon8f581bc2010a
+tempint	obstack.h	/^    PTR_INT_TYPE tempint;$/;"	m	union:obstack::__anon8f581bc2010a	typeref:typename:PTR_INT_TYPE
+tempptr	obstack.h	/^    void *tempptr;$/;"	m	union:obstack::__anon8f581bc2010a	typeref:typename:void *
+termination_requested	tst-malloc-fork-deadlock.c	/^static bool termination_requested;$/;"	v	typeref:typename:bool	file:
+termination_requested	tst-malloc-thread-exit.c	/^static bool termination_requested;$/;"	v	typeref:typename:bool	file:
+test-extras	Makefile	/^test-extras = \\$/;"	m
+test-srcs	Makefile	/^test-srcs = tst-mtrace$/;"	m
+test_after_failure	tst-alloc_buffer.c	/^test_after_failure (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_copy_bytes	tst-alloc_buffer.c	/^test_copy_bytes (void)$/;"	f	typeref:typename:void	file:
+test_copy_string	tst-alloc_buffer.c	/^test_copy_string (void)$/;"	f	typeref:typename:void	file:
+test_empty	tst-alloc_buffer.c	/^test_empty (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_empty	tst-dynarray-at-fail.c	/^test_empty (void *closure)$/;"	f	typeref:typename:void	file:
+test_empty_array	tst-alloc_buffer.c	/^test_empty_array (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_impossible_array	tst-alloc_buffer.c	/^test_impossible_array (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_int	tst-dynarray.c	/^test_int (void)$/;"	f	typeref:typename:void	file:
+test_int_fail	tst-dynarray-fail.c	/^test_int_fail (void)$/;"	f	typeref:typename:void	file:
+test_large	tst-alloc_buffer.c	/^test_large (void)$/;"	f	typeref:typename:void	file:
+test_large_aligned_allocations	tst-malloc-too-large.c	/^test_large_aligned_allocations (size_t size)$/;"	f	typeref:typename:void	file:
+test_large_allocations	tst-malloc-too-large.c	/^test_large_allocations (size_t size)$/;"	f	typeref:typename:void	file:
+test_large_misaligned	tst-alloc_buffer.c	/^test_large_misaligned (void)$/;"	f	typeref:typename:void	file:
+test_long_init	tst-dynarray.c	/^test_long_init (void)$/;"	f	typeref:typename:void	file:
+test_long_overflow	tst-dynarray.c	/^test_long_overflow (void)$/;"	f	typeref:typename:void	file:
+test_many	tst-dynarray-at-fail.c	/^test_many (void *closure)$/;"	f	typeref:typename:void	file:
+test_misaligned	tst-alloc_buffer.c	/^test_misaligned (char pad)$/;"	f	typeref:typename:void	file:
+test_one	tst-dynarray-at-fail.c	/^test_one (void *closure)$/;"	f	typeref:typename:void	file:
+test_setup	tst-malloc-too-large.c	/^test_setup (void)$/;"	f	typeref:typename:void	file:
+test_size_1	tst-alloc_buffer.c	/^test_size_1 (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_size_2	tst-alloc_buffer.c	/^test_size_2 (struct alloc_buffer refbuf)$/;"	f	typeref:typename:void	file:
+test_str	tst-dynarray.c	/^test_str (void)$/;"	f	typeref:typename:void	file:
+test_str_fail	tst-dynarray-fail.c	/^test_str_fail (void)$/;"	f	typeref:typename:void	file:
+test_threadproc	tst-malloc-stats-cancellation.c	/^test_threadproc (void *gatep)$/;"	f	typeref:typename:void *	file:
+test_zstr	tst-dynarray.c	/^test_zstr (void)$/;"	f	typeref:typename:void	file:
+tests	Makefile	/^tests := mallocbug tst-malloc tst-valloc tst-calloc tst-obstack \\$/;"	m
+tests-internal	Makefile	/^tests-internal := tst-mallocstate tst-scratch_buffer$/;"	m
+tests-static	Makefile	/^tests-static := \\$/;"	m
+thread_count	tst-malloc-thread-fail.c	/^enum { thread_count = 8 };$/;"	e	enum:__anon306ab4a40203	file:
+thread_count	tst-malloc_info.c	/^    thread_count  = 4,$/;"	e	enum:__anona0f1a4a10103	file:
+tidx2usize	malloc.c	/^# define tidx2usize(/;"	d	file:
+time_based	memusagestat.c	/^static int time_based;$/;"	v	typeref:typename:int	file:
+time_high	memusage.c	/^  uint32_t time_high;$/;"	m	struct:entry	typeref:typename:uint32_t	file:
+time_high	memusagestat.c	/^  uint32_t time_high;$/;"	m	struct:entry	typeref:typename:uint32_t	file:
+time_low	memusage.c	/^  uint32_t time_low;$/;"	m	struct:entry	typeref:typename:uint32_t	file:
+time_low	memusagestat.c	/^  uint32_t time_low;$/;"	m	struct:entry	typeref:typename:uint32_t	file:
+to	malloc.c	/^	size_t to;$/;"	m	struct:weak_alias::__anon4259f6ce0108	typeref:typename:size_t	file:
+top	arena.c	/^#define top(/;"	d	file:
+top	malloc.c	/^  mchunkptr top;$/;"	m	struct:malloc_state	typeref:typename:mchunkptr	file:
+top_check	hooks.c	/^top_check (void)$/;"	f	typeref:typename:void	file:
+top_pad	hooks.c	/^  unsigned long top_pad;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+top_pad	malloc.c	/^  INTERNAL_SIZE_T top_pad;$/;"	m	struct:malloc_par	typeref:typename:INTERNAL_SIZE_T	file:
+top_pad	tst-mallocstate.c	/^  unsigned long top_pad;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+total	malloc.c	/^	size_t total;$/;"	m	struct:weak_alias::__anon4259f6ce0108	typeref:typename:size_t	file:
+total	memusage.c	/^static memusage_size_t total[idx_last];$/;"	v	typeref:typename:memusage_size_t[]	file:
+tr_freehook	mtrace.c	/^tr_freehook (void *ptr, const void *caller)$/;"	f	typeref:typename:void	file:
+tr_mallochook	mtrace.c	/^tr_mallochook (size_t size, const void *caller)$/;"	f	typeref:typename:void *	file:
+tr_memalignhook	mtrace.c	/^tr_memalignhook (size_t alignment, size_t size, const void *caller)$/;"	f	typeref:typename:void *	file:
+tr_old_free_hook	mtrace.c	/^static void (*tr_old_free_hook) (void *ptr, const void *);$/;"	v	typeref:typename:void (*)(void * ptr,const void *)	file:
+tr_old_malloc_hook	mtrace.c	/^static void *(*tr_old_malloc_hook) (size_t size, const void *);$/;"	v	typeref:typename:void * (*)(size_t size,const void *)	file:
+tr_old_memalign_hook	mtrace.c	/^static void *(*tr_old_memalign_hook) (size_t __alignment, size_t __size,$/;"	v	typeref:typename:void * (*)(size_t __alignment,size_t __size,const void *)	file:
+tr_old_realloc_hook	mtrace.c	/^static void *(*tr_old_realloc_hook) (void *ptr, size_t size,$/;"	v	typeref:typename:void * (*)(void * ptr,size_t size,const void *)	file:
+tr_reallochook	mtrace.c	/^tr_reallochook (void *ptr, size_t size, const void *caller)$/;"	f	typeref:typename:void *	file:
+trace_mmap	memusage.c	/^static bool trace_mmap;$/;"	v	typeref:typename:bool	file:
+trim_threshold	hooks.c	/^  unsigned long trim_threshold;$/;"	m	struct:malloc_save_state	typeref:typename:unsigned long	file:
+trim_threshold	malloc.c	/^  unsigned long trim_threshold;$/;"	m	struct:malloc_par	typeref:typename:unsigned long	file:
+trim_threshold	tst-mallocstate.c	/^  unsigned long trim_threshold;$/;"	m	struct:__anonbd4366d70208	typeref:typename:unsigned long	file:
+ts	tst-interpose-aux.c	/^  struct timespec ts;$/;"	m	struct:allocation_header	typeref:struct:timespec	file:
+tst-dynarray-ENV	Makefile	/^tst-dynarray-ENV = MALLOC_TRACE=$(objpfx)tst-dynarray.mtrace$/;"	m
+tst-dynarray-fail-ENV	Makefile	/^tst-dynarray-fail-ENV = MALLOC_TRACE=$(objpfx)tst-dynarray-fail.mtrace$/;"	m
+tst-malloc-usable-ENV	Makefile	/^tst-malloc-usable-ENV = MALLOC_CHECK_=3$/;"	m
+tst-malloc-usable-static-ENV	Makefile	/^tst-malloc-usable-static-ENV = $(tst-malloc-usable-ENV)$/;"	m
+tst-malloc-usable-static-tunables-ENV	Makefile	/^tst-malloc-usable-static-tunables-ENV = $(tst-malloc-usable-tunables-ENV)$/;"	m
+tst-malloc-usable-tunables-ENV	Makefile	/^tst-malloc-usable-tunables-ENV = GLIBC_TUNABLES=glibc.malloc.check=3$/;"	m
+tst-mcheck-ENV	Makefile	/^tst-mcheck-ENV = MALLOC_CHECK_=3$/;"	m
+tst-mxfast-ENV	Makefile	/^tst-mxfast-ENV = GLIBC_TUNABLES=glibc.malloc.tcache_count=0:glibc.malloc.mxfast=0$/;"	m
+turn_on_mcheck	mcheck-init.c	/^turn_on_mcheck (void)$/;"	f	typeref:typename:void	file:
+twelve	tst-alloc_buffer.c	/^struct twelve$/;"	s	file:
+u	obstack.c	/^  union fooround u;$/;"	m	struct:fooalign	typeref:union:fooround	file:
+unchanged_array_size	tst-scratch_buffer.c	/^unchanged_array_size (struct scratch_buffer *buf, size_t a, size_t b)$/;"	f	typeref:typename:bool	file:
+unlink_chunk	malloc.c	/^unlink_chunk (mstate av, mchunkptr p)$/;"	f	typeref:typename:void	file:
+unlock	tst-interpose-aux.c	/^unlock (void)$/;"	f	typeref:typename:void	file:
+unmark_bin	malloc.c	/^#define unmark_bin(/;"	d	file:
+unoptimized_free	tst-malloc-thread-exit.c	/^unoptimized_free (void *ptr)$/;"	f	typeref:typename:void	file:
+unsorted_chunks	malloc.c	/^#define unsorted_chunks(/;"	d	file:
+uordblks	malloc.h	/^  int uordblks; \/* total allocated space *\/$/;"	m	struct:mallinfo	typeref:typename:int
+update_data	memusage.c	/^update_data (struct header *result, size_t len, size_t old_len)$/;"	f	typeref:typename:void	file:
+usage	mtrace.pl	/^sub usage {$/;"	s
+use_extra_arg	obstack.h	/^  unsigned use_extra_arg : 1;     \/* chunk alloc\/dealloc funcs take extra arg *\/$/;"	m	struct:obstack	typeref:typename:unsigned:1
+used	dynarray-skeleton.c	/^      size_t used;$/;"	m	struct:DYNARRAY_STRUCT::__anon6f306f12010a::__anon6f306f120208	typeref:typename:size_t	file:
+used	dynarray.h	/^  size_t used;$/;"	m	struct:dynarray_header	typeref:typename:size_t
+using_malloc_checking	hooks.c	/^  int using_malloc_checking;$/;"	m	struct:malloc_save_state	typeref:typename:int	file:
+using_malloc_checking	hooks.c	/^static int using_malloc_checking;$/;"	v	typeref:typename:int	file:
+using_malloc_checking	tst-mallocstate.c	/^  int using_malloc_checking;$/;"	m	struct:__anonbd4366d70208	typeref:typename:int	file:
+usize2tidx	malloc.c	/^# define usize2tidx(/;"	d	file:
+usmblks	malloc.h	/^  int usmblks;  \/* always 0, preserved for backwards compatibility *\/$/;"	m	struct:mallinfo	typeref:typename:int
+verbose_free	tst-obstack.c	/^verbose_free (void *buf)$/;"	f	typeref:typename:void	file:
+verbose_malloc	tst-obstack.c	/^verbose_malloc (size_t size)$/;"	f	typeref:typename:void *	file:
+version	hooks.c	/^  long version;$/;"	m	struct:malloc_save_state	typeref:typename:long	file:
+version	tst-mallocstate.c	/^  long version;$/;"	m	struct:__anonbd4366d70208	typeref:typename:long	file:
+void	malloc.c	/^#define void /;"	d	file:
+wait_first_thread	tst-malloc-thread-exit.c	/^wait_first_thread (void * closure)$/;"	f	typeref:typename:void *	file:
+weak_alias	malloc.c	/^weak_alias (__libc_memalign, aligned_alloc)$/;"	f
+weak_alias	malloc.c	/^weak_alias (__posix_memalign, posix_memalign)$/;"	f
+weak_variable	malloc.c	/^# define weak_variable /;"	d	file:
+with_aligned_alloc	tst-malloc-thread-fail.c	/^  with_aligned_alloc,$/;"	e	enum:__anon306ab4a40103	file:
+with_calloc	tst-malloc-thread-fail.c	/^  with_calloc,$/;"	e	enum:__anon306ab4a40103	file:
+with_malloc	tst-malloc-thread-fail.c	/^  with_malloc,$/;"	e	enum:__anon306ab4a40103	file:
+with_memalign	tst-malloc-thread-fail.c	/^  with_memalign,$/;"	e	enum:__anon306ab4a40103	file:
+with_posix_memalign	tst-malloc-thread-fail.c	/^  with_posix_memalign,$/;"	e	enum:__anon306ab4a40103	file:
+with_pvalloc	tst-malloc-thread-fail.c	/^  with_pvalloc,$/;"	e	enum:__anon306ab4a40103	file:
+with_realloc	tst-malloc-thread-fail.c	/^  with_realloc,$/;"	e	enum:__anon306ab4a40103	file:
+with_valloc	tst-malloc-thread-fail.c	/^  with_valloc,$/;"	e	enum:__anon306ab4a40103	file:
+worker	tst-malloc-tcache-leak.c	/^worker (void *data)$/;"	f	typeref:typename:void *
+xsetrlimit_as	tst-dynarray-fail.c	/^xsetrlimit_as (const struct rlimit *limit)$/;"	f	typeref:typename:void	file:
+xsize	memusagestat.c	/^static size_t xsize;$/;"	v	typeref:typename:size_t	file:
+ysize	memusagestat.c	/^static size_t ysize;$/;"	v	typeref:typename:size_t	file:

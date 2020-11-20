@@ -3908,7 +3908,7 @@ _int_malloc (mstate av, size_t bytes)
     {
       // largebin
       idx = largebin_index (nb);
-      // 如果 av 分配区有 fastbin 的话，合并回收 fastbin 的 chunk
+      // 如果 av 分配区有 fastbin 的话，回收 fastbin 的 chunk 放入 unsorted bin
       if (atomic_load_relaxed (&av->have_fastchunks))
         malloc_consolidate (av);
     }
@@ -3927,6 +3927,7 @@ _int_malloc (mstate av, size_t bytes)
    */
 
 #if USE_TCACHE
+  // 复位 tcache 
   INTERNAL_SIZE_T tcache_nb = 0;
   size_t tc_idx = csize2tidx (nb);
   if (tcache && tc_idx < mp_.tcache_bins)
@@ -4058,6 +4059,7 @@ _int_malloc (mstate av, size_t bytes)
 
           if (in_smallbin_range (size))
             {
+              // 通过 size 获取 smallbin
               victim_index = smallbin_index (size);
               bck = bin_at (av, victim_index);
               fwd = bck->fd;
@@ -4434,6 +4436,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	   trust it (it also matches random payload data at a 1 in
 	   2^<size_t> chance), so verify it's not an unlikely
 	   coincidence before aborting.  */
+  // key 指向的是每个线程的 tcache_perthread_struct
 	if (__glibc_unlikely (e->key == tcache))
 	  {
 	    tcache_entry *tmp;
@@ -4447,8 +4450,12 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	       few cycles, but don't abort.  */
 	  }
 
+  // mp_ 是一个 malloc_par 结构，描述当前 malloc 的各种参数信息
+  // tcache_count  字段是描述 tcache 的最大 chunk 数
+  // 当前 tcache 的 counts 合法的话
 	if (tcache->counts[tc_idx] < mp_.tcache_count)
 	  {
+      // 把 p 插入 当前线程的 第 tc_idx 条 tcache
 	    tcache_put (p, tc_idx);
 	    return;
 	  }
@@ -4663,9 +4670,11 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	  p->fd_nextsize = NULL;
 	  p->bk_nextsize = NULL;
 	}
+      // 在 bck 和 fwd 之间 插入 p
       bck->fd = p;
       fwd->bk = p;
 
+      // 设置 p 的物理位置上相邻的上一个 chunk 为 inuse
       set_head(p, size | PREV_INUSE);
       set_foot(p, size);
 
