@@ -121,3 +121,47 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 
 可以看到的是 每当 free 一个 chunk 时，会检查 tcache 是否已经初始化，chunk 的 size 是否符合放入 tcache，检查通过就会把 chunk 放入 tcache，完全没有任何检查
 
+2.27 的 tcache 的源码注释：https://github.com/zero-MK/note/blob/master/how2heap/2.27/tcache_house_of_spirit/tcache.c
+
+
+
+在这个 demo 中，把 fake_chunks[10] 对应的内存空间伪造成一个 chunk
+
+fake_chunks[1] 对应的就是 chunk 的 size 字段
+
+```c
+fake_chunks[1] = 0x40
+```
+
+伪造一个大小为 0x40 的 chunk
+
+然后 让 a 指向 fake_chunks[2]
+
+```c
+a = &fake_chunks[2];
+```
+
+没有 free a 前的 heap
+
+```
+Allocated chunk | PREV_INUSE
+Addr: 0x555555559000
+Size: 0x251
+
+Allocated chunk | PREV_INUSE
+Addr: 0x555555559250
+Size: 0x21
+
+Top chunk | PREV_INUSE
+Addr: 0x555555559270
+Size: 0x20d91
+```
+
+free a
+
+```c
+free(a);
+```
+
+
+
