@@ -89,15 +89,15 @@ We got the control
 
 这个时候 a 和 b 都会进入同一条 tcache（一样大小的 chunk，tcache 也没有满）
 
-![image-20201125003506465](image-20201125003506465.png)
+![image-20201125003506465](https://gitee.com/scriptkiddies/images/raw/master/image-20201125003506465.png)
 
-![image-20201125003723919](image-20201125003723919.png)
+![image-20201125003723919](https://gitee.com/scriptkiddies/images/raw/master/image-20201125003723919.png)
 
 tcache 中的 chunk 的 next 指针域是位于 chunk 的 fd 的位置，所以，b 的  next 字段指向的是 a
 
 当 free b 后不把 b 置 NULL，还是可以向 b 所指的区域写入，而写入的东西会覆盖位于 tcache 中的 b chunk 的 next 指针，我们把 stack_var 的地址写上去
 
-![image-20201125004329186](image-20201125004329186.png)
+![image-20201125004329186](https://gitee.com/scriptkiddies/images/raw/master/image-20201125004329186.png)
 
 就会导致 stack_var 被放入 tcache 链中，2.27 的 glibc 从 tcache 中取出 chunk 是没有任何检查的，然后只要再 malloc 两次就能得到 stack_var 的地址
 

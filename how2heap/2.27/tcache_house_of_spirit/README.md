@@ -163,8 +163,8 @@ free a
 free(a);
 ```
 
-![image-20201125001156367](image-20201125001156367.png)
+![image-20201125001156367](https://gitee.com/scriptkiddies/images/raw/master/image-20201125001156367.png)
 
 可以看到现在 fake_chunks 已经被放入 tcache，再次 malloc 一个大小为 0x40 的 chunk 就会得到一个指向 0x7fffffffdee0 的指针
 
-![image-20201125001552886](image-20201125001552886.png)
+![image-20201125001552886](https://gitee.com/scriptkiddies/images/raw/master/image-20201125001552886.png)
