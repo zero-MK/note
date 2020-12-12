@@ -71,7 +71,7 @@ static ssize_t read_mem(struct file *file, char __user *buf,
 		unsigned long remaining;
 		int allowed, probe;
         
-        // 当想要读取的内存大于一个页的大小时，每一轮就复制一个页面
+        // 如果跨页，就求页内的长度，没有跨页就是 size面
 		sz = size_inside_page(p, count);
 
 		err = -EPERM;
@@ -134,7 +134,8 @@ failed:
 size_inside_page
 
 ```c
-// size 大于一个 页面大小 的时候取的是 一个页面的大小
+// & (x-1), x 如果是以 2 的 n 次方对齐的话相当于 模 x
+// 如果跨页，就求页内的长度，没有跨页就是 size
 static inline unsigned long size_inside_page(unsigned long start,
 					     unsigned long size)
 {
@@ -177,6 +178,7 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
 	/* we don't have page 0 mapped on sparc and m68k.. */
     // 有的架构不映射 0 号页，所以不能直接读取 0 号页
 	if (p < PAGE_SIZE) {
+        // 如果跨页，就求页内的长度，没有跨页就是 size
 		sz = size_inside_page(p, count);
 		/* Hmm. Do something? */
         // 跳过
