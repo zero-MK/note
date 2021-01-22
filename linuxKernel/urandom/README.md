@@ -12,6 +12,8 @@ crw-rw-rw- 1 root root 1, 9 Dec  6 16:31 /dev/urandom
 
 版本：Linux kernel-5.6
 
+![image-20210120194402775](https://gitee.com/scriptkiddies/images/raw/master/image-20210120194402775.png)
+
 字符设备，肯定填写了 `file_operations` 结构
 
 ```c
@@ -610,6 +612,10 @@ static ssize_t _extract_entropy(struct entropy_store *r, void *buf,
 ## 参考文献：
 
 [Analysis of the Linux Random Number Generator](https://eprint.iacr.org/2006/086.pdf)
+
+[Linux Random Number Generator](http://chronox.de/lrng/doc/lrng.pdf)
+
+[The Linux Pseudorandom Number Generator Revisited](http://eprint.iacr.org/2012/251.pdf)
 
 [ 软件随机数发生器安全性的研究综述](http://www.jcr.cacrnet.org.cn/CN/Y2020/V7/I6/735)
 
