@@ -3101,8 +3101,10 @@ tcache_init(void)
 {
   mstate ar_ptr;
   void *victim = 0;
+  // 获取 tcache_perthread_struct 结构的大小，每个 thread 都有一个自己的 tcache_perthread_struct
   const size_t bytes = sizeof (tcache_perthread_struct);
 
+  // tcache_shutting_down 如果是 真 ，那就表示不使用 tcache，直接 return
   if (tcache_shutting_down)
     return;
 
@@ -3131,6 +3133,7 @@ tcache_init(void)
 
 }
 
+// tcache 如果为 NULL 的话说明 tcache 没有初始化，调用 tcache_init 去初始化
 # define MAYBE_INIT_TCACHE() \
   if (__glibc_unlikely (tcache == NULL)) \
     tcache_init();
@@ -3157,7 +3160,7 @@ __libc_malloc (size_t bytes)
                   "PTRDIFF_MAX is not more than half of SIZE_MAX");
 
   // 这个 __malloc_hook 函数是在 malloc.h 里面声明的，
-  // 其实是一个让开发者定义的函数，用来调式 malloc 函数
+  // 其实是一个让开发者定义的函数，用来调试 malloc 函数
   // 如果定义了  __malloc_hook 函数就会调用，没有定义则不会调用
   void *(*hook) (size_t, const void *)
     = atomic_forced_read (__malloc_hook);
