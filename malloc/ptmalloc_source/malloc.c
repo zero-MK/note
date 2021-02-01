@@ -3109,6 +3109,7 @@ tcache_init(void)
     return;
 
   arena_get (ar_ptr, bytes);
+  // 在堆上分配一个 arena 
   victim = _int_malloc (ar_ptr, bytes);
   if (!victim && ar_ptr != NULL)
     {
