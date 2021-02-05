@@ -1197,7 +1197,7 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    & MALLOC_ALIGN_MASK)
 
 /* pad request bytes into a usable size -- internal version */
-
+// 计算 chunk 的大小，这里的设计是这样的，先加上对齐的字节数，然后抹掉低位
 #define request2size(req)                                         \
   (((req) + SIZE_SZ + MALLOC_ALIGN_MASK < MINSIZE)  ?             \
    MINSIZE :                                                      \
@@ -1895,15 +1895,14 @@ malloc_init_state (mstate av)
   // 如果不是初始化 主分配区
   if (av != &main_arena)
 #endif
-  set_noncontiguous (av);
+  set_noncontiguous (av); // 不需要连续的空间
 
 
   if (av == &main_arena)
-    // 设置 global_max_fast
-    set_max_fast (DEFAULT_MXFAST);
-  atomic_store_relaxed (&av->have_fastchunks, false);
+    set_max_fast (DEFAULT_MXFAST); // 设置 global_max_fast，也就是最大的 fastbin 的 chunks 的大小，公式：(64 * SIZE_SZ / 4)，也就是说在 32 bit 的机器下 fastbin 里面最大的 chunks 大小为 64，在 32 bit 的机器下 fastbin 里面最大的 chunks 大小为 128
+  atomic_store_relaxed (&av->have_fastchunks, false); // have_fastchunks 标识是否有 fastbin。初始化 arena 时，arena 当然是没有 fastbins 的
 
-  // 初始化 top chunk
+  // 初始化 top chunk（其实 top chunk 是 arena 的 bins[0]）
   av->top = initial_top (av);
 }
 
@@ -3061,10 +3060,16 @@ tcache_put (mchunkptr chunk, size_t tc_idx)
 static __always_inline void *
 tcache_get (size_t tc_idx)
 {
+  // 获取下标为 tc_idx 的那一条 tcache
   tcache_entry *e = tcache->entries[tc_idx];
+  // tcache 也是一个 栈 结构，从链表头取 chunks
+  // 把栈顶以下的第二个 chunk 当成当前 tcache 的链表头，这样就是把栈顶的那个 chunk 移除
   tcache->entries[tc_idx] = e->next;
+  // counts 字段是 tcache 链表中的 chunk 的数量的计数器
   --(tcache->counts[tc_idx]);
+  // 清除 key 字段
   e->key = NULL;
+  // 返回 chunk 的地址
   return (void *) e;
 }
 
@@ -3160,9 +3165,18 @@ __libc_malloc (size_t bytes)
   _Static_assert (PTRDIFF_MAX <= SIZE_MAX / 2,
                   "PTRDIFF_MAX is not more than half of SIZE_MAX");
 
-  // 这个 __malloc_hook 函数是在 malloc.h 里面声明的，
-  // 其实是一个让开发者定义的函数，用来调试 malloc 函数
-  // 如果定义了  __malloc_hook 函数就会调用，没有定义则不会调用
+  // __malloc_hook 的初始化值是 malloc_hook_ini 函数的地址
+  // 开发者可以通过
+  /* 
+
+  #include<malloc.h> 
+  __malloc_hook == xxxx;
+
+  */ 
+  // 来 hook malloc 函数
+  // 如果开发者像上面一样修改了  __malloc_hook 函数，执行到这里时就调用开发者指定的函数
+  // 否则在第一次调用 malloc 走到这里时会调用 malloc_hook_ini 函数
+  // malloc_hook_ini 会把 __malloc_hook 置为 NULL 并调用 ptmalloc_init 来初始化堆
   void *(*hook) (size_t, const void *)
     = atomic_forced_read (__malloc_hook);
   if (__builtin_expect (hook != NULL, 0))

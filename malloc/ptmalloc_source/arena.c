@@ -109,7 +109,7 @@ int __malloc_initialized = -1;
    is just a hint as to how much memory will be required immediately
    in the new arena. */
 
-// 请求一个 arena，然后加锁
+// 获取当前线程的 arana ，并对其加锁
 #define arena_get(ptr, size) \
   do                         \
   {                          \
@@ -282,10 +282,11 @@ libc_hidden_proto(_dl_open_hook);
 static void
 ptmalloc_init(void)
 {
-  // 全局变量 __malloc_initialized 等于 0 说明没有初始化
+  // 全局变量 __malloc_initialized 大于等于 0 说明没有堆已经初始化，直接返回
   if (__malloc_initialized >= 0)
     return;
 
+  // 标识 heap 正在初始化
   __malloc_initialized = 0;
 
 #ifdef SHARED
@@ -322,6 +323,7 @@ ptmalloc_init(void)
   TUNABLE_GET(mxfast, size_t, TUNABLE_CALLBACK(set_mxfast));
 #else
   const char *s = NULL;
+  // 检查用户环境变量（下面的几个环境变量都是用来检查或者调试 malloc 和 free 的）
   if (__glibc_likely(_environ != NULL))
   {
     char **runp = _environ;
@@ -383,8 +385,9 @@ ptmalloc_init(void)
       }
     }
   }
+  //  设置了 MALLOC_CHECK_ 环境变量的话，就是需要检查 heap 的各个数据结构
   if (s && s[0] != '\0' && s[0] != '0')
-    __malloc_check_init();
+    __malloc_check_init(); // 使用 自带的钩子函数去检查
 #endif
 
 #if HAVE_MALLOC_INIT_HOOK
@@ -392,7 +395,7 @@ ptmalloc_init(void)
   if (hook != NULL)
     (*hook)();
 #endif
-  __malloc_initialized = 1;
+  __malloc_initialized = 1; // 标识 heap 初始化完成
 }
 
 /* Managing heaps and arenas (for concurrent threads) */
