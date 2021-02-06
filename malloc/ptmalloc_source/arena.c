@@ -70,7 +70,7 @@ extern int sanity_check_heap_info_alignment[(sizeof(heap_info) + 2 * SIZE_SZ) % 
                                                 : 1];
 
 /* Thread specific data.  */
-
+// 每个线程有自己的 arena , thread_arena 就是当前 线程 的 arena ，位于 tls 段
 static __thread mstate thread_arena attribute_tls_model_ie;
 
 /* Arena free list.  free_list_lock synchronizes access to the
@@ -752,7 +752,9 @@ _int_new_arena(size_t size)
 static mstate
 get_free_list(void)
 {
+  // 把当前线程的 arena 赋值给 replaced_arena
   mstate replaced_arena = thread_arena;
+  // free_list 是一个 malloc_state 链表的链表头（所有的 arena 都有一个单链表串起来）
   mstate result = free_list;
   if (result != NULL)
   {
