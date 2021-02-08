@@ -445,10 +445,11 @@ static char *aligned_heap_area;
 
 /* Create a new heap.  size is automatically rounded up to a multiple
    of the page size. */
-
+// 创建一个新 heap
 static heap_info *
 new_heap(size_t size, size_t top_pad)
 {
+  // 获取一个页的大小
   size_t pagesize = GLRO(dl_pagesize);
   char *p1, *p2;
   unsigned long ul;
@@ -462,7 +463,7 @@ new_heap(size_t size, size_t top_pad)
     return 0;
   else
     size = HEAP_MAX_SIZE;
-  size = ALIGN_UP(size, pagesize);
+  size = ALIGN_UP(size, pagesize); // 按页对齐
 
   /* A memory region aligned to a multiple of HEAP_MAX_SIZE is needed.
      No swap space needs to be reserved for the following large
@@ -873,16 +874,19 @@ arena_get2(size_t size, mstate avoid_arena)
 
   static size_t narenas_limit;
 
+  // 获取 arena 链表（所有的 arena 都是挂在一条 malloc_state 链表上）
   a = get_free_list();
   if (a == NULL)
   {
     /* Nothing immediately available, so generate a new arena.  */
     if (narenas_limit == 0)
     {
+      // 获取 arena 数量最大限制值
       if (mp_.arena_max != 0)
         narenas_limit = mp_.arena_max;
       else if (narenas > mp_.arena_test)
       {
+        // __get_nprocs 获取有多少个线程
         int n = __get_nprocs();
 
         if (n >= 1)
