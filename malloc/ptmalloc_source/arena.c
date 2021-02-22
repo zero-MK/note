@@ -70,7 +70,7 @@ extern int sanity_check_heap_info_alignment[(sizeof(heap_info) + 2 * SIZE_SZ) % 
                                                 : 1];
 
 /* Thread specific data.  */
-
+// 每个线程有自己的 arena , thread_arena 就是当前 线程 的 arena ，位于 tls 段
 static __thread mstate thread_arena attribute_tls_model_ie;
 
 /* Arena free list.  free_list_lock synchronizes access to the
@@ -109,7 +109,7 @@ int __malloc_initialized = -1;
    is just a hint as to how much memory will be required immediately
    in the new arena. */
 
-// 请求一个 arena，然后加锁
+// 获取当前线程的 arana ，并对其加锁
 #define arena_get(ptr, size) \
   do                         \
   {                          \
@@ -282,10 +282,11 @@ libc_hidden_proto(_dl_open_hook);
 static void
 ptmalloc_init(void)
 {
-  // 全局变量 __malloc_initialized 等于 0 说明没有初始化
+  // 全局变量 __malloc_initialized 大于等于 0 说明没有堆已经初始化，直接返回
   if (__malloc_initialized >= 0)
     return;
 
+  // 标识 heap 正在初始化
   __malloc_initialized = 0;
 
 #ifdef SHARED
@@ -322,6 +323,7 @@ ptmalloc_init(void)
   TUNABLE_GET(mxfast, size_t, TUNABLE_CALLBACK(set_mxfast));
 #else
   const char *s = NULL;
+  // 检查用户环境变量（下面的几个环境变量都是用来检查或者调试 malloc 和 free 的）
   if (__glibc_likely(_environ != NULL))
   {
     char **runp = _environ;
@@ -383,8 +385,9 @@ ptmalloc_init(void)
       }
     }
   }
+  //  设置了 MALLOC_CHECK_ 环境变量的话，就是需要检查 heap 的各个数据结构
   if (s && s[0] != '\0' && s[0] != '0')
-    __malloc_check_init();
+    __malloc_check_init(); // 使用 自带的钩子函数去检查
 #endif
 
 #if HAVE_MALLOC_INIT_HOOK
@@ -392,7 +395,7 @@ ptmalloc_init(void)
   if (hook != NULL)
     (*hook)();
 #endif
-  __malloc_initialized = 1;
+  __malloc_initialized = 1; // 标识 heap 初始化完成
 }
 
 /* Managing heaps and arenas (for concurrent threads) */
@@ -442,10 +445,11 @@ static char *aligned_heap_area;
 
 /* Create a new heap.  size is automatically rounded up to a multiple
    of the page size. */
-
+// 创建一个新 heap
 static heap_info *
 new_heap(size_t size, size_t top_pad)
 {
+  // 获取一个页的大小
   size_t pagesize = GLRO(dl_pagesize);
   char *p1, *p2;
   unsigned long ul;
@@ -459,7 +463,7 @@ new_heap(size_t size, size_t top_pad)
     return 0;
   else
     size = HEAP_MAX_SIZE;
-  size = ALIGN_UP(size, pagesize);
+  size = ALIGN_UP(size, pagesize); // 按页对齐
 
   /* A memory region aligned to a multiple of HEAP_MAX_SIZE is needed.
      No swap space needs to be reserved for the following large
@@ -749,7 +753,9 @@ _int_new_arena(size_t size)
 static mstate
 get_free_list(void)
 {
+  // 把当前线程的 arena 赋值给 replaced_arena
   mstate replaced_arena = thread_arena;
+  // free_list 是一个 malloc_state 链表的链表头（所有的 arena 都有一个单链表串起来）
   mstate result = free_list;
   if (result != NULL)
   {
@@ -868,16 +874,19 @@ arena_get2(size_t size, mstate avoid_arena)
 
   static size_t narenas_limit;
 
+  // 获取 arena 链表（所有的 arena 都是挂在一条 malloc_state 链表上）
   a = get_free_list();
   if (a == NULL)
   {
     /* Nothing immediately available, so generate a new arena.  */
     if (narenas_limit == 0)
     {
+      // 获取 arena 数量最大限制值
       if (mp_.arena_max != 0)
         narenas_limit = mp_.arena_max;
       else if (narenas > mp_.arena_test)
       {
+        // __get_nprocs 获取有多少个线程
         int n = __get_nprocs();
 
         if (n >= 1)
