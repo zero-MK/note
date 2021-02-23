@@ -36,7 +36,7 @@ cred 结构体
 struct cred {
 	atomic_t	usage;
 #ifdef CONFIG_DEBUG_CREDENTIALS
-	atomic_t	subscribers;	/* number of processes subscribed */
+	atomic_t	subscribers;	/* number of processes subscribed 使用这个 cred 的进程数*/
 	void		*put_addr;
 	unsigned	magic;
 #define CRED_MAGIC	0x43736564
