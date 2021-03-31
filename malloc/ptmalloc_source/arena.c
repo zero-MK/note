@@ -924,19 +924,28 @@ arena_get2(size_t size, mstate avoid_arena)
    out of mmapped areas, so we can try allocating on the main arena.
    Otherwise, it is likely that sbrk() has failed and there is still a chance
    to mmap(), so try one of the other arenas.  */
+// 在从指定 arena 分配内存失败后，调用，尝试从 main_arena 或者获取一个新的 arena 去分配内存
 static mstate
 arena_get_retry(mstate ar_ptr, size_t bytes)
 {
   LIBC_PROBE(memory_arena_retry, 2, bytes, ar_ptr);
+  // 如果 ar_ptr 不是 man_arena，说明刚刚分配失败不是发生在 main_arena
+  // 也就是说，我们还可以尝试从 main_arena 去分配内存
   if (ar_ptr != &main_arena)
   {
+    // 操作 arena 时要给 arena 加锁
     __libc_lock_unlock(ar_ptr->mutex);
+    // 直接让 ar_ptr 指向 man_arena
     ar_ptr = &main_arena;
+    // 操作结束，解锁
     __libc_lock_lock(ar_ptr->mutex);
   }
+  // 如果从 main_arena 分配失败（自己琢磨为什么这样说）
   else
   {
+    // 解锁 ar_ptr
     __libc_lock_unlock(ar_ptr->mutex);
+    // 分配一个新的 arena
     ar_ptr = arena_get2(bytes, ar_ptr);
   }
 

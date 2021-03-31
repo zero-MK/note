@@ -3646,6 +3646,7 @@ __libc_pvalloc(size_t bytes)
   return _mid_memalign(pagesize, rounded_bytes, address);
 }
 
+// 分配 n * elem_size 字节内存
 void *
 __libc_calloc(size_t n, size_t elem_size)
 {
@@ -3658,6 +3659,9 @@ __libc_calloc(size_t n, size_t elem_size)
   INTERNAL_SIZE_T *d;
   ptrdiff_t bytes;
 
+  // __builtin_mul_overflow 是编译器内建函数 用来检查第一第二参数 相乘 有没有溢出，结果存入第三个参数
+  // via: https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html
+  // 检查 n * elem_size 有没有溢出，把结果传入 bytes
   if (__glibc_unlikely(__builtin_mul_overflow(n, elem_size, &bytes)))
   {
     __set_errno(ENOMEM);
@@ -3665,8 +3669,10 @@ __libc_calloc(size_t n, size_t elem_size)
   }
   sz = bytes;
 
+  // 检查有没有设 __malloc_hook，因为 calloc 的底层实现还是依赖 malloc 去分配内存
   void *(*hook)(size_t, const void *) =
       atomic_forced_read(__malloc_hook);
+  // 如果有 hook 函数，调用 hook 函数
   if (__builtin_expect(hook != NULL, 0))
   {
     mem = (*hook)(sz, RETURN_ADDRESS(0));
@@ -3676,22 +3682,26 @@ __libc_calloc(size_t n, size_t elem_size)
     return memset(mem, 0, sz);
   }
 
+  // 检查 tcache 有没有初始化，没有的话就调用  tcache_init 初始化
   MAYBE_INIT_TCACHE();
 
+  // 是否多线程
   if (SINGLE_THREAD_P)
-    av = &main_arena;
+    av = &main_arena; // 单线程就只有主分配区 main_arena
   else
-    arena_get(av, sz);
+    arena_get(av, sz);// 多线程会有多个分配区，获取当前线程的分配区
 
+  // 获取分配区 arena 成功的话
   if (av)
   {
     /* Check if we hand out the top chunk, in which case there may be no
 	 need to clear. */
 #if MORECORE_CLEARS
-    oldtop = top(av);
-    oldtopsize = chunksize(top(av));
+    oldtop = top(av); // 获取 av 分配区的 top chunk 的地址
+    oldtopsize = chunksize(top(av)); // 获取 av 分配区的 top chunk 的大小
 #if MORECORE_CLEARS < 2
     /* Only newly allocated memory is guaranteed to be cleared.  */
+    // 检查 top chunk
     if (av == &main_arena &&
         oldtopsize < mp_.sbrk_base + av->max_system_mem - (char *)oldtop)
       oldtopsize = (mp_.sbrk_base + av->max_system_mem - (char *)oldtop);
@@ -3704,23 +3714,29 @@ __libc_calloc(size_t n, size_t elem_size)
     }
 #endif
   }
+  // 获取不到分配区的话
   else
   {
     /* No usable arenas.  */
     oldtop = 0;
     oldtopsize = 0;
   }
+  // 通过 malloc 路径去分配内存
   mem = _int_malloc(av, sz);
 
   assert(!mem || chunk_is_mmapped(mem2chunk(mem)) ||
          av == arena_for_chunk(mem2chunk(mem)));
 
+  // 单线程状态
   if (!SINGLE_THREAD_P)
   {
+    // 只是因为其他原因分配失败，而不是因为 arena 无效导致的分配失败
     if (mem == 0 && av != NULL)
     {
       LIBC_PROBE(memory_calloc_retry, 1, sz);
+      // 尝试获取新的 arena
       av = arena_get_retry(av, sz);
+      // 从新的 arena 去分配内存
       mem = _int_malloc(av, sz);
     }
 
@@ -3729,16 +3745,20 @@ __libc_calloc(size_t n, size_t elem_size)
   }
 
   /* Allocation failed even after a retry.  */
+  // 还是分配不到内存，直接就是分配失败，返回 0
   if (mem == 0)
     return 0;
 
+  // 分配成功，取 chunk 的用户数据写入的地址
   p = mem2chunk(mem);
 
   /* Two optional cases in which clearing not necessary */
+  // 要是 chunk 是 mmap 分配来的
   if (chunk_is_mmapped(p))
   {
+    // 如果填充数据是 0 的话
     if (__builtin_expect(perturb_byte, 0))
-      return memset(mem, 0, sz);
+      return memset(mem, 0, sz); // 用 0 填充，防止发生信息泄露
 
     return mem;
   }
