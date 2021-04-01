@@ -43,7 +43,7 @@
    threshold can be fulfilled without creating too many heaps.  */
 
 /***************************************************************************/
-
+// 获取 arena 的 top chunk
 #define top(ar_ptr) ((ar_ptr)->top)
 
 /* A heap is a single contiguous memory region holding (coalesceable)
@@ -52,11 +52,11 @@
 
 typedef struct _heap_info
 {
-  mstate ar_ptr;           /* Arena for this heap. */
-  struct _heap_info *prev; /* Previous heap. */
-  size_t size;             /* Current size in bytes. */
+  mstate ar_ptr;           /* Arena for this heap. */ // 指向当前 heap 的 arena
+  struct _heap_info *prev; /* Previous heap. */ // 指向上一个 heap
+  size_t size;             /* Current size in bytes. */ // heap 的大小
   size_t mprotect_size;    /* Size in bytes that has been mprotected
-                           PROT_READ|PROT_WRITE.  */
+                           PROT_READ|PROT_WRITE.  */  // heap 中有多少个字节的内存只是可读可写
   /* Make sure the following data is properly aligned, particularly
      that sizeof (heap_info) + 2 * SIZE_SZ is a multiple of
      MALLOC_ALIGNMENT. */
@@ -79,8 +79,8 @@ static __thread mstate thread_arena attribute_tls_model_ie;
    acquired after free_list_lock has been acquired.  */
 
 __libc_lock_define_initialized(static, free_list_lock);
-static size_t narenas = 1;
-static mstate free_list;
+static size_t narenas = 1; // arena 计数器
+static mstate free_list; // arena 链表头
 
 /* list_lock prevents concurrent writes to the next member of struct
    malloc_state objects.
@@ -94,9 +94,11 @@ static mstate free_list;
    acquired, no arena lock must have been acquired, but it is
    permitted to acquire arena locks subsequently, while list_lock is
    acquired.  */
+// 用来保护 free_list，因为 free_list 可能会被多个线程去竞争
 __libc_lock_define_initialized(static, list_lock);
 
 /* Already initialized? */
+// 标识有没有初始化
 int __malloc_initialized = -1;
 
 /**************************************************************************/
@@ -110,6 +112,7 @@ int __malloc_initialized = -1;
    in the new arena. */
 
 // 获取当前线程的 arana ，并对其加锁
+// thread_arena 指向当线程的 arena
 #define arena_get(ptr, size) \
   do                         \
   {                          \
@@ -117,6 +120,8 @@ int __malloc_initialized = -1;
     arena_lock(ptr, size);   \
   } while (0)
 
+// 判断 arena 是否存在，存在就给 arena 上锁
+// 不存在就分配一个新的 arena （大小为 size）
 #define arena_lock(ptr, size)         \
   do                                  \
   {                                   \
@@ -145,18 +150,24 @@ int __malloc_initialized = -1;
 
 void __malloc_fork_lock_parent(void)
 {
+  // 如果 heap 没有初始化，直接 return
   if (__malloc_initialized < 1)
     return;
 
   /* We do not acquire free_list_lock here because we completely
      reconstruct free_list in __malloc_fork_unlock_child.  */
 
+  // 给 free_list 加锁
   __libc_lock_lock(list_lock);
 
+  // 遍历 arena
   for (mstate ar_ptr = &main_arena;;)
   {
+    // 操作 arena 是需要加锁
     __libc_lock_lock(ar_ptr->mutex);
+    // arena 都由一个环形单链表串起来，next 指向下一个 arena
     ar_ptr = ar_ptr->next;
+    // 从 main_arena 开始遍历，因为是环形链表，再次取到 main_arena 的时候说明已经完成遍历
     if (ar_ptr == &main_arena)
       break;
   }
