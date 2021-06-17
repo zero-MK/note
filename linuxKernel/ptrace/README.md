@@ -1,3 +1,5 @@
+
+
 ```c
 SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
 		unsigned long, data)
@@ -7,7 +9,9 @@ SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
   
   // 一般是子进程调用，使自己进入被追踪模式
 	if (request == PTRACE_TRACEME) {
+        // traceme 的主要函数
 		ret = ptrace_traceme();
+        // 如果不能
 		if (!ret)
 			arch_ptrace_attach(current);
 		goto out;
@@ -15,6 +19,7 @@ SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
   
   // find_get_task_by_vpid 获取 pid 对应进程的 task_struct
 	child = find_get_task_by_vpid(pid);
+    // 如果获取不到，结束
 	if (!child) {
 		ret = -ESRCH;
 		goto out;
