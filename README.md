@@ -1,9 +1,1 @@
-MK
-
-Ehz
-
-scriptkid
-
-Vampire
-
-Datura Stramonium L.
+\x4e\x55\x4c\x4c
