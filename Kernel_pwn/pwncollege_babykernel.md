@@ -2,8 +2,6 @@
 
 题目来自：https://cse466.pwn.college/
 
-
-
 ## level1_teaching1.ko
 
 IDA 打开可以看到
@@ -42,8 +40,6 @@ int __cdecl init_module()
 
 然后打印 `banaer`
 
-
-
 既然是文件看看对应的文件操作函数
 
 `device_open` 对应 `open` 文件时触发的函数
@@ -51,8 +47,6 @@ int __cdecl init_module()
 `device_write` 对应 `write` 文件时触发的函数
 
 `device_read` 对应 `read` 文件时触发的函数
-
-
 
 ### device_open
 
@@ -67,10 +61,6 @@ int __fastcall device_open(inode *inode, file *file)
 unk_6B0： `[device_open] inode=%px, file=%px`
 
  打印 `pwncollege` 文件的 `inode` 和 `file` 结构的地址
-
-
-
-
 
 ### device_write
 
@@ -89,8 +79,6 @@ ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, l
 可以看到，对 `/proc/pwncollege` 进行写入操作时会判断输入的东西是不是 `xmaguhfipptqlmvc`
 
 如果输入的东西前 `16` 字节是 `xmaguhfipptqlmvc`，则  `device_state[0] = 2`，因为 `(strncmp(buffer, "xmaguhfipptqlmvc", 0x10uLL) == 0)` 结果为真，运算结果等于 `1`
-
- 
 
 ### device_read
 
@@ -133,8 +121,6 @@ ssize_t __fastcall device_read(file *file, char *buffer, size_t length, loff_t *
 }
 ```
 
-
-
 ### 思路
 
 其实看完就很明确了，目标就是让 `device_state[0] == 2`
@@ -159,8 +145,6 @@ int main() {
 }
 ```
 
-
-
 ## level2_teaching1.ko
 
 IDA 打开
@@ -173,7 +157,7 @@ IDA 打开
 
 直接看
 
-### device_read 
+### device_read
 
 ```c
 ssize_t __fastcall device_read(file *file, char *buffer, size_t length, loff_t *offset)
@@ -213,11 +197,7 @@ ssize_t __fastcall device_read(file *file, char *buffer, size_t length, loff_t *
 }
 ```
 
-
-
 其实逻辑跟 `level1_teaching1.ko` 的 `device_read` 是一样的，也是检查 `device_state[0]` 是不是等于 `2`，等于 `2` 就给 `flag`
-
-
 
 ### device_ioctl
 
@@ -283,13 +263,9 @@ int main() {
 }
 ```
 
-
-
 ## level3_teaching1.ko
 
 ![image-20210222011125023](https://gitee.com/scriptkiddies/images/raw/master/image-20210222011125023.png)
-
-
 
 这个挑战去掉了 `device_read`，多了一个 `win` 函数
 
@@ -305,8 +281,6 @@ void __cdecl win()
 ```
 
 成功调用 `win` 函数就能拿到 `flag`
-
-
 
 ### device_ioctl
 
@@ -330,9 +304,9 @@ __int64 __fastcall device_ioctl(file *file, unsigned int cmd, unsigned __int64 a
 
 ```c
 #define DECL_INDIRECT_THUNK(reg) \
-	extern asmlinkage void __x86_indirect_thunk_ ## reg (void);
+    extern asmlinkage void __x86_indirect_thunk_ ## reg (void);
 SYM_FUNC_START(__x86_indirect_thunk_\reg)
-	JMP_NOSPEC \reg
+    JMP_NOSPEC \reg
 SYM_FUNC_END(__x86_indirect_thunk_\reg
 ```
 
@@ -340,7 +314,7 @@ SYM_FUNC_END(__x86_indirect_thunk_\reg
 
 ```c
 void __x86_indirect_thunk_rbx (void) {
-	__asm__("jmp rbx");
+    __asm__("jmp rbx");
 }
 ```
 
@@ -387,22 +361,22 @@ ext.unlikely:00000000000008EC ; __int64 __fastcall device_ioctl(file *file, unsi
 ```asm
 gef➤  disassemble __x86_indirect_thunk_rbx
 Dump of assembler code for function __x86_indirect_thunk_rbx:
-   0xffffffff81e00ef0 <+0>:	jmp    rbx
-   0xffffffff81e00ef2 <+2>:	nop
-   0xffffffff81e00ef3 <+3>:	nop
-   0xffffffff81e00ef4 <+4>:	nop
-   0xffffffff81e00ef5 <+5>:	nop
-   0xffffffff81e00ef6 <+6>:	nop
-   0xffffffff81e00ef7 <+7>:	nop
-   0xffffffff81e00ef8 <+8>:	nop
-   0xffffffff81e00ef9 <+9>:	nop
-   0xffffffff81e00efa <+10>:	nop
-   0xffffffff81e00efb <+11>:	nop
-   0xffffffff81e00efc <+12>:	nop
-   0xffffffff81e00efd <+13>:	nop
-   0xffffffff81e00efe <+14>:	nop
-   0xffffffff81e00eff <+15>:	nop
-   0xffffffff81e00f00 <+16>:	nop
+   0xffffffff81e00ef0 <+0>:    jmp    rbx
+   0xffffffff81e00ef2 <+2>:    nop
+   0xffffffff81e00ef3 <+3>:    nop
+   0xffffffff81e00ef4 <+4>:    nop
+   0xffffffff81e00ef5 <+5>:    nop
+   0xffffffff81e00ef6 <+6>:    nop
+   0xffffffff81e00ef7 <+7>:    nop
+   0xffffffff81e00ef8 <+8>:    nop
+   0xffffffff81e00ef9 <+9>:    nop
+   0xffffffff81e00efa <+10>:    nop
+   0xffffffff81e00efb <+11>:    nop
+   0xffffffff81e00efc <+12>:    nop
+   0xffffffff81e00efd <+13>:    nop
+   0xffffffff81e00efe <+14>:    nop
+   0xffffffff81e00eff <+15>:    nop
+   0xffffffff81e00f00 <+16>:    nop
 ```
 
 如果我们输入一个地址，那么执行时就是 `jmp` 到这个地址
@@ -435,10 +409,6 @@ int main ()
   return 0;
 }
 ```
-
-
-
-
 
 ## level4_teaching1.ko
 
@@ -525,10 +495,10 @@ ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, l
  * The parts of the context break down into two categories:
  *
  *  (1) The objective context of a task.  These parts are used when some other
- *	task is attempting to affect this one.
+ *    task is attempting to affect this one.
  *
  *  (2) The subjective context.  These details are used when the task is acting
- *	upon another object, be that a file, a task, a key or whatever.
+ *    upon another object, be that a file, a task, a key or whatever.
  *
  * Note that some members of this structure belong to both categories - the
  * LSM security pointer for instance.
@@ -543,59 +513,57 @@ ssize_t __fastcall device_write(file *file, const char *buffer, size_t length, l
  * same context as task->real_cred.
  */
 struct cred {
-	atomic_t	usage;
+    atomic_t    usage;
 #ifdef CONFIG_DEBUG_CREDENTIALS
-	atomic_t	subscribers;	/* number of processes subscribed */
-	void		*put_addr;
-	unsigned	magic;
-#define CRED_MAGIC	0x43736564
-#define CRED_MAGIC_DEAD	0x44656144
+    atomic_t    subscribers;    /* number of processes subscribed */
+    void        *put_addr;
+    unsigned    magic;
+#define CRED_MAGIC    0x43736564
+#define CRED_MAGIC_DEAD    0x44656144
 #endif
   // 就是下面这几个了 uid gid 什么的，root 的 uid 和 gid 是 0
-	kuid_t		uid;		/* real UID of the task */
-	kgid_t		gid;		/* real GID of the task */
-	kuid_t		suid;		/* saved UID of the task */
-	kgid_t		sgid;		/* saved GID of the task */
-	kuid_t		euid;		/* effective UID of the task */
-	kgid_t		egid;		/* effective GID of the task */
-	kuid_t		fsuid;		/* UID for VFS ops */
-	kgid_t		fsgid;		/* GID for VFS ops */
-	unsigned	securebits;	/* SUID-less security management */
-	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
-	kernel_cap_t	cap_permitted;	/* caps we're permitted */
-	kernel_cap_t	cap_effective;	/* caps we can actually use */
-	kernel_cap_t	cap_bset;	/* capability bounding set */
-	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+    kuid_t        uid;        /* real UID of the task */
+    kgid_t        gid;        /* real GID of the task */
+    kuid_t        suid;        /* saved UID of the task */
+    kgid_t        sgid;        /* saved GID of the task */
+    kuid_t        euid;        /* effective UID of the task */
+    kgid_t        egid;        /* effective GID of the task */
+    kuid_t        fsuid;        /* UID for VFS ops */
+    kgid_t        fsgid;        /* GID for VFS ops */
+    unsigned    securebits;    /* SUID-less security management */
+    kernel_cap_t    cap_inheritable; /* caps our children can inherit */
+    kernel_cap_t    cap_permitted;    /* caps we're permitted */
+    kernel_cap_t    cap_effective;    /* caps we can actually use */
+    kernel_cap_t    cap_bset;    /* capability bounding set */
+    kernel_cap_t    cap_ambient;    /* Ambient capability set */
 #ifdef CONFIG_KEYS
-	unsigned char	jit_keyring;	/* default keyring to attach requested
-					 * keys to */
-	struct key	*session_keyring; /* keyring inherited over fork */
-	struct key	*process_keyring; /* keyring private to this process */
-	struct key	*thread_keyring; /* keyring private to this thread */
-	struct key	*request_key_auth; /* assumed request_key authority */
+    unsigned char    jit_keyring;    /* default keyring to attach requested
+                     * keys to */
+    struct key    *session_keyring; /* keyring inherited over fork */
+    struct key    *process_keyring; /* keyring private to this process */
+    struct key    *thread_keyring; /* keyring private to this thread */
+    struct key    *request_key_auth; /* assumed request_key authority */
 #endif
 #ifdef CONFIG_SECURITY
-	void		*security;	/* subjective LSM security */
+    void        *security;    /* subjective LSM security */
 #endif
-	struct user_struct *user;	/* real user ID subscription */
-	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
-	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
-	/* RCU deletion */
-	union {
-		int non_rcu;			/* Can we skip RCU deletion? */
-		struct rcu_head	rcu;		/* RCU deletion hook */
-	};
+    struct user_struct *user;    /* real user ID subscription */
+    struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+    struct group_info *group_info;    /* supplementary groups for euid/fsgid */
+    /* RCU deletion */
+    union {
+        int non_rcu;            /* Can we skip RCU deletion? */
+        struct rcu_head    rcu;        /* RCU deletion hook */
+    };
 } __randomize_layout;
 
 struct task_struct {
   .......
   /* Effective (overridable) subjective task credentials (COW): */
-	const struct cred __rcu		*cred;
+    const struct cred __rcu        *cred;
   .......
 }
 ```
-
-
 
 需要用到内核里面的两个函数
 
@@ -628,23 +596,22 @@ struct task_struct {
  */
 struct cred *prepare_kernel_cred(struct task_struct *daemon)
 {
-	const struct cred *old;
+    const struct cred *old;
   .......
-	if (daemon)
-		old = get_task_cred(daemon);
-	else
-		old = get_cred(&init_cred);
+    if (daemon)
+        old = get_task_cred(daemon);
+    else
+        old = get_cred(&init_cred);
   .......
   validate_creds(old);
 
-	*new = *old;
+    *new = *old;
   .......
-  
-  put_cred(old);
-	validate_creds(new);
-	return new
-}
 
+  put_cred(old);
+    validate_creds(new);
+    return new
+}
 ```
 
 这里可以看到的是 如果 参数 `daemon` 为 `0` ，则使用 `init` 进程的 `cred` 用作复制的模板，`init` 进程的 `cred`，`root！！！`
@@ -659,33 +626,31 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
  * The initial credentials for the initial task
  */
 struct cred init_cred = {
-	.usage			= ATOMIC_INIT(4),
+    .usage            = ATOMIC_INIT(4),
 #ifdef CONFIG_DEBUG_CREDENTIALS
-	.subscribers		= ATOMIC_INIT(2),
-	.magic			= CRED_MAGIC,
+    .subscribers        = ATOMIC_INIT(2),
+    .magic            = CRED_MAGIC,
 #endif
-	.uid			= GLOBAL_ROOT_UID,
-	.gid			= GLOBAL_ROOT_GID,
-	.suid			= GLOBAL_ROOT_UID,
-	.sgid			= GLOBAL_ROOT_GID,
-	.euid			= GLOBAL_ROOT_UID,
-	.egid			= GLOBAL_ROOT_GID,
-	.fsuid			= GLOBAL_ROOT_UID,
-	.fsgid			= GLOBAL_ROOT_GID,
-	.securebits		= SECUREBITS_DEFAULT,
-	.cap_inheritable	= CAP_EMPTY_SET,
-	.cap_permitted		= CAP_FULL_SET,
-	.cap_effective		= CAP_FULL_SET,
-	.cap_bset		= CAP_FULL_SET,
-	.user			= INIT_USER,
-	.user_ns		= &init_user_ns,
-	.group_info		= &init_groups,
+    .uid            = GLOBAL_ROOT_UID,
+    .gid            = GLOBAL_ROOT_GID,
+    .suid            = GLOBAL_ROOT_UID,
+    .sgid            = GLOBAL_ROOT_GID,
+    .euid            = GLOBAL_ROOT_UID,
+    .egid            = GLOBAL_ROOT_GID,
+    .fsuid            = GLOBAL_ROOT_UID,
+    .fsgid            = GLOBAL_ROOT_GID,
+    .securebits        = SECUREBITS_DEFAULT,
+    .cap_inheritable    = CAP_EMPTY_SET,
+    .cap_permitted        = CAP_FULL_SET,
+    .cap_effective        = CAP_FULL_SET,
+    .cap_bset        = CAP_FULL_SET,
+    .user            = INIT_USER,
+    .user_ns        = &init_user_ns,
+    .group_info        = &init_groups,
 };
 ```
 
 所以我们只要 `prepare_kernel_cred (0)` 就能得到一个 `root` 的 `cred`
-
-
 
 commit_creds
 
@@ -706,33 +671,33 @@ commit_creds
  */
 int commit_creds(struct cred *new)
 {
-	struct task_struct *task = current; // task 指向当前进程的 task_struct 结构
-	const struct cred *old = task->real_cred;
-  
+    struct task_struct *task = current; // task 指向当前进程的 task_struct 结构
+    const struct cred *old = task->real_cred;
+
   ......
 
-	validate_creds(old);
-	validate_creds(new);
-  
+    validate_creds(old);
+    validate_creds(new);
+
   ......
 
-	get_cred(new); /* we will require a ref for the subj creds too */
+    get_cred(new); /* we will require a ref for the subj creds too */
   ......
-	/* do it
-	 * RLIMIT_NPROC limits on user->processes have already been checked
-	 * in set_user().
-	 */
-	alter_cred_subscribers(new, 2);
-	if (new->user != old->user)
-		atomic_inc(&new->user->processes);
-	rcu_assign_pointer(task->real_cred, new); // 修改 task 的 real_cred 为 new cred
-	rcu_assign_pointer(task->cred, new); // 修改 task 的 cred 为 new cred
-  
+    /* do it
+     * RLIMIT_NPROC limits on user->processes have already been checked
+     * in set_user().
+     */
+    alter_cred_subscribers(new, 2);
+    if (new->user != old->user)
+        atomic_inc(&new->user->processes);
+    rcu_assign_pointer(task->real_cred, new); // 修改 task 的 real_cred 为 new cred
+    rcu_assign_pointer(task->cred, new); // 修改 task 的 cred 为 new cred
+
   ......
-	/* release the old obj and subj refs both */
-	put_cred(old);
-	put_cred(old);
-	return 0;
+    /* release the old obj and subj refs both */
+    put_cred(old);
+    put_cred(old);
+    return 0;
 }
 EXPORT_SYMBOL(commit_creds);
 ```
@@ -817,7 +782,4 @@ int main() {
 }
 ```
 
-
-
 ![image-20210222152556474](https://gitee.com/scriptkiddies/images/raw/master/image-20210222152556474.png)
-

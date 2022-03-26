@@ -3,8 +3,8 @@ CTF-pwn-tips-zh_CN
 
 原项目：https://github.com/Naetw/CTF-pwn-tips
 
-
 # 目录
+
 * [缓冲区溢出](#缓冲区溢出)
 * [在 gdb 中查找字符串](#在gdb中查找字符串)
 * [让程序运行在指定端口上](#让程序运行在指定端口上)
@@ -20,7 +20,6 @@ CTF-pwn-tips-zh_CN
 * [使用 printf 触发 malloc 和 free](#使用printf触发malloc和free)
 * [使用 execveat 打开一个 shell](#使用execveat打开一个shell)
 
-
 ## 缓冲区溢出
 
 现在有
@@ -32,44 +31,50 @@ CTF-pwn-tips-zh_CN
 ### scanf
 
 * `scanf("%s", buf)`
-    * `%s` 没有进行边界检查
-    * **pwnable**
+  
+  * `%s` 没有进行边界检查
+  * **pwnable**
 
 * `scanf("%39s", buf)`
-    * `%39s` 只从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
-    * **useless**
+  
+  * `%39s` 只从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
+  * **useless**
 
 * `scanf("%40s", buf)`
-    * 乍一看好像没有什么问题
-    * 从标准输入获取 `40` 个字节的数据，并将 `NULL` 放在输入数据的结尾
-    * 因为 `buf` 只有 `40 Bytes` 的空间，输入数据加上 `NULL`溢出了一个字节（**one-byte-overflow**）
-    * **pwnable**
+  
+  * 乍一看好像没有什么问题
+  * 从标准输入获取 `40` 个字节的数据，并将 `NULL` 放在输入数据的结尾
+  * 因为 `buf` 只有 `40 Bytes` 的空间，输入数据加上 `NULL`溢出了一个字节（**one-byte-overflow**）
+  * **pwnable**
 
 * `scanf("%d", &num)`
-    * 输入的 `num` 用做 `alloca` 的参数 `alloca(num)`
-        * `alloca` 是从调用者的栈上分配内存，相当于 `sub esp, eax` 
-        * 如果我们输入的是一个负数，就会发生栈帧重叠
-        * E.g. [Seccon CTF quals 2016 cheer_msg](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/cheer-msg-100)
-    * 利用 `num` 访问一些数据结构
-        * 很多时候程序员写检查的时候只进行了高边界的检查，而没有检查低边界，然后 `num` 又是无符号类型
-        * 将 `num` 设置成负数会发生整数溢出，`num` 会变得非常大，这样我们就能覆盖到一些重要的数据
+  
+  * 输入的 `num` 用做 `alloca` 的参数 `alloca(num)`
+    * `alloca` 是从调用者的栈上分配内存，相当于 `sub esp, eax` 
+    * 如果我们输入的是一个负数，就会发生栈帧重叠
+    * E.g. [Seccon CTF quals 2016 cheer_msg](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/cheer-msg-100)
+  * 利用 `num` 访问一些数据结构
+    * 很多时候程序员写检查的时候只进行了高边界的检查，而没有检查低边界，然后 `num` 又是无符号类型
+    * 将 `num` 设置成负数会发生整数溢出，`num` 会变得非常大，这样我们就能覆盖到一些重要的数据
 
 ### gets
 
 * `gets(buf)`
-    * 没有进行边界检查
-    * **pwnable**
+  
+  * 没有进行边界检查
+  * **pwnable**
 
 * `fgets(buf, 40, stdin)`
-    * 从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
-    * **useless**
+  
+  * 从标准输入获取 `39` 个字节的数据，并将 `NULL` 放在输入数据的结尾
+  * **useless**
 
 ### read
 
 * `read(stdin, buf, 40)`
-    * 从标准输入获取 `40` 个字节的数据，但是不会把 `NULL` 放在输入数据的结尾
-    * 看起来安全，但是可能会发生信息泄露（**information leak**）
-    * **leakable**
+  * 从标准输入获取 `40` 个字节的数据，但是不会把 `NULL` 放在输入数据的结尾
+  * 看起来安全，但是可能会发生信息泄露（**information leak**）
+  * **leakable**
 
 E.g.
 
@@ -83,42 +88,47 @@ E.g.
 
 * 如果使用 `printf` 或者 `puts` 输出 `buf` ，这两个函数会一直读取内存上的东西直到遇到 
     `NULL`
+
 * 在这里我们能输出 `'A'*40 + '\xcd\xe1\xff\xff\xff\x7f'`
 
 * `fread(buf, 1, 40, stdin)`
-    * 和  `read` 几乎一样
-    * **leakable**
+  
+  * 和  `read` 几乎一样
+  * **leakable**
 
 ### strcpy
 
 假设有一个 buffer: `char buf2[60]`
 
 * `strcpy(buf, buf2)`
-    * 没有进行边界检查
-    * 它会将 `buf2`的内容复制到 `buf` (直到遇到 NULL byte)  这时 `length(buf2) > length(buf)`
-    * 因为 `length(buf2) > length(buf)` 所以 `buf` 发生溢出
-    * **pwnable**
+  
+  * 没有进行边界检查
+  * 它会将 `buf2`的内容复制到 `buf` (直到遇到 NULL byte)  这时 `length(buf2) > length(buf)`
+  * 因为 `length(buf2) > length(buf)` 所以 `buf` 发生溢出
+  * **pwnable**
 
 * `strncpy(buf, buf2, 40)` && `memcpy(buf, buf2, 40)`
-    * 从 `buf2` 复制 `40 Bytes` 的数据到 `buf`，但是结尾没有添加 `NULL`
-    * 由于没有 `NULL` 标志字符串结束，所以跟上面的一样会发生信息泄露
-    * **leakable**
+  
+  * 从 `buf2` 复制 `40 Bytes` 的数据到 `buf`，但是结尾没有添加 `NULL`
+  * 由于没有 `NULL` 标志字符串结束，所以跟上面的一样会发生信息泄露
+  * **leakable**
 
 ### strcat
 
 假设有另一个 `buffer`：`char buf2[60]`
 
 * `strcat(buf, buf2)`
-    * 在  `buf` 没有足够大的空间的时候会有 **缓冲区溢出** 漏洞
-    * 它会将 `NULL` 添加到末尾，可能会导致 **单字节溢出**
-    * 在某些情况下，我们可以使用这个 `NULL` 来更改栈地址或堆地址
-    * **pwnable**
+  
+  * 在  `buf` 没有足够大的空间的时候会有 **缓冲区溢出** 漏洞
+  * 它会将 `NULL` 添加到末尾，可能会导致 **单字节溢出**
+  * 在某些情况下，我们可以使用这个 `NULL` 来更改栈地址或堆地址
+  * **pwnable**
 
 * `strncat(buf, buf2, n)`
-    * 功能跟 `strcat` 一样，但是会有长度限制（参数 `n`）
-    * **pwnable**
-    * E.g. [Seccon CTF quals 2016 jmper](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/jmper-300)
-
+  
+  * 功能跟 `strcat` 一样，但是会有长度限制（参数 `n`）
+  * **pwnable**
+  * E.g. [Seccon CTF quals 2016 jmper](https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/jmper-300)
 
 ## 在gdb中查找字符串
 
@@ -167,8 +177,9 @@ Found 2 results, display max 2 items:
 下面这两个方式是指定了 `binary` 运行时使用的库：
 
 * `ncat -vc 'LD_PRELOAD=/path/to/libc.so ./binary' -kl 127.0.0.1 $port`
-* `ncat -vc 'LD_LIBRARY_PATH=/path/of/libc.so ./binary' -kl 127.0.0.1 $port`
 
+* `ncat -vc 'LD_LIBRARY_PATH=/path/of/libc.so ./binary' -kl 127.0.0.1 $port`
+  
   然后你就可以使用 `nc` 连接到 `binary` 所运行的端口和它进行交互： `nc localhost $port`.
 
 ## 在libc中查找特定的函数偏移量
@@ -433,7 +444,6 @@ if (width >= WORK_BUFFER_SIZE - EXTSIZ)
 我们可以发现，如果 `width` 变量够大的时候将会触发 `malloc`（当然，如果触发了 `malloc`，`printf` 末尾也会触发 `free`）。然而，因为 `WORK_BUFFER_SIZE` 不够大，所以程序会跳到  **else**  代码块去执行。 让我们看看 `__libc_use_alloca` 来决定我们应该给出的最小的 `width`。
 
 ```c
-
 /* Minimum size for a thread.  We are free to choose a reasonable value.  */
 #define PTHREAD_STACK_MIN        16384
 
@@ -447,13 +457,13 @@ int __libc_use_alloca (size_t size)
 
 int __libc_alloca_cutoff (size_t size)
 {
-	return size <= (MIN (__MAX_ALLOCA_CUTOFF,
-					THREAD_GETMEM (THREAD_SELF, stackblock_size) / 4
-					/* The main thread, before the thread library is
-						initialized, has zero in the stackblock_size
-						element.  Since it is the main thread we can
-						assume the maximum available stack space.  */
-					?: __MAX_ALLOCA_CUTOFF * 4));
+    return size <= (MIN (__MAX_ALLOCA_CUTOFF,
+                    THREAD_GETMEM (THREAD_SELF, stackblock_size) / 4
+                    /* The main thread, before the thread library is
+                        initialized, has zero in the stackblock_size
+                        element.  Since it is the main thread we can
+                        assume the maximum available stack space.  */
+                    ?: __MAX_ALLOCA_CUTOFF * 4));
 }
 ```
 
@@ -461,21 +471,18 @@ int __libc_alloca_cutoff (size_t size)
 
 1. `size > PTHREAD_STACK_MIN / 4`
 2. `size > MIN(__MAX_ALLOCA_CUTOFF, THREAD_GETMEM(THREAD_SELF, stackblock_size) / 4 ?: __MAX_ALLOCA_CUTOFF * 4)`
-    * 我不完全理解 `THREAD_GETMEM` 到底是做什么的，但它似乎大多时候返回 0。
-    * 因此，第二个条件通常是 `size > 65536`
+   * 我不完全理解 `THREAD_GETMEM` 到底是做什么的，但它似乎大多时候返回 0。
+   * 因此，第二个条件通常是 `size > 65536`
 
 More details:
 
 * [__builtin_expect](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [THREAD_GETMEM](https://code.woboq.org/userspace/glibc/sysdeps/x86_64/nptl/tls.h.html#_M/THREAD_GETMEM)
 
-
 ### 总结
 
 * 大多数时候，触发 `malloc` 和 `free` 的最小 `width` 是 `65537`。
 * 如果存在格式字符串漏洞，并且程序在调用 `printf(buf)` 后立即结束，我们可以使用 `one-gadget` 劫持 `__malloc_hook` 或 `__free_hook` 并使用上述技巧触发 `malloc` 和 `free`，那么即使在 `printf(buf)` 后面没有任何函数调用或其他东西，我们仍然可以获得 `shell`（这里的意思是，即使调用 `printf` 结束后程序直接退出，我们还是能做到程序执行流程劫持，因为我们劫持了 `__malloc_hook` 或 `__free_hook` ，在触发  `malloc` 和 `free` 的时候我们已经执行了我们想要的操作）
-
-
 
 ## 使用execveat打开一个shell
 

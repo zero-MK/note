@@ -122,8 +122,6 @@ leak flag 第一个字节的 payload 是: "A" * 31 + x (我懒得计算， 直�
 
 ..........
 
-
-
 使用 netcat 把脚本挂在任意端口上
 
 ```bash
@@ -200,4 +198,3 @@ Ncat: Connection from 127.0.0.1.
 [+] flag{cracked_AES_mode_ECB
 [+] flag{cracked_AES_mode_ECB}
 ```
-
