@@ -52,7 +52,7 @@ cd linux-5.4.182
 patch -p1 < ../patch-5.4.182-rt71.patch
 ```
 
-![image-20220326224515430](image-20220326224515430.png)
+![image-20220326224515430](https://gitee.com/scriptkiddies/images/raw/master/image-20220326224515430.png)
 
 ### 配置编译参数
 
@@ -64,7 +64,7 @@ make menuconfig
 
 进入如下的页面
 
-![image-20220326231220401](image-20220326231220401.png)
+![image-20220326231220401](https://gitee.com/scriptkiddies/images/raw/master/image-20220326231220401.png)
 
 我们需要打开 `PREEMPT_RT` 编译选项，这个选项位于 
 
@@ -72,13 +72,13 @@ make menuconfig
 
 选择 `Fully Preemptible Kernel (Real-Time)`
 
-![image-20220326231456455](image-20220326231456455.png)
+![image-20220326231456455](https://gitee.com/scriptkiddies/images/raw/master/image-20220326231456455.png)
 
 然后根据自己的需求再配置其他编译选项，比如开启 kdbg 啥的，然后选择 `save` 生成 `.config` 即可
 
-![image-20220326231639071](image-20220326231639071.png)
+![image-20220326231639071](https://gitee.com/scriptkiddies/images/raw/master/image-20220326231639071.png)
 
-![image-20220326231655323](image-20220326231655323.png)
+![image-20220326231655323](https://gitee.com/scriptkiddies/images/raw/master/image-20220326231655323.png)
 
 
 
@@ -104,13 +104,13 @@ make[1]: *** No rule to make target 'debian/canonical-certs.pem', needed by 'cer
 scripts/config --disable SYSTEM_TRUSTED_KEYS
 ```
 
-![image-20220326233019187](image-20220326233019187.png)
+![image-20220326233019187](https://gitee.com/scriptkiddies/images/raw/master/image-20220326233019187.png)
 
 直接回车即可
 
 编译成功
 
-![image-20220326234038126](image-20220326234038126.png)
+![image-20220326234038126](https://gitee.com/scriptkiddies/images/raw/master/image-20220326234038126.png)
 
 
 
@@ -122,16 +122,16 @@ scripts/config --disable SYSTEM_TRUSTED_KEYS
 qemu-system-x86_64 -m 2G -drive file=image.qcow2 -device e1000,netdev=net -netdev user,id=net,hostfwd=tcp::2222-:22 -kernel vmlinux -initrd initrd -nographic -s -S -append "root=LABEL=rootfs console=ttyS0"
 ```
 
-![image-20220327001816207](image-20220327001816207.png)
+![image-20220327001816207](https://gitee.com/scriptkiddies/images/raw/master/image-20220327001816207.png)
 
 
 
 gdb 远程调试
 
-![image-20220327000632733](image-20220327000632733.png)
+![image-20220327000632733](https://gitee.com/scriptkiddies/images/raw/master/image-20220327000632733.png)
 
 在 内核入口函数下断点`hb start_kernel`
 
-![image-20220327000751708](image-20220327000751708.png)
+![image-20220327000751708](https://gitee.com/scriptkiddies/images/raw/master/image-20220327000751708.png)
 
 成功断下，开始愉快的 Real-Time Linux hack 之旅吧
